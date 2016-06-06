@@ -196,6 +196,7 @@ public class MainActivity2 extends Activity {
         }
         else  {
             SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
+            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
             exchangeRateThread();
 
             boolean isDial = false;
@@ -269,6 +270,7 @@ public class MainActivity2 extends Activity {
             TimeOutUtil.getInstance().updatePin();
 
             SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
+            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
         }
 
         IntentFilter filter_restart = new IntentFilter(ACTION_RESTART);
@@ -469,6 +471,20 @@ public class MainActivity2 extends Activity {
 
                 alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
+                        try {
+                            HD_WalletFactory.getInstance(MainActivity2.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(MainActivity2.this).getGUID() + AccessFactory.getInstance(MainActivity2.this).getPIN()));
+                        }
+                        catch(MnemonicException.MnemonicLengthException mle) {
+                            ;
+                        }
+                        catch(JSONException je) {
+                            ;
+                        }
+                        catch(IOException ioe) {
+                            ;
+                        }
+
                         AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
                         TimeOutUtil.getInstance().reset();
                         dialog.dismiss();
