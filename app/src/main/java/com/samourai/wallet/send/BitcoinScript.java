@@ -2,6 +2,8 @@ package com.samourai.wallet.send;
 
 import com.samourai.wallet.util.Hash;
 
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.CoinDefinition;
 import org.bitcoinj.core.Utils;
 
 import java.util.ArrayList;
@@ -352,7 +354,7 @@ public class BitcoinScript {
         // Now create the redemption script
         List<Byte> bytes = new ArrayList<Byte>();
 
-        if (address.getVersion() == 0) {
+        if (address.getVersion() == CoinDefinition.AddressHeader) {
             BitcoinScript.writeOpcode(bytes, BitcoinScript.OP_DUP);
             BitcoinScript.writeOpcode(bytes, BitcoinScript.OP_HASH160);
             BitcoinScript.writeBytes(bytes, address.getHash160().getBytes());
@@ -361,7 +363,7 @@ public class BitcoinScript {
 
             return new BitcoinScript(bytes);
         }
-        else if (address.getVersion() == 5) {
+        else if (address.getVersion() == CoinDefinition.p2shHeader) {
             BitcoinScript.writeOpcode(bytes, BitcoinScript.OP_HASH160);
             BitcoinScript.writeBytes(bytes, address.getHash160().getBytes());
             BitcoinScript.writeOpcode(bytes, BitcoinScript.OP_EQUAL);
@@ -507,13 +509,13 @@ public class BitcoinScript {
             switch (this.getOutType()) {
                 case ScriptOutTypeAddress:
                     return new BitcoinAddress(new Hash(this.chunks.get(2)),
-                            (short) 0);
+                            (short) CoinDefinition.AddressHeader);
                 case ScriptOutTypePubKey:
                     return new BitcoinAddress(new Hash(
-                            Utils.sha256hash160(this.chunks.get(0))), (short) 0);
+                            Utils.sha256hash160(this.chunks.get(0))), (short) CoinDefinition.AddressHeader);
                 case ScriptOutTypeP2SH:
                     return new BitcoinAddress(new Hash(
-                            Utils.sha256hash160(this.chunks.get(0))), (short) 5);
+                            Utils.sha256hash160(this.chunks.get(0))), (short) CoinDefinition.p2shHeader);
             }
 
         }

@@ -293,7 +293,7 @@ public class SendNotifTxFactory	{
         HashMap<String,List<MyTransactionOutPoint>> outputsByAddress = new HashMap<String,List<MyTransactionOutPoint>>();
 
 //        Log.i("Unspent outputs url", WebUtil.BLOCKCHAIN_DOMAIN + "unspent?active=" + args);
-        String response = WebUtil.getInstance(null).getURL(WebUtil.BLOCKCHAIN_DOMAIN + "unspent?active=" + args);
+        String response = WebUtil.getInstance(null).getURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "unspent&active=" + args);
 //        Log.i("Unspent outputs", response);
 
         List<MyTransactionOutPoint> outputs = new ArrayList<MyTransactionOutPoint>();

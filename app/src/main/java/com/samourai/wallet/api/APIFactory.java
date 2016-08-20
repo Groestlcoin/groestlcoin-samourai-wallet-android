@@ -1,10 +1,13 @@
 package com.samourai.wallet.api;
 
 import android.content.Context;
+import android.util.Log;
 //import android.util.Log;
 
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
+import com.samourai.wallet.hd.HD_Account;
+import com.samourai.wallet.hd.HD_Chain;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.WebUtil;
@@ -13,6 +16,7 @@ import com.samourai.wallet.bip47.rpc.PaymentAddress;
 
 import org.apache.commons.lang.StringUtils;
 import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.TransactionOutPoint;
@@ -85,18 +89,18 @@ public class APIFactory	{
 
         for(int i = 0; i < xpubs.length; i++)   {
             try {
-                StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-                url.append("multiaddr?active=");
+                StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN_API);
+                url.append("xpub2&xpub=");
                 url.append(xpubs[i]);
-//                Log.i("APIFactory", "XPUB:" + url.toString());
+                Log.i("APIFactory", "XPUB:" + url.toString());
                 String response = WebUtil.getInstance(null).getURL(url.toString());
-//                Log.i("APIFactory", "XPUB response:" + response);
+                Log.i("APIFactory", "XPUB response:" + response);
                 try {
                     jsonObject = new JSONObject(response);
                     if(!HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr().equals(xpubs[i]))    {
                         xpub_txs.put(xpubs[i], new ArrayList<Tx>());
                     }
-                    parseXPUB(jsonObject);
+                    parseXPUB(jsonObject, xpubs[i]);
                     if(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr().equals(xpubs[i]))    {
                         long amount0 = xpub_amounts.get(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr());
                         xpub_amounts.put(HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr(), amount0 + bip47_balance);
@@ -120,7 +124,7 @@ public class APIFactory	{
         return jsonObject;
     }
 
-    private synchronized void parseXPUB(JSONObject jsonObject) throws JSONException  {
+    private synchronized void parseXPUB(JSONObject jsonObject, String xpub) throws JSONException  {
 
         if(jsonObject != null)  {
 /*
@@ -179,7 +183,12 @@ public class APIFactory	{
                     long move_amount = 0L;
                     long input_amount = 0L;
                     long output_amount = 0L;
+                    long bip47_input_amount = 0L;
+                    long xpub_input_amount = 0L;
+                    long change_output_amount = 0L;
                     boolean hasBIP47Input = false;
+                    boolean hasOnlyBIP47Input = true;
+                    boolean hasChangeOutput = false;
 
                     if(txObj.has("block_height"))  {
                         height = txObj.getLong("block_height");
@@ -209,9 +218,15 @@ public class APIFactory	{
                                     JSONObject xpubObj = (JSONObject)prevOutObj.get("xpub");
                                     addr = (String)xpubObj.get("m");
                                     input_xpub = addr;
+                                    xpub_input_amount -= prevOutObj.getLong("value");
+                                    hasOnlyBIP47Input = false;
                                 }
-                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr("addr") != null)  {
+                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) != null)  {
                                     hasBIP47Input = true;
+                                    bip47_input_amount -= prevOutObj.getLong("value");
+                                }
+                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) == null)  {
+                                    hasOnlyBIP47Input = false;
                                 }
                                 else  {
                                     _addr = (String)prevOutObj.get("addr");
@@ -228,8 +243,9 @@ public class APIFactory	{
                             output_amount += outObj.getLong("value");
                             if(outObj.has("xpub"))  {
                                 JSONObject xpubObj = (JSONObject)outObj.get("xpub");
-                                addr = (String)xpubObj.get("m");
-
+                                addr = xpubObj.has("m") ? (String)xpubObj.get("m") : xpub;
+                                change_output_amount += outObj.getLong("value");
+                                path = xpubObj.getString("path");
                                 if(outObj.has("spent"))  {
                                     if(outObj.getBoolean("spent") == false && outObj.has("addr"))  {
                                         if(!haveUnspentOuts.containsKey(addr))  {
@@ -242,11 +258,6 @@ public class APIFactory	{
                                         }
                                     }
                                 }
-                                path = (String)xpubObj.get("path");
-                                String[] s = path.split("/");
-                                if(s[1].equals("1") && hasBIP47Input)    {
-                                    continue;
-                                }
                                 if(input_xpub != null && !input_xpub.equals(addr))    {
                                     output_xpub = addr;
                                     move_amount = outObj.getLong("value");
@@ -256,6 +267,17 @@ public class APIFactory	{
 //                                _addr = (String)outObj.get("addr");
                             }
                         }
+
+                        if(hasOnlyBIP47Input && !hasChangeOutput)    {
+                            amount = bip47_input_amount;
+                        }
+                        else if(hasBIP47Input)    {
+                            amount = bip47_input_amount + xpub_input_amount + change_output_amount;
+                        }
+                        else    {
+                            ;
+                        }
+
                     }
 
                     if(addr != null)  {
@@ -280,16 +302,13 @@ public class APIFactory	{
                         }
                         else    {
 
-                            if(!seenBIP47Tx.containsKey(hash))    {
-                                Tx tx = new Tx(hash, _addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
+                            Tx tx = new Tx(hash, _addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
 
-                                if(!xpub_txs.containsKey(addr))  {
-                                    xpub_txs.put(addr, new ArrayList<Tx>());
-                                }
-                                xpub_txs.get(addr).add(tx);
-
-                                seenBIP47Tx.put(hash, "");
+                            if(!xpub_txs.containsKey(addr))  {
+                                xpub_txs.put(addr, new ArrayList<Tx>());
                             }
+                            xpub_txs.get(addr).add(tx);
+
                         }
 
                     }
@@ -306,8 +325,8 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-            url.append("multiaddr?active=");
+            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN_API);
+            url.append("multiaddr&active=");
             url.append(addr);
 //            Log.i("APIFactory", "Notif address:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
@@ -583,8 +602,8 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-            url.append("unspent?active=");
+            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN_API);
+            url.append("unspent&active=");
             url.append(StringUtils.join(xpubs, "|"));
 //            Log.i("APIFactory", "unspent outputs:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
@@ -603,13 +622,14 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         try {
-            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-            url.append("address/");
+            StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN_API);
+            url.append("multiaddr&active=");
             url.append(addr);
-            url.append("?format=json");
+            //url.append("?format=json");
 
             String response = WebUtil.getInstance(null).getURL(url.toString());
             jsonObject = new JSONObject(response);
+            jsonObject = (JSONObject)jsonObject.getJSONArray("addresses").get(0);
         }
         catch(Exception e) {
             jsonObject = null;
@@ -662,7 +682,7 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
 
         StringBuilder args = new StringBuilder();
-        args.append("active=");
+        args.append("&active=");
         args.append(StringUtils.join(addresses, "|"));
         if(simple) {
             args.append("&simple=true");
@@ -673,7 +693,7 @@ public class APIFactory	{
 
         try {
 //            Log.i("APIFactory", "BIP47 multiaddr:" + args.toString());
-            String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN + "multiaddr?", args.toString());
+            String response = WebUtil.getInstance(null).getURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "multiaddr"+ args.toString());
 //            Log.i("APIFactory", "BIP47 multiaddr:" + response);
             jsonObject = new JSONObject(response);
             parseBIP47(jsonObject);
@@ -691,8 +711,8 @@ public class APIFactory	{
         JSONObject jsonObject = null;
         int ret = 0;
 
-        StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-        url.append("multiaddr?active=");
+        StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN_API);
+        url.append("multiaddr&active=");
         url.append(StringUtils.join(addresses, "|"));
 
         try {
@@ -754,8 +774,8 @@ public class APIFactory	{
         JSONObject jsonObject  = null;
         int ret = 0;
 
-        StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN);
-        url.append("multiaddr?active=");
+        StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN_API);
+        url.append("multiaddr&active=");
         url.append(StringUtils.join(addresses, "|"));
 
         try {

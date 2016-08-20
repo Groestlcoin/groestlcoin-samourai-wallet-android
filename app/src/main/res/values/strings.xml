@@ -5,7 +5,7 @@
     <string name="version_name">0.74a</string>
     <string name="app_name">Samourai</string>
 
-    <string name="new_version_message">Welcome to Samourai Alpha 2 \'Stealthy Crane\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
+    <string name="new_version_message">Welcome to Groestlcoin Samourai Alpha 2 \'Stealthy Crane\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to bitcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>
 
     <string name="alpha_create_wallet">Write these words down and keep them safe. Do not lose these words or forget your passphrase.</string>
     <string name="alpha_create_confirm_backup">I\'ve written down my words</string>
@@ -30,7 +30,7 @@
     <string name="action_bip47">Payment channels</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="about_us">About Samourai Wallet</string>
+    <string name="about_us">About Groestlcoin Samourai Wallet</string>
     <string name="about_title">About us</string>
 
     <string name="ok">OK</string>
@@ -41,7 +41,7 @@
     <string name="options_cat_remote">Remote settings</string>
     <string name="options_cat_wallet">Your wallet</string>
     <string name="options_cat_networking">Networking</string>
-    <string name="options_cat_other">Samourai</string>
+    <string name="options_cat_other">Groestlcoin Samourai</string>
 
     <string name="options_mnemonic">Show mnemonic</string>
     <string name="options_mnemonic2">Show mnemonic for this wallet.</string>
@@ -107,7 +107,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <string name="sim_warning">Your Samourai Wallet device now has a different SIM card corresponding to incoming number of this text message.</string>
+    <string name="sim_warning">Your Groestlcoin Samourai Wallet device now has a different SIM card corresponding to incoming number of this text message.</string>
 
     <string name="pin_5_8">Create a PIN code between 5 and 8 characters.</string>
     <string name="pin_5_8_confirm">Confirm PIN code</string>

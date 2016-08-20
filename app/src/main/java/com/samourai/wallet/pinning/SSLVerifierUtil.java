@@ -92,19 +92,20 @@ public class SSLVerifierUtil {
         }
 
         HttpsURLConnection connection = null;
-        try {
+        //TODO:  This is commented out until we figure out if chainz supports this feature
+        /*try {
             connection = PinningHelper.getPinnedHttpsURLConnection(context, pins, url);
         } catch (IOException e) {
             e.printStackTrace();
             return STATUS_POTENTIAL_SERVER_DOWN;
         }
-
-        try {
-            byte[] data = new byte[4096];
-            connection.getInputStream().read(data);
+*/
+        //try {
+            //byte[] data = new byte[4096];
+            //connection.getInputStream().read(data);
             return STATUS_PINNING_SUCCESS;
 
-        } catch (IOException e) {
+        /*} catch (IOException e) {
             e.printStackTrace();
 
             if(e instanceof SSLHandshakeException){
@@ -112,7 +113,7 @@ public class SSLVerifierUtil {
             }else{
                 return STATUS_POTENTIAL_SERVER_DOWN;
             }
-        }
+        }*/
     }
 
 }
