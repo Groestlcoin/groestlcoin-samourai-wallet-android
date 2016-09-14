@@ -190,6 +190,9 @@ public class APIFactory	{
                     boolean hasOnlyBIP47Input = true;
                     boolean hasChangeOutput = false;
 
+                    boolean useManualAmount = false;
+                    long manual_amount = 0;
+
                     if(txObj.has("block_height"))  {
                         height = txObj.getLong("block_height");
                     }
@@ -201,7 +204,9 @@ public class APIFactory	{
                     }
                     if(txObj.has("result"))  {
                         amount = txObj.getLong("result");
-                    }
+                        if(amount == 0)
+                            useManualAmount = true;
+                    } else useManualAmount = true;
                     if(txObj.has("time"))  {
                         ts = txObj.getLong("time");
                     }
@@ -211,15 +216,17 @@ public class APIFactory	{
                         JSONObject inputObj = null;
                         for(int j = 0; j < inputArray.length(); j++)  {
                             inputObj = (JSONObject)inputArray.get(j);
-                            if(inputObj.has("prev_out"))  {
-                                JSONObject prevOutObj = (JSONObject)inputObj.get("prev_out");
+                            if(true/*inputObj.has("prev_out")*/)  {
+                                JSONObject prevOutObj = inputObj;//(JSONObject)inputObj.get("prev_out");
                                 input_amount += prevOutObj.getLong("value");
                                 if(prevOutObj.has("xpub"))  {
                                     JSONObject xpubObj = (JSONObject)prevOutObj.get("xpub");
-                                    addr = (String)xpubObj.get("m");
+                                    addr = xpubObj.has("m") ? (String)xpubObj.get("m") : xpub;
                                     input_xpub = addr;
                                     xpub_input_amount -= prevOutObj.getLong("value");
                                     hasOnlyBIP47Input = false;
+                                    if(useManualAmount) manual_amount-=prevOutObj.getLong("value");
+
                                 }
                                 else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) != null)  {
                                     hasBIP47Input = true;
@@ -246,6 +253,7 @@ public class APIFactory	{
                                 addr = xpubObj.has("m") ? (String)xpubObj.get("m") : xpub;
                                 change_output_amount += outObj.getLong("value");
                                 path = xpubObj.getString("path");
+                                if(useManualAmount) manual_amount+=outObj.getLong("value");
                                 if(outObj.has("spent"))  {
                                     if(outObj.getBoolean("spent") == false && outObj.has("addr"))  {
                                         if(!haveUnspentOuts.containsKey(addr))  {
@@ -302,7 +310,7 @@ public class APIFactory	{
                         }
                         else    {
 
-                            Tx tx = new Tx(hash, _addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
+                            Tx tx = new Tx(hash, _addr, useManualAmount ? manual_amount : amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
 
                             if(!xpub_txs.containsKey(addr))  {
                                 xpub_txs.put(addr, new ArrayList<Tx>());

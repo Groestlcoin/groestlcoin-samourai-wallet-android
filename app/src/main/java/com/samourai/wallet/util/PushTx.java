@@ -144,4 +144,16 @@ public class PushTx {
 
     }
 
+    public String chainz(String hexString) {
+
+        try {
+            String response = WebUtil.getInstance(null).postURL("text/plain", WebUtil.BLOCKCHAIN_DOMAIN + "pushtx", hexString);
+//        Log.i("Send response", response);
+            return response;
+        }
+        catch(Exception e) {
+            return null;
+        }
+
+    }
 }

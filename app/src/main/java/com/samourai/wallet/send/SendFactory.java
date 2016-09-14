@@ -227,11 +227,12 @@ public class SendFactory	{
                         throw new Exception(context.getString(R.string.tx_length_error));
                     }
 
-//                    Log.i("SendFactory tx hash", tx.getHashAsString());
-//                    Log.i("SendFactory tx string", hexString);
-                    String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", "tx=" + hexString);
-//                    Log.i("Send response", response);
-                    if(response.contains("Transaction Submitted")) {
+                    Log.i("SendFactory tx hash", tx.getHashAsString());
+                    Log.i("SendFactory tx string", hexString);
+                    String response = WebUtil.getInstance(null).postURL("text/plain", WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", hexString);
+                    //String response = WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
+                    Log.i("Send response", response);
+                    if(response.contains("txid") || response.length()==64) {
                         opc.onSuccess();
                         if(sentChange) {
                             for(int i = 0; i < changeAddressesUsed; i++) {
@@ -383,11 +384,13 @@ public class SendFactory	{
                         throw new Exception(context.getString(R.string.tx_length_error));
                     }
 
-//                    Log.i("SendFactory tx hash", tx.getHashAsString());
-//                    Log.i("SendFactory tx string", hexString);
-                    String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", "tx=" + hexString);
+                    Log.i("SendFactory tx hash", tx.getHashAsString());
+                    Log.i("SendFactory tx string", hexString);
+                    //String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", "tx=" + hexString);
+                    String response = WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
 //                    Log.i("Send response", response);
-                    if(response.contains("Transaction Submitted")) {
+                    //if(response.contains("Transaction Submitted")) {
+                    if(response.contains("txid")) {
                         opc.onSuccess();
                         HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
                     }
@@ -452,12 +455,13 @@ public class SendFactory	{
             byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
 
             Hash hash = new Hash(hashBytes);
-            hash.reverse();
+            //hash.reverse();
             Sha256Hash txHash = new Sha256Hash(hash.getBytes());
 
             int txOutputN = ((Number)outDict.get("tx_ouput_n")).intValue();
 //            Log.i("Unspent output",  "n:" + txOutputN);
-            BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
+            BigInteger value = //BigInteger.valueOf(((Number)outDict.get("value")).longValue());
+                    new BigInteger(outDict.get("value").toString(), 10);
 //            Log.i("Unspent output",  "value:" + value.toString());
             totalValue = totalValue.add(value);
 //            Log.i("Unspent output",  "totalValue:" + totalValue.toString());
@@ -735,7 +739,7 @@ public class SendFactory	{
             byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
 
             Hash hash = new Hash(hashBytes);
-            hash.reverse();
+            //hash.reverse();
             Sha256Hash txHash = new Sha256Hash(hash.getBytes());
 
             int txOutputN = ((Number)outDict.get("tx_ouput_n")).intValue();

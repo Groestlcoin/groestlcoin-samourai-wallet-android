@@ -30,11 +30,13 @@ public class WebUtil	{
 
     public static final String BLOCKCHAIN_DOMAIN = "http://chainz.cryptoid.info/grs/";
     public static final String BLOCKCHAIN_DOMAIN_API = BLOCKCHAIN_DOMAIN + "api.dws?key=d47da926b82e&q=";
+    public static final String GROESTLSIGHT_SEND_URL = "http://groestlsight.groestlcoin.org/api/tx/send";
 
     public static final String LBC_EXCHANGE_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/";
     public static final String BTCe_EXCHANGE_URL = "https://btc-e.com/api/3/ticker/";
     public static final String BFX_EXCHANGE_URL = "https://api.bitfinex.com/v1/pubticker/btcusd";
     public static final String AVG_EXCHANGE_URL = "https://api.bitcoinaverage.com/ticker/global/all";
+    public static final String BITTREX_EXCHANGE_URL = "https://bittrex.com/api/v1.1/public/getmarkethistory?market=BTC-GRS&count=25";
     public static final String VALIDATE_SSL_URL = "https://chainz.cryptoid.info";
 
     public static final String BTCX_FEE_URL = "http://bitcoinexchangerate.org/fees";

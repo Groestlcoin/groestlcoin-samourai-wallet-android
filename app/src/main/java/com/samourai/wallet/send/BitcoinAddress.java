@@ -19,6 +19,7 @@ package com.samourai.wallet.send;
 
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Base58;
+import org.bitcoinj.core.CoinDefinition;
 import org.bitcoinj.core.Utils;
 
 import com.hashengineering.crypto.Groestl;
@@ -45,7 +46,7 @@ public class BitcoinAddress implements Serializable {
     @Override
     public String toString() {
 
-        if(_toStringCache == null) {
+       // if(_toStringCache == null) {
 
             int length = hash160.getBytes().length;
             byte[] addressBytes = new byte[1 + length + 4];
@@ -59,7 +60,7 @@ public class BitcoinAddress implements Serializable {
                 byte[] first = digest.digest();
                 check = digest.digest(first);
                 */
-                check = Groestl.digest(addressBytes);
+                check = Groestl.digest(addressBytes, 0, length+1);
             //}
             //catch(NoSuchAlgorithmException e) {
             //    throw new RuntimeException(e);  // Cannot happen.
@@ -67,7 +68,7 @@ public class BitcoinAddress implements Serializable {
             System.arraycopy(check, 0, addressBytes, length + 1, 4);
 
             _toStringCache = Base58.encode(addressBytes);
-        }
+        //}
 
         return _toStringCache;
     }
@@ -75,7 +76,7 @@ public class BitcoinAddress implements Serializable {
     // from pubKey
     public BitcoinAddress(byte[] pubKey) {
         this.hash160 = new Hash(Utils.sha256hash160(pubKey));
-        this.version = 0;
+        this.version = CoinDefinition.AddressHeader;
     }
 
     public short getVersion() {
