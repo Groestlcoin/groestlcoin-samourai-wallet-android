@@ -822,12 +822,12 @@ public class SettingsActivity2 extends PreferenceActivity	{
         final int fxSel = PrefsUtil.getInstance(SettingsActivity2.this).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
 
         final String[] currencies;
-        if(fxSel == 1)	{
+        /*if(fxSel == 1)	{
             currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabelsBTCe();
         }
-        else	{
+        else	{*/
             currencies = ExchangeRateFactory.getInstance(this).getCurrencyLabels();
-        }
+        //}
 
         new AlertDialog.Builder(SettingsActivity2.this)
                 .setTitle(R.string.options_currency)
