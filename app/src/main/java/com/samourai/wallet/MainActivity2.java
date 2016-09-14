@@ -910,6 +910,16 @@ public class MainActivity2 extends Activity {
                     e.printStackTrace();
                 }
 
+                response = null;
+                try {
+                    response = WebUtil.getInstance(null).getURL(WebUtil.BITTREX_EXCHANGE_URL);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).setDataBittrex(response);
+                    ExchangeRateFactory.getInstance(MainActivity2.this).parseBittrex();
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+
                 handler.post(new Runnable() {
                     @Override
                     public void run() {

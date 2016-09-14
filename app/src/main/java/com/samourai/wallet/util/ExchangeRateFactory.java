@@ -2,6 +2,7 @@ package com.samourai.wallet.util;
 
 import android.content.Context;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,11 +18,15 @@ public class ExchangeRateFactory	{
     private static String strDataBTCe = null;
     private static String strDataBFX = null;
     private static String strDataBTCAvg = null;
+    private static String strPoloniex = null;
+    private static String strBittrex = null;
 
     private static HashMap<String,Double> fxRatesLBC = null;
     private static HashMap<String,Double> fxRatesBTCe = null;
     private static HashMap<String,Double> fxRatesBFX = null;
     private static HashMap<String,Double> fxRatesBTCAvg = null;
+    private static HashMap<String,Double> fxPoloniex = null;
+    private static HashMap<String,Double> fxBittrex = null;
 //    private static HashMap<String,String> fxSymbols = null;
 
     private static ExchangeRateFactory instance = null;
@@ -44,11 +49,15 @@ public class ExchangeRateFactory	{
             "Russian Rouble - RUR"
     };
 
-    private static String[] exchangeLabels = {
+    /*private static String[] exchangeLabels = {
             "LocalBitcoins.com",
             "BTC-e",
             "Bitfinex",
             "Bitcoin Average"
+    };*/
+    private static String[] exchangeLabels = {
+            //"Poloniex",
+            "Bittrex",
     };
 
     private ExchangeRateFactory()	 { ; }
@@ -62,6 +71,8 @@ public class ExchangeRateFactory	{
             fxRatesBTCe = new HashMap<String,Double>();
             fxRatesBFX = new HashMap<String,Double>();
             fxRatesBTCAvg = new HashMap<String,Double>();
+            fxPoloniex = new HashMap<String,Double>();
+            fxBittrex = new HashMap<String,Double>();
 //            fxSymbols = new HashMap<String,String>();
 
             instance = new ExchangeRateFactory();
@@ -71,20 +82,38 @@ public class ExchangeRateFactory	{
     }
 
     public double getAvgPrice(String currency)	 {
-        int fxSel = PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
+        // int fxSel = PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
         HashMap<String,Double> fxRates = null;
-        if(fxSel == 1)	 {
+        if(!fxRatesBTCe.isEmpty() && fxRatesBTCe.containsKey(currency) && fxRatesBTCe.get(currency) > 0.0)	 {
             fxRates = fxRatesBTCe;
         }
-        else if(fxSel == 2)	 {
+        else if(!fxRatesBFX.isEmpty() && fxRatesBFX.containsKey(currency) && fxRatesBFX.get(currency) > 0.0)	 {
             fxRates = fxRatesBFX;
         }
-        else if(fxSel == 3)	 {
-            fxRates = fxRatesBTCAvg;
-        }
-        else	 {
+        else if(!fxRatesLBC.isEmpty() && fxRatesLBC.containsKey(currency) && fxRatesLBC.get(currency) > 0.0)	 {
             fxRates = fxRatesLBC;
         }
+
+        double GRS_price = getAvgGRSPrice("BTC");
+
+        if(GRS_price > 0.0 && fxRates.get(currency) != null && fxRates.get(currency) > 0.0)	 {
+            PrefsUtil.getInstance(context).setValue("CANNED_" + currency, Double.toString(fxRates.get(currency)*GRS_price));
+            return fxRates.get(currency)*GRS_price;
+        }
+        else	 {
+            return Double.parseDouble(PrefsUtil.getInstance(context).getValue("CANNED_" + currency, "0.0"));
+        }
+    }
+
+    public double getAvgGRSPrice(String currency)	 {
+        int fxSel = PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
+        HashMap<String,Double> fxRates = null;
+        // if(fxSel == 0)	 {
+        //     fxRates = fxPoloniex;
+        // }
+        //else	 {
+        fxRates = fxBittrex;
+        //}
 
         if(fxRates.get(currency) != null && fxRates.get(currency) > 0.0)	 {
             PrefsUtil.getInstance(context).setValue("CANNED_" + currency, Double.toString(fxRates.get(currency)));
@@ -238,6 +267,78 @@ public class ExchangeRateFactory	{
             }
         } catch (JSONException je) {
             fxRatesBTCAvg.put(currency, Double.valueOf(-1.0));
+//            fxSymbols.put(currency, null);
+        }
+    }
+    public void setDataPoloniex(String str)
+    {  strPoloniex = str; }
+
+    public void setDataBittrex(String str)
+    {  strBittrex = str; }
+
+    public void parsePoloniex()	 {
+        getPoloniex();
+
+    }
+
+    public void parseBittrex()	 {
+        getBittrex();
+
+    }
+
+    private void getPoloniex()	 {
+        try {
+            JSONArray recenttrades = new JSONArray(strPoloniex);
+
+            double btcTraded = 0.0;
+            double coinTraded = 0.0;
+
+            for(int i = 0; i < recenttrades.length(); ++i)
+            {
+                JSONObject trade = (JSONObject)recenttrades.get(i);
+
+                btcTraded += trade.getDouble("total");
+                coinTraded += trade.getDouble("amount");
+
+            }
+
+            Double averageTrade = btcTraded / coinTraded;
+
+            fxPoloniex.put("BTC", Double.valueOf(averageTrade));
+//                Log.i("ExchangeRateFactory", "BFX:" + currency + " " + Double.valueOf(avg_price));
+
+
+        } catch (JSONException je) {
+            fxPoloniex.put("BTC", Double.valueOf(-1.0));
+//            fxSymbols.put(currency, null);
+        }
+    }
+
+    private void getBittrex()	 {
+        try {
+            JSONObject jsonObject = new JSONObject(strBittrex);
+            JSONArray recenttrades = jsonObject.getJSONArray("result");
+
+            double btcTraded = 0.0;
+            double coinTraded = 0.0;
+
+            for(int i = 0; i < recenttrades.length(); ++i)
+            {
+                JSONObject trade = (JSONObject)recenttrades.get(i);
+
+                btcTraded += trade.getDouble("Total");
+                coinTraded += trade.getDouble("Quantity");
+
+            }
+
+            Double averageTrade = btcTraded / coinTraded;
+
+            fxBittrex.put("BTC", Double.valueOf(averageTrade));
+//                Log.i("ExchangeRateFactory", "BFX:" + currency + " " + Double.valueOf(avg_price));
+
+
+        } catch (JSONException je) {
+            fxRatesBFX.put("BTC", Double.valueOf(-1.0));
 //            fxSymbols.put(currency, null);
         }
     }
