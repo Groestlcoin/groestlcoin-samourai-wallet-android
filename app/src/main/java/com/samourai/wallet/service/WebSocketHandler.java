@@ -279,7 +279,7 @@ public class WebSocketHandler {
 
                                                         SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                                                         String strTS = sd.format(ts * 1000L);
-                                                        String event = strTS + " " + context.getString(R.string.received) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) total_value / 1e8) + " BTC";
+                                                        String event = strTS + " " + context.getString(R.string.received) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) total_value / 1e8) + " GRS";
                                                         BIP47Meta.getInstance().setLatestEvent(pcode, event);
 
                                                         List<String> _addrs = new ArrayList<String>();
@@ -324,7 +324,7 @@ public class WebSocketHandler {
 
                                         String title = context.getString(R.string.app_name);
                                         if (total_value > 0L) {
-                                            String marquee = context.getString(R.string.received_bitcoin) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) total_value / 1e8) + " BTC";
+                                            String marquee = context.getString(R.string.received_bitcoin) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) total_value / 1e8) + " GRS";
                                             String text = marquee;
                                             if (total_value > 0) {
                                                 text += " from " + in_addr;

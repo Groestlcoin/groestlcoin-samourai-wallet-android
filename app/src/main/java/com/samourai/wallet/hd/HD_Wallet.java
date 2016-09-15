@@ -193,7 +193,7 @@ public class HD_Wallet {
             meta.put("use_trusted", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.TRUSTED_LOCK, false));
             meta.put("fiat", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_FIAT, "USD"));
             meta.put("fiat_sel", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_FIAT_SEL, 0));
-            meta.put("fx", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_EXCHANGE, "LocalBitcoins.com"));
+            meta.put("fx", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_EXCHANGE, "Bittrex"));
             meta.put("fx_sel", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0));
 
             JSONObject obj = new JSONObject();

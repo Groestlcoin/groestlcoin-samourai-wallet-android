@@ -371,7 +371,7 @@ public class BitcoinScript {
             return new BitcoinScript(bytes);
         }
         else {
-            throw new Exception("Bitcoin address version " + address.getVersion() + " not supported yet");
+            throw new Exception("Groestlcoin address version " + address.getVersion() + " not supported yet");
         }
     }
 

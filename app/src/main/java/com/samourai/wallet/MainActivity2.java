@@ -1065,7 +1065,7 @@ public class MainActivity2 extends Activity {
 
                     AlertDialog.Builder dlg = new AlertDialog.Builder(MainActivity2.this)
                             .setTitle(R.string.app_name)
-                            .setMessage(getString(R.string.sweep_address_for) + " " + MonetaryUtil.getInstance().getBTCFormat().format(bValue.doubleValue() / 1e8) + " BTC?")
+                            .setMessage(getString(R.string.sweep_address_for) + " " + MonetaryUtil.getInstance().getBTCFormat().format(bValue.doubleValue() / 1e8) + " GRS?")
                             .setCancelable(false)
                             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {

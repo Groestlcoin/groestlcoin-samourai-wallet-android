@@ -647,7 +647,7 @@ public class SendFragment extends Fragment {
                                 strUnitDisplay = "Unit amount:" + edAmountBTC.getText().toString().trim() + " " + getDisplayUnits() + "\n\n";
                             }
 //                            String strSpend = MonetaryUtil.getInstance().getBTCFormat().format(BigInteger.valueOf(_amount).doubleValue() / 1e8) + " BTC" + ", " + "Fee:" + MonetaryUtil.getInstance().getBTCFormat().format(fee.doubleValue() / 1e8) + " BTC" + "\n\n";
-                            String strSpend = "Miners' fee:" + MonetaryUtil.getInstance().getBTCFormat().format(fee.doubleValue() / 1e8) + " BTC" + "\n\n";
+                            String strSpend = "Miners' fee:" + MonetaryUtil.getInstance().getBTCFormat().format(fee.doubleValue() / 1e8) + " GRS" + "\n\n";
 //                            String strCJSimulate = "Inputs:" + ror.getOutputs().size() + ", " + "Change:" + MonetaryUtil.getInstance().getBTCFormat().format(totalChange.doubleValue() / 1e8) + "\n\n";
 //                            String strNbAddresses = "Addresses associated with this spend:" + " " + ror.getNbAddress() + "\n\n";
                             String strChangeOutputSafe = "";
@@ -667,7 +667,7 @@ public class SendFragment extends Fragment {
                                 dest = address;
                             }
 
-                            final String msg = strPrivacyWarning + strChangeOutputSafe + strUnitDisplay + strSpend + getString(R.string.send) + " " + MonetaryUtil.getInstance().getBTCFormat().format(((double)_amount) / 1e8) + " BTC " + getString(R.string.to) + " " + dest;
+                            final String msg = strPrivacyWarning + strChangeOutputSafe + strUnitDisplay + strSpend + getString(R.string.send) + " " + MonetaryUtil.getInstance().getBTCFormat().format(((double)_amount) / 1e8) + " GRS " + getString(R.string.to) + " " + dest;
 
                             final UnspentOutputsBundle _unspentCoinsBundle = unspentCoinsBundle;
 
@@ -710,7 +710,7 @@ public class SendFragment extends Fragment {
 
                                                 SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                                                 String strTS = sd.format(System.currentTimeMillis());
-                                                String event = strTS + " " + getActivity().getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) _amount / 1e8) + " BTC";
+                                                String event = strTS + " " + getActivity().getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) _amount / 1e8) + " GRS";
                                                 BIP47Meta.getInstance().setLatestEvent(strPCode, event);
                                             }
 

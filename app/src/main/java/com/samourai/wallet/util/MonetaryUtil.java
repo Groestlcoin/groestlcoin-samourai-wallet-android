@@ -7,7 +7,7 @@ import java.util.Locale;
 public class MonetaryUtil {
 
 //    private static CharSequence[] btcUnits = { "BTC", "mBTC", "µBTC" };
-    private static CharSequence[] btcUnits = { "BTC", "mBTC", "bits" };
+    private static CharSequence[] btcUnits = { "GRS", "mGRS", "µGRS" };
     public static final int UNIT_BTC = 0;
     public static final int MILLI_BTC = 1;
     public static final int MICRO_BTC = 2;
