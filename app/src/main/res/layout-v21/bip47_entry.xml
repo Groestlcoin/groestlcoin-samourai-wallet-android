@@ -19,7 +19,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="16dp"
-            android:background="@drawable/ripple_tx_status_compat"
+            android:background="@drawable/ripple_tx_status"
             android:baselineAlignBottom="false"
             android:padding="8dp"
             android:textSize="24dp"
