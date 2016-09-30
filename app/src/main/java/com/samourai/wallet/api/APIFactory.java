@@ -15,6 +15,7 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 
 import org.apache.commons.lang.StringUtils;
+import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
@@ -23,15 +24,18 @@ import org.bitcoinj.core.TransactionOutPoint;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -336,9 +340,9 @@ public class APIFactory	{
             StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN_API);
             url.append("multiaddr&active=");
             url.append(addr);
-//            Log.i("APIFactory", "Notif address:" + url.toString());
+            Log.i("APIFactory", "Notif address:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
-//            Log.i("APIFactory", "Notif address:" + response);
+            Log.i("APIFactory", "Notif address:" + response);
             try {
                 jsonObject = new JSONObject(response);
                 parseNotifAddress(jsonObject, addr);
@@ -367,9 +371,9 @@ public class APIFactory	{
                 for(int i = 0; i < txArray.length(); i++)  {
                     txObj = (JSONObject)txArray.get(i);
 
-                    if(!txObj.has("block_height"))    {
+                    /*if(!txObj.has("block_height"))    {
                         return;
-                    }
+                    }*/
 
                     String hash = null;
 
@@ -423,9 +427,9 @@ public class APIFactory	{
             byte[] payload = null;
             PaymentCode pcode = null;
 
-            if(jsonObject.has("data"))  {
+            if(true/*jsonObject.has("data")*/)  {
 
-                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject data = jsonObject;//.getJSONObject("data");
 
                 if(data.has("confirmations") && data.getInt("confirmations") < 1)    {
                     return;
@@ -435,19 +439,27 @@ public class APIFactory	{
 
                     JSONArray inArray = (JSONArray)data.get("inputs");
 
-                    if(inArray.length() > 0 && ((JSONObject)inArray.get(0)).has("script_hex"))    {
-                        String strScript = ((JSONObject)inArray.get(0)).getString("script_hex");
-                        Script script = new Script(Hex.decode(strScript));
+                    if(inArray.length() > 0 && ((JSONObject)inArray.get(0)).has("received_from"))    { //script
+                        JSONObject receivedFrom1 = (JSONObject)((JSONObject)inArray.get(0)).get("received_from");
+
+                        String strScript = receivedFrom1.getString("script");//((JSONObject)inArray.get(0)).getString("script");
+
+                        Script script;
+
+                            script = new Script(Hex.decode(strScript));
+
 //                        Log.i("APIFactory", "pubkey from script:" + Hex.toHexString(script.getPubKey()));
                         ECKey pKey = new ECKey(null, script.getPubKey(), true);
 //                        Log.i("APIFactory", "address from script:" + pKey.toAddress(MainNetParams.get()).toString());
 //                        Log.i("APIFactory", "uncompressed public key from script:" + Hex.toHexString(pKey.decompress().getPubKey()));
 
                         if(((JSONObject)inArray.get(0)).has("received_from"))    {
+
+
                             JSONObject received_from = ((JSONObject) inArray.get(0)).getJSONObject("received_from");
 
-                            String strHash = received_from.getString("txid");
-                            int idx = received_from.getInt("output_no");
+                            String strHash = received_from.getString("tx"); //txid
+                            int idx = received_from.getInt("n");  //output_n
 
                             byte[] hashBytes = Hex.decode(strHash);
 //                            Hash hash = new Hash(hashBytes);
@@ -480,14 +492,14 @@ public class APIFactory	{
                     String op_return = null;
                     for(int j = 0; j < outArray.length(); j++)  {
                         outObj = (JSONObject)outArray.get(j);
-                        if(outObj.has("address"))  {
-                            _addr = outObj.getString("address");
+                        if(outObj.has("addr"))  {
+                            _addr = outObj.getString("addr");
                             if(addr.equals(_addr))    {
                                 isIncoming = true;
                             }
                         }
-                        if(outObj.has("script_hex"))  {
-                            script = outObj.getString("script_hex");
+                        if(outObj.has("script"))  {
+                            script = outObj.getString("script");
                             if(script.startsWith("6a4c50"))    {
                                 op_return = script;
                             }
@@ -579,9 +591,9 @@ public class APIFactory	{
 
         if(jsonObject != null)  {
 
-            if(jsonObject.has("data"))  {
+            if(true /*jsonObject.has("data")*/)  {
 
-                JSONObject data = jsonObject.getJSONObject("data");
+                JSONObject data = jsonObject;//.getJSONObject("data");
 
                 if(data.has("confirmations"))    {
 //                    Log.i("APIFactory", "returning notif tx confirmations:" + data.getInt("confirmations"));
@@ -701,10 +713,12 @@ public class APIFactory	{
 
         try {
 //            Log.i("APIFactory", "BIP47 multiaddr:" + args.toString());
-            String response = WebUtil.getInstance(null).getURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "multiaddr"+ args.toString());
+            for(String address: addresses) {
+                String response = WebUtil.getInstance(null).getURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "multiaddr&active=" + address);
 //            Log.i("APIFactory", "BIP47 multiaddr:" + response);
-            jsonObject = new JSONObject(response);
-            parseBIP47(jsonObject);
+                jsonObject = new JSONObject(response);
+                parseBIP47(jsonObject, address);
+            }
         }
         catch(Exception e) {
             jsonObject = null;
@@ -835,7 +849,7 @@ public class APIFactory	{
         return ret;
     }
 
-    private synchronized void parseBIP47(JSONObject jsonObject) throws JSONException  {
+    private synchronized void parseBIP47(JSONObject jsonObject, String address) throws JSONException  {
 
         if(jsonObject != null)  {
 
@@ -906,24 +920,64 @@ public class APIFactory	{
 
                     txObj = (JSONObject)txArray.get(i);
                     long height = 0L;
+                    long confirmations = -1;
                     long amount = 0L;
                     long ts = 0L;
                     String hash = null;
                     String addr = null;
                     boolean hasBIP47Input = false;
                     boolean hasBIP47Output = false;
+                    boolean manual_ammount = false;
 
                     if(txObj.has("block_height"))  {
                         height = txObj.getLong("block_height");
                     }
                     else  {
                         height = -1L;  // 0 confirmations
+                        if(txObj.has("confirmations"))
+                        {
+                            confirmations = txObj.getLong("confirmations");
+                        }
                     }
                     if(txObj.has("hash"))  {
                         hash = (String)txObj.get("hash");
                     }
+                    if(txObj.has("change"))  {
+                        amount = txObj.getLong("change");
+                        if(amount == 0)
+                            manual_ammount = true;
+                    } else manual_ammount = true;
                     if(txObj.has("time"))  {
                         ts = txObj.getLong("time");
+                    }
+                    else if(txObj.has("time_utc"))
+                    {
+                        String _ts = txObj.getString("time_utc");
+                        try{
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+                            Date parsedDate = dateFormat.parse(_ts);
+                            ts = parsedDate.getTime()/1000;
+                        }catch(Exception e){//this generic but you can control another types of exception
+                            //look the origin of excption
+                        }
+                    }
+                    if(amount < 0)
+                    {
+                        if(BIP47Meta.getInstance().getPCode4Addr(address) != null)
+                        {
+                            addr = address;
+                            //amount -= prevOutObj.getLong("value");
+                            hasBIP47Input = true;
+                        }
+                    }
+                    else
+                    {
+                        if(BIP47Meta.getInstance().getPCode4Addr(address) != null)   {
+//                                Log.i("APIFactory", "found output:" + outObj.getString("addr"));
+                        addr = address;
+                        //amount += outObj.getLong("value");
+                        hasBIP47Output = true;
+                        }
                     }
 
                     if(txObj.has("inputs"))  {
@@ -990,7 +1044,7 @@ public class APIFactory	{
 //                        Log.i("APIFactory", "found BIP47 tx, value:" + amount + "," + addr);
 
                         if((hasBIP47Output || hasBIP47Input) && !seenBIP47Tx.containsKey(hash))    {
-                            Tx tx = new Tx(hash, addr, amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
+                            Tx tx = new Tx(hash, addr, amount, ts, confirmations);
                             if(!xpub_txs.containsKey(account0_xpub))  {
                                 xpub_txs.put(account0_xpub, new ArrayList<Tx>());
                             }

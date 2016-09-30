@@ -152,8 +152,21 @@ public class PushTx {
             return response;
         }
         catch(Exception e) {
+            e.printStackTrace();
             return null;
         }
-
     }
+    public String groestlsight(String hexString) {
+
+        try {
+            String response = WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+hexString);
+//        Log.i("Send response", response);
+            return response;
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

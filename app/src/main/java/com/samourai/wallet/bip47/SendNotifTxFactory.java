@@ -3,10 +3,12 @@ package com.samourai.wallet.bip47;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 //import android.util.Log;
 
+import org.apache.commons.lang.StringUtils;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.DumpedPrivateKey;
@@ -44,6 +46,8 @@ import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.SecretPoint;
 
 import org.bitcoinj.script.ScriptOpCodes;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.spongycastle.util.encoders.Hex;
@@ -65,7 +69,7 @@ public class SendNotifTxFactory	{
 
     public static final BigInteger _bNotifTxTotalAmount = _bFee.add(_bSWFee).add(_bNotifTxValue);
 
-    private static final String SAMOURAI_NOTIF_TX_FEE_ADDRESS = "3KjbSUUbC4emCtnnrz4XXfZ6XimJBYvEQk";
+    private static final String SAMOURAI_NOTIF_TX_FEE_ADDRESS = "3K8eqP6j14JzPnmRMG6exTsNo8iUZHEH5e";
 
     private static SendNotifTxFactory instance = null;
     private static Context context = null;
@@ -245,8 +249,8 @@ public class SendNotifTxFactory	{
                     }
                     */
 
-                    String response = PushTx.getInstance(context).samourai(hexString);
-                    if(response != null && response.contains("Transaction Submitted"))  {
+                    String response = PushTx.getInstance(context).groestlsight(hexString);
+                    if(response != null && (response.contains("txid") || response.length() == 68))  {
                         opc.onSuccess();
                         if(sentChange) {
                             HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
@@ -292,9 +296,13 @@ public class SendNotifTxFactory	{
 
         HashMap<String,List<MyTransactionOutPoint>> outputsByAddress = new HashMap<String,List<MyTransactionOutPoint>>();
 
-//        Log.i("Unspent outputs url", WebUtil.BLOCKCHAIN_DOMAIN + "unspent?active=" + args);
+        ArrayList<String> addresses = getXPUB_unspent_addresses(from);
+
+        args = StringUtils.join(addresses.toArray(), "|");
+
+        Log.i("Unspent outputs url", WebUtil.BLOCKCHAIN_DOMAIN + "unspent?active=" + args);
         String response = WebUtil.getInstance(null).getURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "unspent&active=" + args);
-//        Log.i("Unspent outputs", response);
+        Log.i("Unspent outputs", response);
 
         List<MyTransactionOutPoint> outputs = new ArrayList<MyTransactionOutPoint>();
 
@@ -312,12 +320,13 @@ public class SendNotifTxFactory	{
             byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
 
             Hash hash = new Hash(hashBytes);
-            hash.reverse();
+           // hash.reverse();
             Sha256Hash txHash = new Sha256Hash(hash.getBytes());
 
-            int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
+            int txOutputN = ((Number)outDict.get("tx_ouput_n")).intValue();
 //            Log.i("Unspent output",  "n:" + txOutputN);
-            BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
+            BigInteger value = //BigInteger.valueOf(((Number)outDict.get("value")).longValue());
+                    new BigInteger(outDict.get("value").toString(), 10);
 //            Log.i("Unspent output",  "value:" + value.toString());
             byte[] scriptBytes = Hex.decode((String)outDict.get("script"));
             int confirmations = ((Number)outDict.get("confirmations")).intValue();
@@ -709,6 +718,204 @@ public class SendNotifTxFactory	{
 
         }
 
+    }
+
+    private synchronized ArrayList<String> getXPUB_unspent_addresses(String[] xpubs) {
+
+        org.json.JSONObject jsonObject  = null;
+        ArrayList<String> addresses = null;
+
+        for(int i = 0; i < xpubs.length; i++)   {
+            try {
+                StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN_API);
+                url.append("xpub2&xpub=");
+                url.append(xpubs[i]);
+                Log.i("APIFactory", "XPUB:" + url.toString());
+                String response = WebUtil.getInstance(null).getURL(url.toString());
+                Log.i("APIFactory", "XPUB response:" + response);
+                try {
+                    jsonObject = new org.json.JSONObject(response);
+
+                    addresses = parseXPUB_unspent_addresses(jsonObject, xpubs[i]);
+                }
+                catch(JSONException je) {
+                    je.printStackTrace();
+                    jsonObject = null;
+                }
+            }
+            catch(Exception e) {
+                jsonObject = null;
+                e.printStackTrace();
+            }
+        }
+
+        return addresses;
+    }
+    private synchronized ArrayList<String> parseXPUB_unspent_addresses(org.json.JSONObject jsonObject, String xpub) throws JSONException  {
+
+
+        if(jsonObject != null)  {
+            ArrayList<String> addresses = new ArrayList<String>();
+/*
+
+            if(jsonObject.has("wallet"))  {
+                JSONObject walletObj = (JSONObject)jsonObject.get("wallet");
+                if(walletObj.has("final_balance"))  {
+                    xpub_balance = walletObj.getLong("final_balance");
+                }
+            }
+*/
+            long latest_block = 0L;
+
+            if(jsonObject.has("info"))  {
+                org.json.JSONObject infoObj = (org.json.JSONObject)jsonObject.get("info");
+                if(infoObj.has("latest_block"))  {
+                    org.json.JSONObject blockObj = (org.json.JSONObject)infoObj.get("latest_block");
+                    if(blockObj.has("height"))  {
+                        latest_block = blockObj.getLong("height");
+                    }
+                }
+            }
+
+            if(jsonObject.has("addresses"))  {
+
+                JSONArray addressesArray = (JSONArray)jsonObject.get("addresses");
+                org.json.JSONObject addrObj = null;
+                for(int i = 0; i < addressesArray.length(); i++)  {
+                    addrObj = (org.json.JSONObject)addressesArray.get(i);
+                    if(i == 1 && addrObj.has("n_tx") && addrObj.getInt("n_tx") > 0)  {
+                    }
+                    if(addrObj.has("final_balance") && addrObj.has("address"))  {
+                    }
+                }
+            }
+
+            if(jsonObject.has("txs"))  {
+
+                JSONArray txArray = (JSONArray)jsonObject.get("txs");
+                org.json.JSONObject txObj = null;
+                for(int i = 0; i < txArray.length(); i++)  {
+
+                    txObj = (org.json.JSONObject)txArray.get(i);
+                    long height = 0L;
+                    long amount = 0L;
+                    long ts = 0L;
+                    String hash = null;
+                    String addr = null;
+                    String _addr = null;
+                    String path = null;
+                    String input_xpub = null;
+                    String output_xpub = null;
+                    long move_amount = 0L;
+                    long input_amount = 0L;
+                    long output_amount = 0L;
+                    long bip47_input_amount = 0L;
+                    long xpub_input_amount = 0L;
+                    long change_output_amount = 0L;
+                    boolean hasBIP47Input = false;
+                    boolean hasOnlyBIP47Input = true;
+                    boolean hasChangeOutput = false;
+
+                    if(txObj.has("block_height"))  {
+                        height = txObj.getLong("block_height");
+                    }
+                    else  {
+                        height = -1L;  // 0 confirmations
+                    }
+                    if(txObj.has("hash"))  {
+                        hash = (String)txObj.get("hash");
+                    }
+                    if(txObj.has("result"))  {
+                        amount = txObj.getLong("result");
+                    }
+                    if(txObj.has("time"))  {
+                        ts = txObj.getLong("time");
+                    }
+
+                    if(txObj.has("inputs"))  {
+                        JSONArray inputArray = (JSONArray)txObj.get("inputs");
+                        org.json.JSONObject inputObj = null;
+                        for(int j = 0; j < inputArray.length(); j++)  {
+                            inputObj = (org.json.JSONObject)inputArray.get(j);
+                            if(inputObj.has("prev_out"))  {
+                                org.json.JSONObject prevOutObj = (org.json.JSONObject)inputObj.get("prev_out");
+                                input_amount += prevOutObj.getLong("value");
+                                if(prevOutObj.has("xpub"))  {
+                                    org.json.JSONObject xpubObj = (org.json.JSONObject)prevOutObj.get("xpub");
+                                    addr = (String)xpubObj.get("m");
+                                    input_xpub = addr;
+                                    xpub_input_amount -= prevOutObj.getLong("value");
+                                    hasOnlyBIP47Input = false;
+                                }
+                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) != null)  {
+                                    hasBIP47Input = true;
+                                    bip47_input_amount -= prevOutObj.getLong("value");
+                                }
+                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) == null)  {
+                                    hasOnlyBIP47Input = false;
+                                }
+                                else  {
+                                    _addr = (String)prevOutObj.get("addr");
+                                }
+                            }
+                        }
+                    }
+
+                    if(txObj.has("out"))  {
+                        JSONArray outArray = (JSONArray)txObj.get("out");
+                        org.json.JSONObject outObj = null;
+                        for(int j = 0; j < outArray.length(); j++)  {
+                            outObj = (org.json.JSONObject)outArray.get(j);
+                            output_amount += outObj.getLong("value");
+                            if(outObj.has("xpub"))  {
+                                org.json.JSONObject xpubObj = (org.json.JSONObject)outObj.get("xpub");
+                                //addr = (String)xpubObj.get("m");
+                                addr = xpub;
+                                change_output_amount += outObj.getLong("value");
+                                path = xpubObj.getString("path");
+                                if(outObj.has("spent"))  {
+                                    if(outObj.getBoolean("spent") == false && outObj.has("addr"))  {
+                                        if(!addresses.contains(outObj.getString("addr")))
+                                            addresses.add(outObj.getString("addr"));
+                                        //froms.put(outObj.getString("addr"), path);
+                                    }
+                                }
+                                if(input_xpub != null && !input_xpub.equals(addr))    {
+                                    output_xpub = addr;
+                                    move_amount = outObj.getLong("value");
+                                }
+                            }
+                            else  {
+                                _addr = (String)outObj.get("addr");
+                            }
+                        }
+
+                        if(hasOnlyBIP47Input && !hasChangeOutput)    {
+                            amount = bip47_input_amount;
+                        }
+                        else if(hasBIP47Input)    {
+                            amount = bip47_input_amount + xpub_input_amount + change_output_amount;
+                        }
+                        else    {
+                            ;
+                        }
+
+                    }
+
+                    if(addr != null)  {
+
+                        //
+                        // test for MOVE from Shuffling -> Samourai account
+                        //
+
+
+                    }
+                }
+
+            }
+            return addresses;
+        }
+        return null;
     }
 
 }

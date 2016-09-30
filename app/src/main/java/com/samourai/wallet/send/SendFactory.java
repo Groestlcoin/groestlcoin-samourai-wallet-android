@@ -232,7 +232,7 @@ public class SendFactory	{
                     String response = WebUtil.getInstance(null).postURL("text/plain", WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", hexString);
                     //String response = WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
                     Log.i("Send response", response);
-                    if(response.contains("txid") || response.length()==64) {
+                    if(response.contains("txid") || response.length()==68) {
                         opc.onSuccess();
                         if(sentChange) {
                             for(int i = 0; i < changeAddressesUsed; i++) {
@@ -390,7 +390,7 @@ public class SendFactory	{
                     String response = WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
 //                    Log.i("Send response", response);
                     //if(response.contains("Transaction Submitted")) {
-                    if(response.contains("txid")) {
+                    if(response.contains("txid") || response.length()==68) {
                         opc.onSuccess();
                         HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
                     }
@@ -503,15 +503,33 @@ public class SendFactory	{
         for(int i = 0; i < xpubs.length; i++)   {
             try {
                 StringBuilder url = new StringBuilder(WebUtil.BLOCKCHAIN_DOMAIN_API);
-                url.append("xpub2&xpub=");
-                url.append(xpubs[i]);
-                Log.i("APIFactory", "XPUB:" + url.toString());
-                String response = WebUtil.getInstance(null).getURL(url.toString());
-                Log.i("APIFactory", "XPUB response:" + response);
+                String response;
+                if(xpubs[i].charAt(0) == 'x') {
+                    url.append("xpub2&xpub=");
+                    url.append(xpubs[i]);
+                    Log.i("APIFactory", "XPUB:" + url.toString());
+                    response = WebUtil.getInstance(null).getURL(url.toString());
+                    Log.i("APIFactory", "XPUB response:" + response);
+                }
+                else {
+                    url.append("unspent&active=");
+                    url.append(xpubs[i]);
+                    Log.i("APIFactory", "MultiAddr:" + url.toString());
+                    response = WebUtil.getInstance(null).getURL(url.toString());
+                    Log.i("APIFactory", "MultiAddr response:" + response);
+                }
                 try {
                     jsonObject = new org.json.JSONObject(response);
 
-                    addresses = parseXPUB_unspent_addresses(jsonObject, xpubs[i]);
+                    ArrayList<String> theseaddresses;
+                    if(xpubs[i].charAt(0) == 'x')
+                        theseaddresses = parseXPUB_unspent_addresses(jsonObject, xpubs[i]);
+                    else theseaddresses = parseAddress_unspent_addresses(jsonObject, xpubs[i]);
+
+                    if(theseaddresses != null) {
+                        addresses = new ArrayList<String>();
+                        addresses.addAll(theseaddresses);
+                    }
                 }
                 catch(JSONException je) {
                     je.printStackTrace();
@@ -525,6 +543,21 @@ public class SendFactory	{
         }
 
         return addresses;
+    }
+    private synchronized ArrayList<String> parseAddress_unspent_addresses(org.json.JSONObject jsonObject, String address) throws JSONException {
+
+        if(jsonObject == null)
+            return null;
+        if(jsonObject.has("unspent_outputs"))
+        {
+            ArrayList<String> addresses = new ArrayList<String>();
+            org.json.JSONArray unspent_outputs = jsonObject.getJSONArray("unspent_outputs");
+            if(unspent_outputs.length() > 0) {
+                addresses.add(address);
+                return addresses;
+            }
+        }
+        return null;
     }
     private synchronized ArrayList<String> parseXPUB_unspent_addresses(org.json.JSONObject jsonObject, String xpub) throws JSONException  {
 
