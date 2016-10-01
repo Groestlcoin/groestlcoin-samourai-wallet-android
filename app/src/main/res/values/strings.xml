@@ -2,7 +2,7 @@
 <resources>
 
     <string name="code_name">\'Stealthy Crane\'</string>
-    <string name="version_name">0.74a</string>
+    <string name="version_name">0.74c</string>
     <string name="app_name">Groestlcoin Samourai</string>
 
     <string name="new_version_message">Welcome to Groestlcoin Samourai Alpha 2 \'Stealthy Crane\'. We are building the most secure and private mobile wallet. In this version:\n\nUpdated algorithim allows you to define the amount of obfuscation per transaction basis\n\nUse ShapeShift to receive payment in 30+ altcoins and auto convert to Groestlcoin held in your wallet\n\nEnable VPN or Tor to relay all transactions through an anonymous IP address\n\nand much, much more...</string>

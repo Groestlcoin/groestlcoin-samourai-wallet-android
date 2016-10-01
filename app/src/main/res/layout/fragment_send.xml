@@ -92,7 +92,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="BTC-USD"
+                        android:text="GRS-USD"
                         android:gravity="center_horizontal"
                         android:textAlignment="gravity"
                         android:id="@+id/fiatSymbol" />
