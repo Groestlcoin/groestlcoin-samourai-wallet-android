@@ -6,10 +6,10 @@ android {
 
     defaultConfig {
         applicationId "hashegineering.groestlcoin.samourai.wallet"
-        minSdkVersion 19
+        minSdkVersion 17
         targetSdkVersion 21
-        versionCode 22
-        versionName "0.74c"
+        versionCode 23
+        versionName "0.74d"
         multiDexEnabled true
     }
     buildTypes {
