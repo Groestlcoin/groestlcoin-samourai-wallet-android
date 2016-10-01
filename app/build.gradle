@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "hashegineering.groestlcoin.samourai.wallet"
+        applicationId "hashengineering.groestlcoin.samourai.wallet"
         minSdkVersion 17
         targetSdkVersion 21
         versionCode 23

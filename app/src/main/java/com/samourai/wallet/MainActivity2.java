@@ -213,7 +213,7 @@ public class MainActivity2 extends Activity {
             }
             else	{
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity2.this);
+                /*AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity2.this);
 
                 WebView wv = new WebView(MainActivity2.this);
                 wv.setWebViewClient(new WebViewClient() {
@@ -235,7 +235,7 @@ public class MainActivity2 extends Activity {
                 });
                 if(!isFinishing())    {
                     alert.show();
-                }
+                }*/
             }
 
         }

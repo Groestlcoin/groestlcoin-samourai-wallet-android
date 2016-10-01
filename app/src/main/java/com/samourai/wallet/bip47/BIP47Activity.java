@@ -488,8 +488,8 @@ public class BIP47Activity extends Activity {
                                                     public void onClick(DialogInterface dialog, int whichButton) {
 
                                                         Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
-                                                        intent.putExtra("label", "Samourai Donations");
-                                                        intent.putExtra("pcode", "PM8TJVzLGqWR3dtxZYaTWn3xJUop3QP3itR4eYzX7XvV5uAfctEEuHhKNo3zCcqfAbneMhyfKkCthGv5werVbwLruhZyYNTxqbCrZkNNd2pPJA2e2iAh");
+                                                        intent.putExtra("label", "Hash Engineering Donations");
+                                                        intent.putExtra("pcode", "PM8TJaJsT1B8Ak7PyTLSqNDzDAtLzgwypZv9RxW9JyRaNHn9mAATBRKSnjADNhJ8KP9nDEMh9SwKvTDGQserWHfBv9ZXGJGLYRGg2gbUZSmKK9AgDuHp");
                                                         startActivityForResult(intent, EDIT_PCODE);
 
                                                     }

@@ -17,7 +17,7 @@ public class MainActivity extends Activity {
         String action = getIntent().getAction();
         String scheme = getIntent().getScheme();
         String strUri = null;
-        if(action != null && Intent.ACTION_VIEW.equals(action) && scheme.equals("bitcoin")) {
+        if(action != null && Intent.ACTION_VIEW.equals(action) && scheme.equals("groestlcoin")) {
             strUri = getIntent().getData().toString();
         }
 

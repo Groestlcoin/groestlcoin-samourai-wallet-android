@@ -9,7 +9,7 @@ public class AboutActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about);
-        setTitle("Samourai, v" + getResources().getString(R.string.version_name));
+        setTitle("Groestlcoin Samourai, v" + getResources().getString(R.string.version_name));
     }
 
 }
