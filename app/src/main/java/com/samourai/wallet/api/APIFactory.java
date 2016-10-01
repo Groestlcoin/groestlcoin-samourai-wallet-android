@@ -958,6 +958,15 @@ public class APIFactory	{
                             Date parsedDate = dateFormat.parse(_ts);
                             ts = parsedDate.getTime()/1000;
                         }catch(Exception e){//this generic but you can control another types of exception
+                            try {
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm'Z'");
+                                Date parsedDate = dateFormat.parse(_ts);
+                                ts = parsedDate.getTime() / 1000;
+                            }
+                            catch (Exception e1)
+                            {
+
+                            }
                             //look the origin of excption
                         }
                     }

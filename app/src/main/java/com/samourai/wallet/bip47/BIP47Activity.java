@@ -109,7 +109,7 @@ public class BIP47Activity extends Activity {
 
                 AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
                         .setTitle(R.string.app_name)
-                        .setMessage("Want to see your payment code suggested here? Contact us at wallet@samouraiwallet.com.")
+                        .setMessage("Want to see your payment code suggested here? Contact us at hashengineeringsolutions@gmail.com")
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 ;
@@ -541,7 +541,7 @@ public class BIP47Activity extends Activity {
 
         String strNotifTxMsg = getText(R.string.bip47_setup4_text1) + " ";
         long notifAmount = SendNotifTxFactory._bNotifTxTotalAmount.longValue();
-        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount) / 1e8) + " BTC ";
+        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount) / 1e8) + " GRS ";
         strNotifTxMsg += strAmount + getText(R.string.bip47_setup4_text2);
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
