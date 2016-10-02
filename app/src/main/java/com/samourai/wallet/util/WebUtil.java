@@ -1,25 +1,16 @@
 package com.samourai.wallet.util;
 
 import android.content.Context;
-import android.util.Log;
+//import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.SocketAddress;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.client.methods.HttpGet;
@@ -32,6 +23,9 @@ public class WebUtil	{
     public static final String BLOCKCHAIN_DOMAIN_API = BLOCKCHAIN_DOMAIN + "api.dws?key=d47da926b82e&q=";
     public static final String GROESTLSIGHT_SEND_URL = "http://groestlsight.groestlcoin.org/api/tx/send";
 
+    public static final String SAMOURAI_API = "https://api.samouraiwallet.com/";
+    public static final String SAMOURAI_API_CHECK = "https://api.samourai.io/status";
+
     public static final String LBC_EXCHANGE_URL = "https://localbitcoins.com/bitcoinaverage/ticker-all-currencies/";
     public static final String BTCe_EXCHANGE_URL = "https://btc-e.com/api/3/ticker/";
     public static final String BFX_EXCHANGE_URL = "https://api.bitfinex.com/v1/pubticker/btcusd";
@@ -43,6 +37,8 @@ public class WebUtil	{
 
     public static final String CHAINSO_TX_PREV_OUT_URL = "http://chainz.cryptoid.info/grs/api.dws?q=txinfo&t=";//"https://chain.so/api/v2/tx/BTC/";
     public static final String CHAINSO_PUSHTX_URL = "https://chain.so/api/v2/send_tx/BTC/";
+
+    public static final String RECOMMENDED_BIP47_URL = "http://samouraiwallet.com/api/v1/get-pcodes";
 
     private static final int DefaultRequestRetry = 2;
     private static final int DefaultRequestTimeout = 60000;

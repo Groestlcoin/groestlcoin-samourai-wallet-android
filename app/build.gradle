@@ -8,10 +8,16 @@ android {
         applicationId "hashengineering.groestlcoin.samourai.wallet"
         minSdkVersion 17
         targetSdkVersion 21
-        versionCode 23
-        versionName "0.74d"
+        versionCode 28
+        versionName "0.81"
         multiDexEnabled true
     }
+    dexOptions
+            {
+                incremental false
+                javaMaxHeapSize "2048M"
+                preDexLibraries = false
+            }
     buildTypes {
         release {
             minifyEnabled false
@@ -34,7 +40,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v4:21.0.3'
     compile 'net.i2p.android.ext:floatingactionbutton:1.9.0'
     compile files('libs/httpclientandroidlib-1.2.1.jar')

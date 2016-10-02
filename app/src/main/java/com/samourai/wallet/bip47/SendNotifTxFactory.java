@@ -8,7 +8,7 @@ import android.util.Pair;
 import android.widget.Toast;
 //import android.util.Log;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.DumpedPrivateKey;
@@ -19,7 +19,6 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.Transaction.SigHash;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
-import org.bitcoinj.core.Wallet;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
@@ -30,6 +29,7 @@ import com.samourai.wallet.R;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.api.APIFactory;
+import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.hd.HD_Address;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.send.BitcoinAddress;
@@ -69,7 +69,8 @@ public class SendNotifTxFactory	{
 
     public static final BigInteger _bNotifTxTotalAmount = _bFee.add(_bSWFee).add(_bNotifTxValue);
 
-    private static final String SAMOURAI_NOTIF_TX_FEE_ADDRESS = "3K8eqP6j14JzPnmRMG6exTsNo8iUZHEH5e";
+    private static final String SAMOURAI_NOTIF_TX_FEE_ADDRESS = "3K8eqP6j14JzPnmRMG6exTsNo8iUZHEH5e";  //GRS
+
 
     private static SendNotifTxFactory instance = null;
     private static Context context = null;
@@ -116,17 +117,27 @@ public class SendNotifTxFactory	{
         HashMap<String,List<String>> unspentOutputs = APIFactory.getInstance(context).getUnspentOuts();
         List<String> data = unspentOutputs.get(xpub);
         froms = new HashMap<String,String>();
-        for(String f : data) {
-            if(f != null) {
-                String[] s = f.split(",");
+        if(data != null)    {
+            for(String f : data) {
+                if(f != null) {
+                    String[] s = f.split(",");
 //                Log.i("address path", s[1] + " " + s[0]);
-                froms.put(s[1], s[0]);
+                    froms.put(s[1], s[0]);
+                }
             }
         }
 
         UnspentOutputsBundle unspentCoinsBundle = null;
         try {
-            unspentCoinsBundle = getRandomizedUnspentOutputPoints(new String[]{xpub});
+//            unspentCoinsBundle = getRandomizedUnspentOutputPoints(new String[]{xpub});
+
+            ArrayList<String> addressStrings = new ArrayList<String>();
+            addressStrings.add(xpub);
+            for(String pcode : BIP47Meta.getInstance().getUnspentProviders())   {
+                addressStrings.addAll(BIP47Meta.getInstance().getUnspentAddresses(context, pcode));
+            }
+            unspentCoinsBundle = getRandomizedUnspentOutputPoints(addressStrings.toArray(new String[addressStrings.size()]));
+
         }
         catch(Exception e) {
             return null;
@@ -170,7 +181,6 @@ public class SendNotifTxFactory	{
                     Transaction tx = pair.first;
                     Long priority = pair.second;
 
-                    Wallet wallet = new Wallet(MainNetParams.get());
                     for (TransactionInput input : tx.getInputs()) {
                         byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
                         String address = new BitcoinScript(scriptBytes).getAddress().toString();
@@ -179,20 +189,26 @@ public class SendNotifTxFactory	{
                         try {
                             String privStr = null;
                             String path = froms.get(address);
-                            String[] s = path.split("/");
-                            HD_Address hd_address = AddressFactory.getInstance(context).get(accountIdx, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-//                            Log.i("HD address", hd_address.getAddressString());
-                            privStr = hd_address.getPrivateKeyString();
-                            DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), privStr);
-                            ecKey = pk.getKey();
-//                            Log.i("ECKey address", ecKey.toAddress(MainNetParams.get()).toString());
+                            if(path == null)    {
+                                String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
+                                int idx = BIP47Meta.getInstance().getIdx4Addr(address);
+                                PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);
+                                ecKey = addr.getReceiveECKey();
+                            }
+                            else    {
+                                String[] s = path.split("/");
+                                HD_Address hd_address = AddressFactory.getInstance(context).get(accountIdx, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
+                                privStr = hd_address.getPrivateKeyString();
+                                DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), privStr);
+                                ecKey = pk.getKey();
+                            }
+
                         } catch (AddressFormatException afe) {
                             afe.printStackTrace();
                             continue;
                         }
 
                         if(ecKey != null) {
-//                            wallet.addKey(ecKey);
                             keyBag.put(input.getOutpoint().toString(), ecKey);
                         }
                         else {
@@ -214,29 +230,29 @@ public class SendNotifTxFactory	{
 //                    Log.i("SendFactory tx hash", tx.getHashAsString());
 //                    Log.i("SendFactory tx string", hexString);
 
-                    /*
-                    String response = PushTx.chainSo(hexString);
-                    Log.i("Send response", response);
-                    org.json.JSONObject responseObj = null;
+                    String response = PushTx.getInstance(context).groestlsight(hexString);
+
                     try {
-                        responseObj = new org.json.JSONObject(response);
-                        Log.i("Send response", responseObj.toString());
+                        //org.json.JSONObject jsonObject = new org.json.JSONObject(response);
+                        if(response != null && (response.contains("txid") || response.length() == 68))    {
+                            //if(jsonObject.getString("status").equals("ok"))    {
+                                opc.onSuccess();
+                                if(sentChange) {
+                                    HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
+                                }
 
-                        if(responseObj.has("data") && responseObj.getJSONObject("data").has("txid"))    {
-                            org.json.JSONObject jsonObj = responseObj.getJSONObject("data");
-                            Log.i("tx hash", jsonObj.getString("txid"));
-                            opc.onSuccess();
-                            if(sentChange) {
-                                HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
-                            }
-
-                            BIP47Meta.getInstance().setOutgoingIdx(notifPcode.toString(), 0);
-                            Log.i("SendNotifTxFactory", "tx hash:" + jsonObj.getString("txid"));
-                            BIP47Meta.getInstance().setOutgoingStatus(notifPcode.toString(), jsonObj.getString("txid"), BIP47Meta.STATUS_SENT_NO_CFM);
+                                BIP47Meta.getInstance().setOutgoingIdx(notifPcode.toString(), 0);
+//                        Log.i("SendNotifTxFactory", "tx hash:" + tx.getHashAsString());
+                                BIP47Meta.getInstance().setOutgoingStatus(notifPcode.toString(), tx.getHashAsString(), BIP47Meta.STATUS_SENT_NO_CFM);
 
 //                            SendAddressUtil.getInstance().add(notifPcode.notificationAddress().toString(), true);
 
-                            HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                                HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                            //}
+                            //else {
+                            //    Toast.makeText(context, jsonObject.getString("status"), Toast.LENGTH_SHORT).show();
+                            //    opc.onFail();
+                            //}
                         }
                         else    {
                             Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
@@ -244,28 +260,7 @@ public class SendNotifTxFactory	{
                         }
                     }
                     catch(JSONException je) {
-                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
-                        opc.onFail();
-                    }
-                    */
-
-                    String response = PushTx.getInstance(context).groestlsight(hexString);
-                    if(response != null && (response.contains("txid") || response.length() == 68))  {
-                        opc.onSuccess();
-                        if(sentChange) {
-                            HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
-                        }
-
-                        BIP47Meta.getInstance().setOutgoingIdx(notifPcode.toString(), 0);
-//                        Log.i("SendNotifTxFactory", "tx hash:" + tx.getHashAsString());
-                        BIP47Meta.getInstance().setOutgoingStatus(notifPcode.toString(), tx.getHashAsString(), BIP47Meta.STATUS_SENT_NO_CFM);
-
-//                            SendAddressUtil.getInstance().add(notifPcode.notificationAddress().toString(), true);
-
-                        HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
-                    }
-                    else    {
-                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, je.getMessage(), Toast.LENGTH_SHORT).show();
                         opc.onFail();
                     }
 
@@ -292,17 +287,16 @@ public class SendNotifTxFactory	{
 
         UnspentOutputsBundle ret = new UnspentOutputsBundle();
 
-        String args = from[0];
-
         HashMap<String,List<MyTransactionOutPoint>> outputsByAddress = new HashMap<String,List<MyTransactionOutPoint>>();
 
         ArrayList<String> addresses = getXPUB_unspent_addresses(from);
 
-        args = StringUtils.join(addresses.toArray(), "|");
+        String args = org.apache.commons.lang.StringUtils.join(addresses.toArray(), "|");
 
         Log.i("Unspent outputs url", WebUtil.BLOCKCHAIN_DOMAIN + "unspent?active=" + args);
         String response = WebUtil.getInstance(null).getURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "unspent&active=" + args);
         Log.i("Unspent outputs", response);
+
 
         List<MyTransactionOutPoint> outputs = new ArrayList<MyTransactionOutPoint>();
 
@@ -470,13 +464,22 @@ public class SendNotifTxFactory	{
             priority += outPoint.getValue().longValue() * outPoint.getConfirmations();
 
             if(i == 0)    {
+                ECKey ecKey = null;
                 String privStr = null;
                 String path = froms.get(address);
-                String[] s = path.split("/");
-                HD_Address hd_address = AddressFactory.getInstance(context).get(accountIdx, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                privStr = hd_address.getPrivateKeyString();
-                DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), privStr);
-                ECKey ecKey = pk.getKey();
+                if(path == null)    {
+                    String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
+                    int idx = BIP47Meta.getInstance().getIdx4Addr(address);
+                    PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);
+                    ecKey = addr.getReceiveECKey();
+                }
+                else    {
+                    String[] s = path.split("/");
+                    HD_Address hd_address = AddressFactory.getInstance(context).get(accountIdx, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
+                    privStr = hd_address.getPrivateKeyString();
+                    DumpedPrivateKey pk = new DumpedPrivateKey(MainNetParams.get(), privStr);
+                    ecKey = pk.getKey();
+                }
 
                 byte[] privkey = ecKey.getPrivKeyBytes();
                 byte[] pubkey = notifPcode.notificationAddress().getPubKey();

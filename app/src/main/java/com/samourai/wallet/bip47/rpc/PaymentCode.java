@@ -7,6 +7,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.*;
 import org.bitcoinj.core.bip47.Account;
 import org.bitcoinj.core.bip47.Address;
+import com.samourai.wallet.hd.HD_Address;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import org.bitcoinj.core.AddressFormatException;
+import org.bitcoinj.core.Base58;
+import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
 import org.bitcoinj.params.MainNetParams;
@@ -18,9 +25,6 @@ import java.nio.BufferUnderflowException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
-// https://www.reddit.com/r/Bitcoin/comments/3alzga/bip47_reusable_payment_codes/
-// https://github.com/bitcoin/bips/blob/master/bip-0047.mediawiki
 
 public class PaymentCode {
 
@@ -69,12 +73,12 @@ public class PaymentCode {
         strPaymentCode = makeV1();
     }
 
-    public Address notificationAddress() throws AddressFormatException {
+    public HD_Address notificationAddress() throws AddressFormatException {
         return addressAt(0);
     }
 
-    public Address addressAt(int idx) throws AddressFormatException {
-        return new Account(MainNetParams.get(), strPaymentCode).addressAt(idx);
+    public HD_Address addressAt(int idx) throws AddressFormatException {
+        return new BIP47Account(MainNetParams.get(), strPaymentCode).addressAt(idx);
     }
 
     public byte[] getPayload() throws AddressFormatException    {
@@ -93,22 +97,6 @@ public class PaymentCode {
         int type = (int)bb.get();
 
         return type;
-    }
-
-    public byte[] decode() throws AddressFormatException    {
-        return Base58.decode(strPaymentCode);
-    }
-
-    public byte[] decodeChecked() throws AddressFormatException    {
-        return Base58.decodeChecked(strPaymentCode);
-    }
-
-    public byte[] getPubKey()   {
-        return pubkey;
-    }
-
-    public byte[] getChain()   {
-        return chain;
     }
 
     public String toString()    {
@@ -178,6 +166,14 @@ public class PaymentCode {
     }
 
     private String makeV1() {
+        return make(0x01);
+    }
+
+    private String makeV2() {
+      return make(0x02);
+    }
+
+    private String make(int type) {
 
         String ret = null;
 
@@ -188,8 +184,8 @@ public class PaymentCode {
             payload[i] = (byte)0x00;
         }
 
-        // byte 0: type. required value: 0x01
-        payload[0] = (byte)0x01;
+        // byte 0: type.
+        payload[0] = (byte)type;
         // byte 1: features bit field. All bits must be zero except where specified elsewhere in this specification
         //      bit 0: Bitmessage notification
         //      bits 1-7: reserved

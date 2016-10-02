@@ -1,15 +1,25 @@
 package com.samourai.wallet.api;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
 //import android.util.Log;
 
+import com.samourai.wallet.R;
 import com.samourai.wallet.bip47.BIP47Meta;
 import com.samourai.wallet.bip47.BIP47Util;
 import com.samourai.wallet.hd.HD_Account;
 import com.samourai.wallet.hd.HD_Chain;
 import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.AddressFactory;
+import com.samourai.wallet.util.ConnectivityStatus;
+import com.samourai.wallet.util.PrefsUtil;
 import com.samourai.wallet.util.WebUtil;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
@@ -56,6 +66,8 @@ public class APIFactory	{
 
     private static Context context = null;
 
+    private static AlertDialog alertDialog = null;
+
     private APIFactory()	{ ; }
 
     public static APIFactory getInstance(Context ctx) {
@@ -85,6 +97,39 @@ public class APIFactory	{
         xpub_txs.clear();
         haveUnspentOuts.clear();
         seenBIP47Tx.clear();
+    }
+
+    private synchronized void preloadXPUB(String[] xpubs) {
+
+        JSONObject jsonObject = null;
+
+        for(int i = 0; i < xpubs.length; i++)   {
+            if(!PrefsUtil.getInstance(context).getValue(xpubs[i], false))    {
+                try {
+                    StringBuilder url = new StringBuilder(WebUtil.SAMOURAI_API);
+                    url.append("xpub?xpub=");
+                    url.append(xpubs[i]);
+                    String response = WebUtil.getInstance(null).getURL(url.toString());
+//                Log.i("APIFactory", "XPUB response:" + response);
+                    try {
+                        jsonObject = new JSONObject(response);
+                        if(jsonObject.has("status") && jsonObject.getString("status").equals("ok") &&
+                                jsonObject.has("comment") && (jsonObject.getString("comment").equals("added") || jsonObject.getString("comment").equals("duplicate")))    {
+                            PrefsUtil.getInstance(context).setValue(xpubs[i], true);
+                        }
+                    }
+                    catch(JSONException je) {
+                        je.printStackTrace();
+                        jsonObject = null;
+                    }
+                }
+                catch(Exception e) {
+                    jsonObject = null;
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
     private synchronized JSONObject getXPUB(String[] xpubs) {
@@ -255,9 +300,10 @@ public class APIFactory	{
                             if(outObj.has("xpub"))  {
                                 JSONObject xpubObj = (JSONObject)outObj.get("xpub");
                                 addr = xpubObj.has("m") ? (String)xpubObj.get("m") : xpub;
-                                change_output_amount += outObj.getLong("value");
+                                //change_output_amount += outObj.getLong("value");
                                 path = xpubObj.getString("path");
                                 if(useManualAmount) manual_amount+=outObj.getLong("value");
+
                                 if(outObj.has("spent"))  {
                                     if(outObj.getBoolean("spent") == false && outObj.has("addr"))  {
                                         if(!haveUnspentOuts.containsKey(addr))  {
@@ -269,6 +315,10 @@ public class APIFactory	{
                                             haveUnspentOuts.get(addr).add(data);
                                         }
                                     }
+                                }
+                                String[] s = path.split("/");
+                                if(s[1].equals("1") && hasBIP47Input)    {
+                                    continue;
                                 }
                                 if(input_xpub != null && !input_xpub.equals(addr))    {
                                     output_xpub = addr;
@@ -659,6 +709,81 @@ public class APIFactory	{
         return jsonObject;
     }
 
+    public synchronized void validateAPIThread() {
+
+        final Handler handler = new Handler();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Looper.prepare();
+
+                if(ConnectivityStatus.hasConnectivity(context)) {
+
+                    try {
+                        String response = WebUtil.getInstance(context).getURL(WebUtil.SAMOURAI_API_CHECK);
+
+                        JSONObject jsonObject = new JSONObject(response);
+                        if(!jsonObject.has("process"))    {
+                            showAlertDialog(context.getString(R.string.api_error), false);
+                        }
+
+                    }
+                    catch(Exception e) {
+                        showAlertDialog(context.getString(R.string.cannot_reach_api), false);
+                    }
+
+                } else {
+                    showAlertDialog(context.getString(R.string.no_internet), false);
+                }
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ;
+                    }
+                });
+
+                Looper.loop();
+
+            }
+        }).start();
+    }
+
+    private void showAlertDialog(final String message, final boolean forceExit){
+
+        if (!((Activity) context).isFinishing()) {
+
+            if(alertDialog != null)alertDialog.dismiss();
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage(message);
+            builder.setCancelable(false);
+
+            if(!forceExit) {
+                builder.setPositiveButton(R.string.retry,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                d.dismiss();
+                                //Retry
+                                validateAPIThread();
+                            }
+                        });
+            }
+
+            builder.setNegativeButton(R.string.exit,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface d, int id) {
+                            d.dismiss();
+                            ((Activity) context).finish();
+                        }
+                    });
+
+            alertDialog = builder.create();
+            alertDialog.show();
+        }
+    }
+
     public synchronized void initWalletAmounts() {
 
         APIFactory.getInstance(context).reset();
@@ -683,6 +808,7 @@ public class APIFactory	{
         // bip44 balance and tx
         //
         try {
+            APIFactory.getInstance(context).preloadXPUB(HD_WalletFactory.getInstance(context).get().getXPUBs());
             APIFactory.getInstance(context).getXPUB(HD_WalletFactory.getInstance(context).get().getXPUBs());
         }
         catch(IOException ioe) {
@@ -694,6 +820,12 @@ public class APIFactory	{
         finally {
             ;
         }
+
+        Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+        intent.putExtra("notfTx", false);
+        intent.putExtra("fetch", false);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
 
     }
 
@@ -830,7 +962,7 @@ public class APIFactory	{
 //                                        Log.i("APIFactory", "sync send idx:" + idx + ", " + addr);
                                         BIP47Meta.getInstance().setOutgoingIdx(pcode, idx + 1);
                                     }
-                                ret++;
+                                    ret++;
                                 }
 
                             }

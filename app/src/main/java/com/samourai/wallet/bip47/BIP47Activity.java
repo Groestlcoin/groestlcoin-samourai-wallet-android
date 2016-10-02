@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,6 +39,8 @@ import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
+import org.json.JSONException;
+import org.spongycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,6 +70,7 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 public class BIP47Activity extends Activity {
 
     private static final int EDIT_PCODE = 2000;
+    private static final int RECOMMENDED_PCODE = 2001;
     private static final int SCAN_PCODE = 2077;
 
     private SwipeMenuListView listView = null;
@@ -107,6 +109,7 @@ public class BIP47Activity extends Activity {
             @Override
             public void onClick(View arg0) {
 
+                /*
                 AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
                         .setTitle(R.string.app_name)
                         .setMessage("Want to see your payment code suggested here? Contact us at hashengineeringsolutions@gmail.com")
@@ -118,6 +121,10 @@ public class BIP47Activity extends Activity {
                         });
 
                 dlg.show();
+                */
+
+                Intent intent = new Intent(BIP47Activity.this, BIP47Recommended.class);
+                startActivityForResult(intent, RECOMMENDED_PCODE);
 
             }
         });
@@ -141,7 +148,7 @@ public class BIP47Activity extends Activity {
                 if (BIP47Meta.getInstance().getLabel(itemValue) != null && BIP47Meta.getInstance().getLabel(itemValue).length() > 0) {
                     msg = BIP47Meta.getInstance().getLabel(itemValue) + ":";
                 }
-                Toast.makeText(getApplicationContext(), msg + "Outgoing status:" + BIP47Meta.getInstance().getOutgoingStatus(itemValue), Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), msg + "Outgoing status:" + BIP47Meta.getInstance().getOutgoingStatus(itemValue), Toast.LENGTH_LONG).show();
 
                 if (BIP47Meta.getInstance().getOutgoingStatus(itemValue) == BIP47Meta.STATUS_NOT_SENT) {
 
@@ -183,10 +190,12 @@ public class BIP47Activity extends Activity {
 
                     case 0:
 
+                    {
                         Intent intent = new Intent(BIP47Activity.this, BIP47Add.class);
                         intent.putExtra("label", BIP47Meta.getInstance().getLabel(pcodes[position]));
                         intent.putExtra("pcode", pcodes[position]);
                         startActivityForResult(intent, EDIT_PCODE);
+                    }
 
                         break;
 
@@ -197,6 +206,17 @@ public class BIP47Activity extends Activity {
                         break;
 
                     case 2:
+
+                    {
+                        Intent intent = new Intent(BIP47Activity.this, BIP47ShowQR.class);
+                        intent.putExtra("label", BIP47Meta.getInstance().getLabel(pcodes[position]));
+                        intent.putExtra("pcode", pcodes[position]);
+                        startActivity(intent);
+                    }
+
+                        break;
+
+                    case 3:
 
                         // archive
 
@@ -248,6 +268,18 @@ public class BIP47Activity extends Activity {
                 syncItem.setIcon(android.R.drawable.ic_popup_sync);
                 // add to menu
                 menu.addMenuItem(syncItem);
+
+                // create "qr" item
+                SwipeMenuItem qrItem = new SwipeMenuItem(getApplicationContext());
+                // set item background
+                qrItem.setBackground(new ColorDrawable(Color.rgb(0x17, 0x1B, 0x24)));
+                // set item width
+                qrItem.setWidth(180);
+                // set a icon
+                qrItem.setIcon(R.drawable.ic_receive_qr);
+                // add to menu
+                menu.addMenuItem(qrItem);
+
 /*
                 // create "archive" item
                 SwipeMenuItem archiveItem = new SwipeMenuItem(getApplicationContext());
@@ -327,6 +359,64 @@ public class BIP47Activity extends Activity {
 
         }
         else if (resultCode == Activity.RESULT_CANCELED && requestCode == EDIT_PCODE) {
+            ;
+        }
+        else if (resultCode == Activity.RESULT_OK && requestCode == RECOMMENDED_PCODE) {
+
+            if(data.hasExtra("pcode") && data.hasExtra("label"))    {
+
+                String pcode = data.getStringExtra("pcode");
+                String label = data.getStringExtra("label");
+
+                BIP47Meta.getInstance().setLabel(pcode, label);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+
+                        try {
+                            HD_WalletFactory.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance().getPIN()));
+                        }
+                        catch(MnemonicException.MnemonicLengthException mle) {
+                            mle.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
+                        catch(DecoderException de) {
+                            de.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
+                        catch(JSONException je) {
+                            je.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
+                        catch(IOException ioe) {
+                            ioe.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
+                        catch(java.lang.NullPointerException npe) {
+                            npe.printStackTrace();
+                            Toast.makeText(BIP47Activity.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
+                        finally {
+                            ;
+                        }
+
+                        Looper.loop();
+
+                    }
+                }).start();
+
+                if(BIP47Meta.getInstance().getOutgoingStatus(pcode) == BIP47Meta.STATUS_NOT_SENT)    {
+
+                    doNotifTx(pcode);
+
+                }
+
+            }
+
+        }
+        else if (resultCode == Activity.RESULT_CANCELED && requestCode == RECOMMENDED_PCODE) {
             ;
         }
         else {
@@ -420,7 +510,7 @@ public class BIP47Activity extends Activity {
 
     private void refreshList()  {
 
-        Set<String> _pcodes = BIP47Meta.getInstance().getLabels();
+        Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels();
 
         //
         // check for own payment code
@@ -561,11 +651,10 @@ public class BIP47Activity extends Activity {
                                 try {
                                     payment_code = new PaymentCode(pcode);
                                 }
-                                catch (AddressFormatException afe) {
+                                catch (Exception afe) {
                                     ;
                                 }
 
-                                //payment_code = new PaymentCode(pcode);
                                 UnspentOutputsBundle unspentCoinsBundle = SendNotifTxFactory.getInstance(BIP47Activity.this).phase1(0);
                                 if (unspentCoinsBundle == null) {
                                     Toast.makeText(BIP47Activity.this, R.string.no_confirmed_outputs_available, Toast.LENGTH_SHORT).show();
@@ -637,6 +726,7 @@ public class BIP47Activity extends Activity {
                 LayoutInflater inflater = (LayoutInflater)BIP47Activity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = inflater.inflate(R.layout.bip47_entry, null);
 
+
             }
             else    {
                 view = convertView;
@@ -646,15 +736,17 @@ public class BIP47Activity extends Activity {
 
             TextView tvInitial = (TextView)view.findViewById(R.id.Initial);
             tvInitial.setText(strLabel.substring(0, 1).toUpperCase());
-            if(position % 3 == 0)    {
-                tvInitial.setBackgroundResource(R.drawable.ripple_initial_red);
-            }
-            else if(position % 2 == 1)    {
-                tvInitial.setBackgroundResource(R.drawable.ripple_initial_green);
-            }
-            else {
-                tvInitial.setBackgroundResource(R.drawable.ripple_initial_blue);
-            }
+            //if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)    {
+                if(position % 3 == 0)    {
+                    tvInitial.setBackgroundResource(R.drawable.ripple_initial_red);
+                }
+                else if(position % 2 == 1)    {
+                    tvInitial.setBackgroundResource(R.drawable.ripple_initial_green);
+                }
+                else {
+                    tvInitial.setBackgroundResource(R.drawable.ripple_initial_blue);
+                }
+            //}
 
             TextView tvLabel = (TextView)view.findViewById(R.id.Label);
             tvLabel.setText(strLabel);
@@ -724,7 +816,6 @@ public class BIP47Activity extends Activity {
                                         handler.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                                Log.i("BIP47Activity", "updating list");
                                                 refreshList();
                                                 adapter.notifyDataSetChanged();
                                             }
@@ -744,8 +835,6 @@ public class BIP47Activity extends Activity {
     }
 
     public boolean refreshDisplay()   {
-
-        Log.i("BIP47Activity", "handling message");
 
         boolean changed = false;
 
@@ -809,7 +898,7 @@ public class BIP47Activity extends Activity {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
                             PaymentAddress receiveAddress = BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(payment_code, i);
-                            Log.i("BIP47Activity", "sync receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
+//                            Log.i("BIP47Activity", "sync receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
                             BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
                             BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), i);
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), payment_code.toString());
@@ -831,7 +920,7 @@ public class BIP47Activity extends Activity {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
                             PaymentAddress sendAddress = BIP47Util.getInstance(BIP47Activity.this).getSendAddress(payment_code, i);
-                            Log.i("BIP47Activity", "sync send to " + i + ":" + sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString());
+//                            Log.i("BIP47Activity", "sync send to " + i + ":" + sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString());
 //                            BIP47Meta.getInstance().setOutgoingIdx(payment_code.toString(), i);
                             BIP47Meta.getInstance().getIdx4AddrLookup().put(sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString(), i);
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(sendAddress.getSendECKey().toAddress(MainNetParams.get()).toString(), payment_code.toString());
@@ -877,7 +966,6 @@ public class BIP47Activity extends Activity {
                                         @Override
                                         public void run() {
 
-                                            Log.i("BIP47Activity", "updating list");
                                             refreshList();
                                             adapter.notifyDataSetChanged();
                                         }

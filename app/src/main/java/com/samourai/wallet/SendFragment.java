@@ -413,13 +413,14 @@ public class SendFragment extends Fragment {
         tvSpendTypeDesc = (TextView)rootView.findViewById(R.id.spendTypeDesc);
         spendType = (SeekBar)rootView.findViewById(R.id.seekBar);
         spendType.setMax(2);
-        spendType.setProgress(1);
+        spendType.setProgress(PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.SPEND_TYPE, 1));
         spendType.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             int progressChanged = 0;
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
                 progressChanged = progress;
+                PrefsUtil.getInstance(getActivity()).setValue(PrefsUtil.SPEND_TYPE, spendType.getProgress());
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -481,6 +482,9 @@ public class SendFragment extends Fragment {
         btSend = (Button)rootView.findViewById(R.id.send);
         btSend.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
+                btSend.setClickable(false);
+                btSend.setActivated(false);
 
                 double btc_amount = 0.0;
 
@@ -600,15 +604,30 @@ public class SendFragment extends Fragment {
                             }
                             else if((amount + _fee.longValue()) > APIFactory.getInstance(getActivity()).getXpubAmounts().get(AddressFactory.getInstance().account2xpub().get(accountIdx)))    {
 //                                Log.i("SendActivity", "insufficient funds");
-                                Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        btSend.setActivated(true);
+                                        btSend.setClickable(true);
+                                        Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 return;
+
                             }
                             else if((amount + _fee.longValue()) > unspentCoinsBundle.getTotalAmount().longValue())	{
                                 UnspentOutputsBundle refreshUnspents = SendFactory.getInstance(getActivity()).supplementRandomizedUnspentOutputPoints(unspentCoinsBundle, BigInteger.valueOf((amount + _fee.longValue() + SamouraiWallet.bDust.longValue()) - unspentCoinsBundle.getTotalAmount().longValue()));
 
                                 if(refreshUnspents == null)    {
 //                                    Log.i("SendActivity", "refreshUnspents == null");
-                                    Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            btSend.setActivated(true);
+                                            btSend.setClickable(true);
+                                            Toast.makeText(getActivity(), R.string.insufficient_funds, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                     return;
                                 }
 
@@ -624,7 +643,14 @@ public class SendFragment extends Fragment {
                             final Pair<Transaction, Long> pair = SendFactory.getInstance(getActivity()).phase2(accountIdx, unspentCoinsBundle.getOutputs(), receivers, fee, spendType.getProgress());
                             if(pair == null) {
 //                                Log.i("SendActivity", "pair == null");
-                                Toast.makeText(getActivity(), R.string.error_creating_tx, Toast.LENGTH_SHORT).show();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        btSend.setActivated(true);
+                                        btSend.setClickable(true);
+                                        Toast.makeText(getActivity(), R.string.error_creating_tx, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 return;
                             }
 
@@ -676,7 +702,7 @@ public class SendFragment extends Fragment {
                             builder.setMessage(msg);
                             builder.setCancelable(false);
                             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
+                                public void onClick(final DialogInterface dialog, int whichButton) {
 
                                     final ProgressDialog progress = new ProgressDialog(getActivity());
                                     progress.setCancelable(false);
@@ -696,8 +722,11 @@ public class SendFragment extends Fragment {
                                                     Toast.makeText(getActivity(), R.string.tx_ok, Toast.LENGTH_SHORT).show();
                                                     APIFactory.getInstance(getActivity()).setXpubBalance(APIFactory.getInstance(getActivity()).getXpubBalance() - (_amount + fee.longValue()));
 
+                                                    btSend.setActivated(true);
+                                                    btSend.setClickable(true);
                                                     edAddress.setText("");
                                                     edAmountBTC.setText("");
+
                                                 }
                                             });
                                             if (progress != null && progress.isShowing()) {
@@ -706,6 +735,7 @@ public class SendFragment extends Fragment {
 
                                             // increment counter if BIP47 spend
                                             if(strPCode != null && strPCode.length() > 0)    {
+                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(address, strPCode);
                                                 BIP47Meta.getInstance().inc(strPCode);
 
                                                 SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
@@ -735,9 +765,12 @@ public class SendFragment extends Fragment {
                                         }
 
                                         public void onFail() {
+
                                             getActivity().runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
+                                                    btSend.setActivated(true);
+                                                    btSend.setClickable(true);
                                                     Toast.makeText(getActivity(), R.string.tx_ko, Toast.LENGTH_SHORT).show();
                                                 }
                                             });
@@ -753,8 +786,17 @@ public class SendFragment extends Fragment {
                                 }
                             });
                             builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
+                                public void onClick(final DialogInterface dialog, int whichButton) {
+
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            btSend.setActivated(true);
+                                            btSend.setClickable(true);
+                                            dialog.dismiss();
+                                        }
+                                    });
+
                                 }
                             });
 
@@ -763,7 +805,14 @@ public class SendFragment extends Fragment {
 
                         }
                         else {
-                            Toast.makeText(getActivity(), R.string.no_confirmed_outputs_available, Toast.LENGTH_SHORT).show();
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btSend.setActivated(true);
+                                    btSend.setClickable(true);
+                                    Toast.makeText(getActivity(), R.string.no_confirmed_outputs_available, Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
 
                         Looper.loop();
@@ -905,7 +954,7 @@ public class SendFragment extends Fragment {
                     edAddress.setEnabled(false);
                     edAmountBTC.setEnabled(false);
                     edAmountFiat.setEnabled(false);
-                    Toast.makeText(getActivity(), R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), R.string.no_edit_BIP21_scan, Toast.LENGTH_SHORT).show();
                 }
             }
             catch (NumberFormatException nfe) {
@@ -937,7 +986,7 @@ public class SendFragment extends Fragment {
                     strDestinationBTCAddress = paymentAddress.getSendECKey().toAddress(MainNetParams.get()).toString();
                     edAddress.setText(BIP47Meta.getInstance().getDisplayLabel(pcode.toString()));
                     edAddress.setEnabled(false);
-                    Toast.makeText(getActivity(), R.string.no_edit_BIP47_address, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), R.string.no_edit_BIP47_address, Toast.LENGTH_SHORT).show();
                 }
                 catch(Exception e) {
                     Toast.makeText(getActivity(), R.string.error_payment_code, Toast.LENGTH_SHORT).show();

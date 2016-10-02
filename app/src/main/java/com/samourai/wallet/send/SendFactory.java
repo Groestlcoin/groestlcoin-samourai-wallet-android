@@ -19,7 +19,6 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.Transaction.SigHash;
 import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.TransactionOutput;
-import org.bitcoinj.core.Wallet;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
@@ -41,6 +40,7 @@ import com.samourai.wallet.hd.HD_WalletFactory;
 import com.samourai.wallet.util.AddressFactory;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.Hash;
+import com.samourai.wallet.util.PushTx;
 import com.samourai.wallet.util.SendAddressUtil;
 import com.samourai.wallet.util.WebUtil;
 
@@ -183,7 +183,7 @@ public class SendFactory	{
                         ECKey ecKey = null;
                         try {
                             String path = froms.get(address);
-                            if(path == null)    {
+                            if (path == null) {
 //                                Log.i("pcode lookup size:", "" + BIP47Meta.getInstance().getPCode4AddrLookup().size());
 //                                Log.i("looking up:", "" + address);
                                 String pcode = BIP47Meta.getInstance().getPCode4Addr(address);
@@ -193,8 +193,7 @@ public class SendFactory	{
                                 PaymentAddress addr = BIP47Util.getInstance(context).getReceiveAddress(new PaymentCode(pcode), idx);
                                 ecKey = addr.getReceiveECKey();
 //                                Log.i("ECKey address:", ecKey.toAddress(MainNetParams.get()).toString());
-                            }
-                            else    {
+                            } else {
                                 String[] s = path.split("/");
                                 HD_Address hd_address = AddressFactory.getInstance(context).get(accountIdx, Integer.parseInt(s[1]), Integer.parseInt(s[2]));
 //                            Log.i("HD address", hd_address.getAddressString());
@@ -208,10 +207,9 @@ public class SendFactory	{
                             continue;
                         }
 
-                        if(ecKey != null) {
+                        if (ecKey != null) {
                             keyBag.put(input.getOutpoint().toString(), ecKey);
-                        }
-                        else {
+                        } else {
                             opc.onFail();
 //                            Log.i("ECKey error", "cannot process private key");
                         }
@@ -220,36 +218,45 @@ public class SendFactory	{
 
                     signTx(tx, keyBag);
                     String hexString = new String(Hex.encode(tx.bitcoinSerialize()));
-                    if(hexString.length() > (100 * 1024)) {
+                    if (hexString.length() > (100 * 1024)) {
                         Toast.makeText(context, R.string.tx_length_error, Toast.LENGTH_SHORT).show();
 //                        Log.i("SendFactory", "Transaction length too long");
                         opc.onFail();
                         throw new Exception(context.getString(R.string.tx_length_error));
                     }
 
+
                     Log.i("SendFactory tx hash", tx.getHashAsString());
                     Log.i("SendFactory tx string", hexString);
-                    String response = WebUtil.getInstance(null).postURL("text/plain", WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", hexString);
+                    String response = PushTx.getInstance(null).chainz(hexString);//WebUtil.getInstance(null).postURL("text/plain", WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", hexString);
                     //String response = WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
                     Log.i("Send response", response);
-                    if(response.contains("txid") || response.length()==68) {
-                        opc.onSuccess();
-                        if(sentChange) {
-                            for(int i = 0; i < changeAddressesUsed; i++) {
-                                HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
+                    try {
+                        if (response.contains("txid") || response.length() == 68) {
+                            opc.onSuccess();
+                            if (sentChange) {
+                                for (int i = 0; i < changeAddressesUsed; i++) {
+                                    HD_WalletFactory.getInstance(context).get().getAccount(accountIdx).getChain(AddressFactory.CHANGE_CHAIN).incAddrIdx();
+                                }
                             }
-                        }
 
-                        for(Iterator<Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext();) {
-                            Entry<String, BigInteger> mapEntry = iterator.next();
-                            String toAddress = mapEntry.getKey();
-                            SendAddressUtil.getInstance().add(toAddress, true);
-                        }
+                            for (Iterator<Entry<String, BigInteger>> iterator = receivers.entrySet().iterator(); iterator.hasNext(); ) {
+                                Entry<String, BigInteger> mapEntry = iterator.next();
+                                String toAddress = mapEntry.getKey();
+                                SendAddressUtil.getInstance().add(toAddress, true);
+                            }
 
-                        HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
-                    }
-                    else {
-                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                            HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+
+
+                        }
+                        else{
+                            Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                            opc.onFail();
+                        }
+                                    }
+                    catch(JSONException je) {
+                        Toast.makeText(context, je.getMessage(), Toast.LENGTH_SHORT).show();
                         opc.onFail();
                     }
 
@@ -359,7 +366,6 @@ public class SendFactory	{
                     Transaction tx = pair.first;
                     Long priority = pair.second;
 
-                    Wallet wallet = new Wallet(MainNetParams.get());
                     for (TransactionInput input : tx.getInputs()) {
                         byte[] scriptBytes = input.getOutpoint().getConnectedPubKeyScript();
                         String address = new BitcoinScript(scriptBytes).getAddress().toString();
@@ -384,18 +390,25 @@ public class SendFactory	{
                         throw new Exception(context.getString(R.string.tx_length_error));
                     }
 
+
                     Log.i("SendFactory tx hash", tx.getHashAsString());
                     Log.i("SendFactory tx string", hexString);
                     //String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", "tx=" + hexString);
-                    String response = WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
+                    String response = PushTx.getInstance(null).groestlsight(hexString);//WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
 //                    Log.i("Send response", response);
                     //if(response.contains("Transaction Submitted")) {
-                    if(response.contains("txid") || response.length()==68) {
-                        opc.onSuccess();
-                        HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                    try {
+                        if(response.contains("txid") || response.length()==68) {
+                            opc.onSuccess();
+                            HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
+                        }
+                        else    {
+                            Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                            opc.onFail();
+                        }
                     }
-                    else {
-                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                    catch(JSONException je) {
+                        Toast.makeText(context, je.getMessage(), Toast.LENGTH_SHORT).show();
                         opc.onFail();
                     }
 
