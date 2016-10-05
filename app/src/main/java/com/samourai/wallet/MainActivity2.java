@@ -130,48 +130,49 @@ public class MainActivity2 extends Activity {
 
 //        doAccountSelection();
 
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
-            @Override
-            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        if(SamouraiWallet.USE_SHAPESHIFT) {
+            getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+            ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
+                @Override
+                public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 
-                if(itemPosition == 2 && PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.FIRST_USE_SHUFFLE, true) == true)    {
+                    if (itemPosition == 2 && PrefsUtil.getInstance(MainActivity2.this).getValue(PrefsUtil.FIRST_USE_SHUFFLE, true) == true) {
 
-                    new AlertDialog.Builder(MainActivity2.this)
-                            .setTitle(R.string.app_name)
-                            .setMessage(R.string.first_use_shuffle)
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    PrefsUtil.getInstance(MainActivity2.this).setValue(PrefsUtil.FIRST_USE_SHUFFLE, false);
-                                }
-                            }).show();
+                        new AlertDialog.Builder(MainActivity2.this)
+                                .setTitle(R.string.app_name)
+                                .setMessage(R.string.first_use_shuffle)
+                                .setCancelable(false)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        PrefsUtil.getInstance(MainActivity2.this).setValue(PrefsUtil.FIRST_USE_SHUFFLE, false);
+                                    }
+                                }).show();
 
+                    }
+
+                    SamouraiWallet.getInstance().setCurrentSelectedAccount(itemPosition);
+                    if (account_selections.length > 1) {
+                        SamouraiWallet.getInstance().setShowTotalBalance(true);
+                    } else {
+                        SamouraiWallet.getInstance().setShowTotalBalance(false);
+                    }
+                    if (loadedBalanceFragment) {
+                        BalanceFragment balanceFragment = BalanceFragment.newInstance(4);
+                        Bundle args = new Bundle();
+                        args.putBoolean("notifTx", false);
+                        args.putBoolean("fetch", false);
+                        balanceFragment.setArguments(args);
+                        FragmentManager fragmentManager = getFragmentManager();
+                        fragmentManager.beginTransaction().replace(R.id.container, balanceFragment).commit();
+                    }
+
+                    return false;
                 }
+            };
 
-                SamouraiWallet.getInstance().setCurrentSelectedAccount(itemPosition);
-                if(account_selections.length > 1)    {
-                    SamouraiWallet.getInstance().setShowTotalBalance(true);
-                }
-                else    {
-                    SamouraiWallet.getInstance().setShowTotalBalance(false);
-                }
-                if(loadedBalanceFragment)    {
-                    BalanceFragment balanceFragment = BalanceFragment.newInstance(4);
-                    Bundle args = new Bundle();
-                    args.putBoolean("notifTx", false);
-                    args.putBoolean("fetch", false);
-                    balanceFragment.setArguments(args);
-                    FragmentManager fragmentManager = getFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.container, balanceFragment).commit();
-                }
-
-                return false;
-            }
-        };
-
-        getActionBar().setListNavigationCallbacks(adapter, navigationListener);
-        getActionBar().setSelectedNavigationItem(1);
+            getActionBar().setListNavigationCallbacks(adapter, navigationListener);
+            getActionBar().setSelectedNavigationItem(1);
+        }
 
         mTitle = getTitle();
 
@@ -218,7 +219,7 @@ public class MainActivity2 extends Activity {
             }
             else	{
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity2.this);
+                /*AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity2.this);
 
                 WebView wv = new WebView(MainActivity2.this);
                 wv.setWebViewClient(new WebViewClient() {
@@ -240,7 +241,9 @@ public class MainActivity2 extends Activity {
                 });
                 if(!isFinishing())    {
                     alert.show();
-                }
+                }*/
+                PrefsUtil.getInstance(MainActivity2.this).setValue("popup_" + getResources().getString(R.string.version_name), true);
+                AppUtil.getInstance(MainActivity2.this).restartApp();
             }
 
         }
@@ -1269,21 +1272,29 @@ public class MainActivity2 extends Activity {
             };
         }
         */
-
-        account_selections = new String[] {
-                getString(R.string.total),
-                getString(R.string.account_samourai),
-                getString(R.string.account_shuffling),
-        };
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            adapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, account_selections);
+        if(SamouraiWallet.USE_SHAPESHIFT) {
+            account_selections = new String[]{
+                    getString(R.string.total),
+                    getString(R.string.account_samourai),
+                    getString(R.string.account_shuffling),
+            };
+        } else {
+            account_selections = new String[]{
+                    //getString(R.string.total),
+                    getString(R.string.account_samourai),
+                    //getString(R.string.account_shuffling),
+            };
         }
-        else    {
-            adapter = new ArrayAdapter<String>(getBaseContext(), R.layout.spinner_dropdown, account_selections);
+
+        if(SamouraiWallet.USE_SHAPESHIFT) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                adapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, account_selections);
+            } else {
+                adapter = new ArrayAdapter<String>(getBaseContext(), R.layout.spinner_dropdown, account_selections);
+            }
         }
 
-        if(account_selections.length > 1)    {
+        if(account_selections.length > 1 || SamouraiWallet.USE_SHAPESHIFT != false)    {
             SamouraiWallet.getInstance().setShowTotalBalance(true);
         }
         else    {

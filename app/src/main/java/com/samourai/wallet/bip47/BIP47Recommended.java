@@ -105,7 +105,7 @@ public class BIP47Recommended extends Activity {
 
         });
 
-        refreshDisplay();
+        //refreshDisplay();
 
     }
 

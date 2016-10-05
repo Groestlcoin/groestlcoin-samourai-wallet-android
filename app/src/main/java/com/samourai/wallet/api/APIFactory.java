@@ -1037,6 +1037,7 @@ public class APIFactory	{
                         else    {
                             BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
                         }
+                        bip47_balance += amount;
                     }
                     if(addr != null)  {
                         bip47_amounts.put(addr, amount);

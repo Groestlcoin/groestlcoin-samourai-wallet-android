@@ -263,15 +263,18 @@ public class BalanceFragment extends Fragment {
 
             }
         });
+        actionShapeShift = (FloatingActionButton) rootView.findViewById(R.id.shapeshift);
+        if(SamouraiWallet.USE_SHAPESHIFT) {
 
-        actionShapeShift = (FloatingActionButton)rootView.findViewById(R.id.shapeshift);
-        actionShapeShift.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                Intent intent = new Intent(getActivity(), ShapeShiftActivity.class);
-                startActivity(intent);
-            }
-        });
+            actionShapeShift.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    Intent intent = new Intent(getActivity(), ShapeShiftActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+        else actionShapeShift.setVisibility(View.INVISIBLE);
 
         actionBIP47 = (FloatingActionButton)rootView.findViewById(R.id.bip47);
         actionBIP47.setOnClickListener(new OnClickListener() {
