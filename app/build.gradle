@@ -8,8 +8,8 @@ android {
         applicationId "hashengineering.groestlcoin.samourai.wallet"
         minSdkVersion 17
         targetSdkVersion 21
-        versionCode 30
-        versionName "0.81a"
+        versionCode 31
+        versionName "0.81b"
         multiDexEnabled true
     }
     dexOptions
