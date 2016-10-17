@@ -8,7 +8,7 @@
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:id="@+id/samourai_splash"
-        android:src="@drawable/samourai_splash"
+        android:src="@drawable/ic_launcher"
         />
 
 </RelativeLayout>
