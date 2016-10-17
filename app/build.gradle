@@ -8,8 +8,8 @@ android {
         applicationId "hashengineering.groestlcoin.samourai.wallet"
         minSdkVersion 17
         targetSdkVersion 21
-        versionCode 28
-        versionName "0.81"
+        versionCode 30
+        versionName "0.81a"
         multiDexEnabled true
     }
     dexOptions
@@ -22,6 +22,14 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        android {
+
+        }
+        blackberry {
+            targetSdkVersion 17
         }
     }
     lintOptions {
@@ -41,7 +49,8 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:21.0.3'
+    androidCompile 'com.android.support:support-v4:21.0.3'
+    blackberryCompile 'com.android.support:support-v4:19.0.3'
     compile 'net.i2p.android.ext:floatingactionbutton:1.9.0'
     compile files('libs/httpclientandroidlib-1.2.1.jar')
     compile 'com.squareup.picasso:picasso:2.5.2'

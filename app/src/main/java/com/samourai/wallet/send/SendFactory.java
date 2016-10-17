@@ -230,9 +230,9 @@ public class SendFactory	{
                     Log.i("SendFactory tx string", hexString);
                     String response = PushTx.getInstance(null).chainz(hexString);//WebUtil.getInstance(null).postURL("text/plain", WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", hexString);
                     //String response = WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
-                    Log.i("Send response", response);
+                    Log.i("Send response", response == null ? "No Response" : response);
                     try {
-                        if (response.contains("txid") || response.length() == 68) {
+                        if (response != null && response.contains("txid") || response.length() == 68) {
                             opc.onSuccess();
                             if (sentChange) {
                                 for (int i = 0; i < changeAddressesUsed; i++) {
@@ -394,7 +394,7 @@ public class SendFactory	{
                     Log.i("SendFactory tx hash", tx.getHashAsString());
                     Log.i("SendFactory tx string", hexString);
                     //String response = WebUtil.getInstance(null).postURL(WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", "tx=" + hexString);
-                    String response = PushTx.getInstance(null).groestlsight(hexString);//WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
+                    String response = PushTx.getInstance(null).chainz(hexString);//WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
 //                    Log.i("Send response", response);
                     //if(response.contains("Transaction Submitted")) {
                     try {
@@ -540,7 +540,8 @@ public class SendFactory	{
                     else theseaddresses = parseAddress_unspent_addresses(jsonObject, xpubs[i]);
 
                     if(theseaddresses != null) {
-                        addresses = new ArrayList<String>();
+                        if(addresses == null )
+                            addresses = new ArrayList<String>();
                         addresses.addAll(theseaddresses);
                     }
                 }

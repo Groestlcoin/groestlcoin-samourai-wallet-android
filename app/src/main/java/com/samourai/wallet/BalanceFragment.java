@@ -192,7 +192,7 @@ public class BalanceFragment extends Fragment {
 
         rootView.setFilterTouchesWhenObscured(true);
 
-        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        //getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
         thisActivity = getActivity();
 

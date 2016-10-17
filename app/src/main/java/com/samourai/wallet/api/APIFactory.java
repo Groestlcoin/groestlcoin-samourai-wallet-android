@@ -47,7 +47,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 public class APIFactory	{
 
@@ -101,7 +103,7 @@ public class APIFactory	{
 
     private synchronized void preloadXPUB(String[] xpubs) {
 
-        JSONObject jsonObject = null;
+        /*JSONObject jsonObject = null;
 
         for(int i = 0; i < xpubs.length; i++)   {
             if(!PrefsUtil.getInstance(context).getValue(xpubs[i], false))    {
@@ -110,7 +112,7 @@ public class APIFactory	{
                     url.append("xpub?xpub=");
                     url.append(xpubs[i]);
                     String response = WebUtil.getInstance(null).getURL(url.toString());
-//                Log.i("APIFactory", "XPUB response:" + response);
+                Log.i("APIFactory", "XPUB response:" + response);
                     try {
                         jsonObject = new JSONObject(response);
                         if(jsonObject.has("status") && jsonObject.getString("status").equals("ok") &&
@@ -129,6 +131,7 @@ public class APIFactory	{
                 }
             }
         }
+        */
 
     }
 
@@ -258,6 +261,8 @@ public class APIFactory	{
                     } else useManualAmount = true;
                     if(txObj.has("time"))  {
                         ts = txObj.getLong("time");
+                        if(ts == 0)
+                            ts = new Date().getTime();
                     }
 
                     if(txObj.has("inputs"))  {
@@ -332,9 +337,11 @@ public class APIFactory	{
 
                         if(hasOnlyBIP47Input && !hasChangeOutput)    {
                             amount = bip47_input_amount;
+                            manual_amount += bip47_input_amount;
                         }
                         else if(hasBIP47Input)    {
                             amount = bip47_input_amount + xpub_input_amount + change_output_amount;
+                            manual_amount += bip47_input_amount;
                         }
                         else    {
                             ;
@@ -364,7 +371,31 @@ public class APIFactory	{
                         }
                         else    {
 
+                            String pmtcode = null;
+                            if(hasBIP47Input)
+                            {
+                                Iterator<Tx> txs = xpub_txs.get(xpub).iterator();
+                                Tx thisTx = txs.next();
+                                while(thisTx != null)
+                                {
+                                    if(thisTx.getHash().equals(hash))
+                                    {
+                                        pmtcode = thisTx.getPaymentCode();
+                                        txs.remove();
+                                        Log.i("APIFactory", "deleting BIP47 transaction: "+ hash);
+                                        break;
+                                    }
+                                    thisTx = txs.next();
+                                }
+
+                            }
+
+
+
                             Tx tx = new Tx(hash, _addr, useManualAmount ? manual_amount : amount, ts, (latest_block > 0L && height > 0L) ? (latest_block - height) + 1 : 0);
+
+                            if(pmtcode != null)
+                                tx.setPaymentCode(pmtcode);
 
                             if(!xpub_txs.containsKey(addr))  {
                                 xpub_txs.put(addr, new ArrayList<Tx>());
@@ -718,7 +749,7 @@ public class APIFactory	{
             public void run() {
                 Looper.prepare();
 
-                if(ConnectivityStatus.hasConnectivity(context)) {
+                /*if(ConnectivityStatus.hasConnectivity(context)) {
 
                     try {
                         String response = WebUtil.getInstance(context).getURL(WebUtil.SAMOURAI_API_CHECK);
@@ -735,7 +766,7 @@ public class APIFactory	{
 
                 } else {
                     showAlertDialog(context.getString(R.string.no_internet), false);
-                }
+                }*/
 
                 handler.post(new Runnable() {
                     @Override
@@ -1086,19 +1117,22 @@ public class APIFactory	{
                     else if(txObj.has("time_utc"))
                     {
                         String _ts = txObj.getString("time_utc");
+                        ts = new Date().getTime();
                         try{
                             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+                            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                             Date parsedDate = dateFormat.parse(_ts);
                             ts = parsedDate.getTime()/1000;
                         }catch(Exception e){//this generic but you can control another types of exception
                             try {
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm'Z'");
+                                dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                                 Date parsedDate = dateFormat.parse(_ts);
                                 ts = parsedDate.getTime() / 1000;
                             }
                             catch (Exception e1)
                             {
-
+                                ts = new Date().getTime();
                             }
                             //look the origin of excption
                         }

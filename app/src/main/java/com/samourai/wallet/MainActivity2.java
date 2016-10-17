@@ -24,11 +24,13 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 //import android.widget.Toolbar;
 //import android.util.Log;
@@ -172,6 +174,12 @@ public class MainActivity2 extends Activity {
 
             getActionBar().setListNavigationCallbacks(adapter, navigationListener);
             getActionBar().setSelectedNavigationItem(1);
+        }
+        else
+        {
+            getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+           getActionBar().setDisplayShowTitleEnabled(false);
+            getActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
         mTitle = getTitle();
@@ -390,7 +398,7 @@ public class MainActivity2 extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        menu.getItem(0).setVisible(false);
+        menu.getItem(0).setVisible(true);
         menu.getItem(1).setVisible(false);
         restoreActionBar();
         return super.onCreateOptionsMenu(menu);
@@ -404,6 +412,13 @@ public class MainActivity2 extends Activity {
         int id = item.getItemId();
 
         // noinspection SimplifiableIfStatement
+        if (id == R.id.action_refresh)
+        {
+            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+            intent.putExtra("notfTx", false);
+            intent.putExtra("fetch", true);
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+        }
         if (id == R.id.action_settings) {
             doSettings();
         }

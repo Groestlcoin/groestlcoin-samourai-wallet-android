@@ -413,7 +413,7 @@ public class SendFragment extends Fragment {
         tvSpendTypeDesc = (TextView)rootView.findViewById(R.id.spendTypeDesc);
         spendType = (SeekBar)rootView.findViewById(R.id.seekBar);
         spendType.setMax(2);
-        spendType.setProgress(PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.SPEND_TYPE, 1));
+        spendType.setProgress(1/*PrefsUtil.getInstance(getActivity()).getValue(PrefsUtil.SPEND_TYPE, 1)*/);
         spendType.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             int progressChanged = 0;
