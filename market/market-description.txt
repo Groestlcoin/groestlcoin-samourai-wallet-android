@@ -1,0 +1,16 @@
+﻿Groestlcoin Samourai has been created to be an extremely portable and highly secure mobile Groestlcoin (GRS) wallet.  Its features include:
+- Military Grade Encryption 
+- BIP 39 passphrase enforced on new wallets
+- Your private keys are stored on your device and are never communicated with any server
+- BIP 47 "Reusable Payment Codes" support
+- No Address Reuse 
+- Randomised Number of Change Outputs
+- Deterministic sorting of input/outputs to help prevent the wallet from leaving a discernible block chain fingerprint
+- Completely portable and exportable at anytime
+- Put Groestlcoin Samourai into stealth mode to hide it on the device
+- Enable remote SMS commands to regain access to your funds if you lose your phone
+- Custom fiat currency prices from popular exchanges or from a blended average
+- Block Explorer support for all popular services
+- Choose the level of block chain obfuscation on every transaction
+
+This app is based on Samourai Wallet for Bitcoin (http://samouraiwallet.com/)
