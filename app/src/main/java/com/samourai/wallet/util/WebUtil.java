@@ -19,9 +19,9 @@ import info.guardianproject.onionkit.ui.OrbotHelper;
 
 public class WebUtil	{
 
-    public static final String BLOCKCHAIN_DOMAIN = "http://chainz.cryptoid.info/grs/";
+    public static final String BLOCKCHAIN_DOMAIN = "https://chainz.cryptoid.info/grs/";
     public static final String BLOCKCHAIN_DOMAIN_API = BLOCKCHAIN_DOMAIN + "api.dws?key=d47da926b82e&q=";
-    public static final String GROESTLSIGHT_SEND_URL = "http://groestlsight.groestlcoin.org/api/tx/send";
+    public static final String GROESTLSIGHT_SEND_URL = "https://groestlsight.groestlcoin.org/api/tx/send";
 
     public static final String SAMOURAI_API = "https://api.samouraiwallet.com/";
     public static final String SAMOURAI_API_CHECK = "https://api.samourai.io/status";
@@ -35,7 +35,7 @@ public class WebUtil	{
 
     public static final String BTCX_FEE_URL = "http://bitcoinexchangerate.org/fees";
 
-    public static final String CHAINSO_TX_PREV_OUT_URL = "http://chainz.cryptoid.info/grs/api.dws?q=txinfo&t=";//"https://chain.so/api/v2/tx/BTC/";
+    public static final String CHAINSO_TX_PREV_OUT_URL = "https://chainz.cryptoid.info/grs/api.dws?q=txinfo&t=";//"https://chain.so/api/v2/tx/BTC/";
     public static final String CHAINSO_PUSHTX_URL = "https://chain.so/api/v2/send_tx/BTC/";
 
     public static final String RECOMMENDED_BIP47_URL = "http://samouraiwallet.com/api/v1/get-pcodes";

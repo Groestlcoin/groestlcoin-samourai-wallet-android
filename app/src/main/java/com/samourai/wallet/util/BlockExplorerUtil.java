@@ -3,7 +3,7 @@ package com.samourai.wallet.util;
 public class BlockExplorerUtil {
 
     private static CharSequence[] blockExplorers = { "Chainz", "Groestlsight", "BChain.info (GRS)" };
-    private static CharSequence[] blockExplorerUrls = { "https://chainz.cryptoid.info/grs/tx.dws?", "http://groestlsight.groestlcoin.org/tx//", "https://bchain.info/GRS/tx/"};
+    private static CharSequence[] blockExplorerUrls = { "https://chainz.cryptoid.info/grs/tx.dws?", "https://groestlsight.groestlcoin.org/tx//", "https://bchain.info/GRS/tx/"};
 
     public static final int CHAINZ = 0;
     public static final int GROESTLSIGHT = 1;
