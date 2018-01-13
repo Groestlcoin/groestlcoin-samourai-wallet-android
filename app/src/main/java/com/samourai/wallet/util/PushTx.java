@@ -71,6 +71,13 @@ public class PushTx {
             return null;
         }
     }
+
+    public boolean chainz_valid(String result)
+    {
+        if(result.length() > 67 && result.charAt(66) == '\n' && result.charAt(67) == '\n')
+            return true;
+        else return false;
+    }
     public String groestlsight(String hexString) {
 
         try {

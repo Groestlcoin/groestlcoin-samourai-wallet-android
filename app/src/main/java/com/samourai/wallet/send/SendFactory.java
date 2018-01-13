@@ -232,7 +232,7 @@ public class SendFactory	{
                     //String response = WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+ hexString);
                     Log.i("Send response", response == null ? "No Response" : response);
                     try {
-                        if (response != null && response.contains("txid") || response.length() == 68) {
+                        if (response != null && response.contains("txid") || PushTx.getInstance(null).chainz_valid(response)) {
                             opc.onSuccess();
                             if (sentChange) {
                                 for (int i = 0; i < changeAddressesUsed; i++) {
@@ -398,7 +398,7 @@ public class SendFactory	{
 //                    Log.i("Send response", response);
                     //if(response.contains("Transaction Submitted")) {
                     try {
-                        if(response.contains("txid") || response.length()==68) {
+                        if(response.contains("txid") || PushTx.getInstance(null).chainz_valid(response)) {
                             opc.onSuccess();
                             HD_WalletFactory.getInstance(context).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + AccessFactory.getInstance(context).getPIN()));
                         }
