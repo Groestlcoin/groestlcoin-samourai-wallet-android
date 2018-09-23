@@ -5,13 +5,16 @@ import android.content.Context;
 import com.samourai.wallet.hd.HD_WalletFactory;
 
 import org.bitcoinj.core.Coin;
-import org.bitcoinj.core.Utils;
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.MnemonicException;
+import org.bitcoinj.params.MainNetParams;
 
 import java.io.IOException;
 import java.math.BigInteger;
 
 public class SamouraiWallet {
+
+    private static NetworkParameters networkParams = null;
 
     public final static int SAMOURAI_ACCOUNT = 0;
     public final static int MIXING_ACCOUNT = 1;
@@ -19,12 +22,10 @@ public class SamouraiWallet {
 
     public final static int NB_ACCOUNTS = 2;
 
-    public static final boolean USE_SHAPESHIFT = false;
+    public static final BigInteger bDust = BigInteger.valueOf(Coin.parseCoin("0.00000546").longValue());    // https://github.com/bitcoin/bitcoin/pull/2760
+    public static final BigInteger bFee = BigInteger.valueOf(Coin.parseCoin("0.00015").longValue());
 
-    public static final BigInteger bDust = BigInteger.valueOf(Coin.parseCoin("0.0001121").longValue());    // https://github.com/bitcoin/bitcoin/pull/2760
-    public static final BigInteger bFee = BigInteger.valueOf(Coin.parseCoin("0.0001").longValue());
-    public static final BigInteger bPriority = BigInteger.valueOf(Coin.parseCoin("0.0005").longValue());
-    public static final BigInteger bAddPriority = BigInteger.valueOf(Coin.parseCoin("0.0003").longValue());
+    public static final long RBF_SEQUENCE_NO = 0xffffffff - 2;
 
     private static SamouraiWallet instance = null;
 
@@ -78,5 +79,16 @@ public class SamouraiWallet {
         }
     }
 
+    public NetworkParameters getCurrentNetworkParams() {
+        return (networkParams == null) ? MainNetParams.get() : networkParams;
+    }
+
+    public void setCurrentNetworkParams(NetworkParameters params) {
+        networkParams = params;
+    }
+
+    public boolean isTestNet()  {
+        return (networkParams == null) ? false : !(getCurrentNetworkParams() instanceof MainNetParams);
+    }
 
 }

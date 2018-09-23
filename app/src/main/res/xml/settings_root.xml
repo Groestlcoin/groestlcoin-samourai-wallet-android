@@ -12,6 +12,11 @@
         />
 
     <Preference
+        android:title="@string/options_txs"
+        android:key="txs"
+        />
+
+    <Preference
         android:title="@string/options_cat_stealth"
         android:key="stealth"
         />
@@ -24,6 +29,11 @@
     <Preference
         android:title="@string/options_cat_networking"
         android:key="networking"
+        />
+
+    <Preference
+        android:title="@string/options_troubleshoot"
+        android:key="troubleshoot"
         />
 
     <Preference

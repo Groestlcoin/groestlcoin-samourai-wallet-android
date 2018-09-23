@@ -1,13 +1,16 @@
 package com.samourai.wallet.util;
 
+import com.samourai.wallet.SamouraiWallet;
+
 public class BlockExplorerUtil {
 
     private static CharSequence[] blockExplorers = { "Chainz", "Groestlsight"};
-    private static CharSequence[] blockExplorerUrls = { "https://chainz.cryptoid.info/grs/tx.dws?", "https://groestlsight.groestlcoin.org/tx//"};
+    private static CharSequence[] blockExplorerTxUrls = { "https://chainz.cryptoid.info/grs/tx.dws?", "https://groestlsight.groestlcoin.org/tx/"};
+    private static CharSequence[] blockExplorerAddressUrls = { "https://www.smartbit.com.au/address/", "http://srv1.yogh.io/#addr:id:", "https://live.blockcypher.com/btc/address/", "https://live.blockcypher.com/btc/address/" };
 
-    public static final int CHAINZ = 0;
-    public static final int GROESTLSIGHT = 1;
-
+    private static CharSequence[] tBlockExplorers = { "Chainz", "Groestlsight"};
+    private static CharSequence[] tBlockExplorerTxUrls = { "https://testnet.smartbit.com.au/tx/", "https://live.blockcypher.com/btc-testnet/tx/" };
+    private static CharSequence[] tBlockExplorerAddressUrls = { "https://testnet.smartbit.com.au/address/", "https://live.blockcypher.com/btc-testnet/address/" };
 
     private static BlockExplorerUtil instance = null;
 
@@ -23,11 +26,36 @@ public class BlockExplorerUtil {
     }
 
     public CharSequence[] getBlockExplorers() {
-        return blockExplorers;
+
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            return tBlockExplorers;
+        }
+        else    {
+            return blockExplorers;
+        }
+
     }
 
-    public CharSequence[] getBlockExplorerUrls() {
-        return blockExplorerUrls;
+    public CharSequence[] getBlockExplorerTxUrls() {
+
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            return tBlockExplorerTxUrls;
+        }
+        else    {
+            return blockExplorerTxUrls;
+        }
+
+    }
+
+    public CharSequence[] getBlockExplorerAddressUrls() {
+
+        if(SamouraiWallet.getInstance().isTestNet())    {
+            return tBlockExplorerAddressUrls;
+        }
+        else    {
+            return blockExplorerAddressUrls;
+        }
+
     }
 
 }

@@ -9,7 +9,13 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,10 +31,15 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.encode.QRCodeEncoder;
+import com.samourai.wallet.BuildConfig;
+import com.samourai.wallet.bip47.paynym.ClaimPayNymActivity;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.R;
+import com.squareup.picasso.Picasso;
 
 import org.bitcoinj.core.AddressFormatException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -72,7 +84,7 @@ public class BIP47ShowQR extends Activity {
         display = (BIP47ShowQR.this).getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        imgWidth = size.x - 280;
+        imgWidth = Math.max(size.x - 360, 150);
 
         addressLayout = (LinearLayout)findViewById(R.id.receive_address_layout);
         addressLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -110,6 +122,9 @@ public class BIP47ShowQR extends Activity {
         ivQR.setMaxWidth(imgWidth);
 
         displayQRCode();
+
+        doPayNymTask();
+
     }
 
     @Override
@@ -175,8 +190,16 @@ public class BIP47ShowQR extends Activity {
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_SEND);
                                 intent.setType("image/png");
-                                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-                                startActivity(Intent.createChooser(intent, BIP47ShowQR.this.getText(R.string.send_payment_code)));
+                                if (android.os.Build.VERSION.SDK_INT >= 24) {
+                                    //From API 24 sending FIle on intent ,require custom file provider
+                                    intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                                            BIP47ShowQR.this,
+                                            getApplicationContext()
+                                                    .getPackageName() + ".provider", file));
+                                } else {
+                                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                                }
+                                 startActivity(Intent.createChooser(intent, BIP47ShowQR.this.getText(R.string.send_payment_code)));
                             }
 
                         }
@@ -216,6 +239,71 @@ public class BIP47ShowQR extends Activity {
         }
 
         return bitmap;
+    }
+
+    private void doPayNymTask() {
+
+        new Thread(new Runnable() {
+
+            private Handler handler = new Handler();
+
+            @Override
+            public void run() {
+
+                Looper.prepare();
+
+                final String strPaymentCode = addr;
+
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("nym", strPaymentCode);
+                    String res = com.samourai.wallet.bip47.paynym.WebUtil.getInstance(BIP47ShowQR.this).postURL("application/json", null, com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + "api/v1/nym", obj.toString());
+                    Log.d("BIP47Activity", res);
+
+                    JSONObject responseObj = new JSONObject(res);
+                    if(responseObj.has("codes"))    {
+                        JSONArray array = responseObj.getJSONArray("codes");
+                        if(array.getJSONObject(0).has("claimed") && array.getJSONObject(0).getBoolean("claimed") == true)    {
+                            final String strNymName = responseObj.getString("nymName");
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    Log.d("BIP47Activity", strNymName);
+
+                                    final ImageView ivAvatar = (ImageView) findViewById(R.id.avatar);
+                                    Picasso.with(BIP47ShowQR.this).load(com.samourai.wallet.bip47.paynym.WebUtil.PAYNYM_API + strPaymentCode + "/avatar").into(ivAvatar);
+
+                                    ((TextView)findViewById(R.id.nymName)).setText(strNymName);
+
+                                }
+                            });
+                        }
+                        else    {
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    ((TextView)findViewById(R.id.nymName)).setVisibility(View.GONE);
+                                    ((ImageView)findViewById(R.id.avatar)).setVisibility(View.GONE);
+                                }
+                            });
+                        }
+                    }
+                    else    {
+                        handler.post(new Runnable() {
+                            public void run() {
+                                ((TextView)findViewById(R.id.nymName)).setVisibility(View.GONE);
+                                ((ImageView)findViewById(R.id.avatar)).setVisibility(View.GONE);
+                            }
+                        });
+                    }
+
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                Looper.loop();
+
+            }
+        }).start();
     }
 
 }

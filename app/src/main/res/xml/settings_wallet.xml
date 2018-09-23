@@ -15,15 +15,35 @@
         android:key="scramblePin"
         />
 
+    <CheckBoxPreference
+        android:title="@string/options_haptic"
+        android:summary="@string/options_haptic_2"
+        android:defaultValue="true"
+        android:key="haptic"
+        />
+
     <Preference
         android:title="@string/options_mnemonic"
         android:summary="@string/options_mnemonic2"
         android:key="mnemonic"
         />
+
     <Preference
         android:title="@string/options_xpub"
         android:summary="@string/options_xpub2"
         android:key="xpub"
+        />
+
+    <Preference
+        android:title="@string/options_xpub49"
+        android:summary="@string/options_xpub49_2"
+        android:key="ypub"
+        />
+
+    <Preference
+        android:title="@string/options_xpub84"
+        android:summary="@string/options_xpub84_2"
+        android:key="zpub"
         />
 
     <Preference

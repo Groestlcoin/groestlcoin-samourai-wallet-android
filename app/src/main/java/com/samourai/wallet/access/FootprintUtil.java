@@ -5,8 +5,10 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 //import android.util.Log;
 
-import org.spongycastle.crypto.digests.RIPEMD160Digest;
-import org.spongycastle.util.encoders.Hex;
+import com.samourai.wallet.util.PrefsUtil;
+
+import org.bouncycastle.crypto.digests.RIPEMD160Digest;
+import org.bouncycastle.util.encoders.Hex;
 
 public class FootprintUtil {
 
@@ -38,23 +40,50 @@ public class FootprintUtil {
 
         strFootprint += tManager.getDeviceId();
 
-//        Log.i("FootprintUtil", strFootprint);
+        return RIPEMD160(strFootprint);
+    }
 
+    public String getFootprintV3() {
+
+        TelephonyManager tManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+
+        String strFootprint = Build.BOARD +  Build.MANUFACTURER + Build.BRAND + Build.MODEL + Build.SERIAL;
+
+        strFootprint += tManager.getDeviceId();
+
+        return RIPEMD160(strFootprint);
+    }
+
+    public String getFootprintV4() {
+
+        String strFootprint = null;
+
+        if(PrefsUtil.getInstance(context).getValue(PrefsUtil.FP, "").length() > 0)  {
+            strFootprint = PrefsUtil.getInstance(context).getValue(PrefsUtil.FP, "");
+        }
+        else    {
+            strFootprint = Build.MANUFACTURER + Build.BRAND + Build.MODEL + Build.SERIAL;
+            PrefsUtil.getInstance(context).setValue(PrefsUtil.FP, strFootprint);
+        }
+
+        return RIPEMD160(strFootprint);
+    }
+
+    public String RIPEMD160(String data)   {
         try {
-            byte[] data = strFootprint.getBytes("UTF-8");
+            byte[] hash = data.getBytes("UTF-8");
             RIPEMD160Digest digest = new RIPEMD160Digest();
-            digest.update(data, 0, data.length);
+            digest.update(hash, 0, hash.length);
             byte[] out = new byte[digest.getDigestSize()];
             digest.doFinal(out, 0);
             if(out != null) {
-//                Log.i("FootprintUtil", "RIPEMD160:" + new String(Hex.encode(out)));
                 return new String(Hex.encode(out));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return strFootprint;
+        return "";
 
     }
 

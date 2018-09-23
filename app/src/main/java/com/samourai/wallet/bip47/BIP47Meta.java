@@ -1,19 +1,21 @@
 package com.samourai.wallet.bip47;
 
 import android.content.Context;
+import android.util.Log;
 //import android.util.Log;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.bip47.rpc.PaymentAddress;
 import com.samourai.wallet.bip47.rpc.PaymentCode;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.params.MainNetParams;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -22,11 +24,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BIP47Meta {
+
+    public static final String strSamouraiDonationPCode = "PM8TJVzLGqWR3dtxZYaTWn3xJUop3QP3itR4eYzX7XvV5uAfctEEuHhKNo3zCcqfAbneMhyfKkCthGv5werVbwLruhZyYNTxqbCrZkNNd2pPJA2e2iAh";
+    public static final String strSamouraiDonationMeta = "?title=Samourai Donations&desc=Donate to help fund development of Samourai Bitcoin Wallet&user=K6tS2X8";
 
     public static final int INCOMING_LOOKAHEAD = 3;
     public static final int OUTGOING_LOOKAHEAD = 3;
@@ -45,6 +48,7 @@ public class BIP47Meta {
     private static ConcurrentHashMap<String,ArrayList<Integer>> pcodeIncomingUnspent = null;
     private static ConcurrentHashMap<String,String> pcodeIncomingStatus = null;
     private static ConcurrentHashMap<String,String> pcodeLatestEvent = null;
+    private static ConcurrentHashMap<String,Boolean> pcodeSegwit = null;
 
     private static BIP47Meta instance = null;
 
@@ -63,6 +67,7 @@ public class BIP47Meta {
             pcodeIncomingUnspent = new ConcurrentHashMap<String,ArrayList<Integer>>();
             pcodeIncomingStatus = new ConcurrentHashMap<String,String>();
             pcodeLatestEvent = new ConcurrentHashMap<String,String>();
+            pcodeSegwit = new ConcurrentHashMap<String,Boolean>();
 
             instance = new BIP47Meta();
         }
@@ -81,6 +86,7 @@ public class BIP47Meta {
         pcodeIncomingUnspent.clear();
         pcodeIncomingStatus.clear();
         pcodeLatestEvent.clear();
+        pcodeSegwit.clear();
     }
 
     public String getLabel(String pcode)   {
@@ -114,14 +120,24 @@ public class BIP47Meta {
         return pcodeLabels.keySet();
     }
 
-    public Set<String> getSortedByLabels()    {
+    public Set<String> getSortedByLabels(boolean includeArchived)    {
 
-        SortedSet<String> ret = new TreeSet<String>();
-        ret.addAll(pcodeLabels.keySet());
+        ConcurrentHashMap<String, String> labels = null;
 
-        ConcurrentHashMap<String, String> labels = pcodeLabels;
+        if(includeArchived)    {
+            labels = pcodeLabels;
+        }
+        else    {
+            labels = new ConcurrentHashMap<String, String>();
+            for(String key : pcodeLabels.keySet())   {
+                if(!BIP47Meta.getInstance().getArchived(key))    {
+                    labels.put(key, pcodeLabels.get(key));
+                }
+            }
+
+        }
+
         Map<String, String> sortedMapAsc = valueSortByComparator(labels, true);
-
         return sortedMapAsc.keySet();
     }
 
@@ -173,6 +189,20 @@ public class BIP47Meta {
         pcodeArchived.put(pcode, archived);
     }
 
+    public boolean getSegwit(String pcode)   {
+        if(!pcodeSegwit.containsKey(pcode))    {
+            pcodeSegwit.put(pcode, false);
+            return false;
+        }
+        else    {
+            return pcodeSegwit.get(pcode);
+        }
+    }
+
+    public void setSegwit(String pcode, boolean segwit)   {
+        pcodeSegwit.put(pcode, segwit);
+    }
+
     public void inc(String pcode)   {
         if(!pcodeOutgoingIdxs.containsKey(pcode))    {
             pcodeOutgoingIdxs.put(pcode, 1);
@@ -195,23 +225,11 @@ public class BIP47Meta {
         pcodeOutgoingIdxs.put(pcode, idx);
     }
 
-    public String[] getIncomingAddresses()  {
-
-        ArrayList<String> addrs = new ArrayList<String>();
-        for(ConcurrentHashMap<String,Integer> map : pcodeIncomingIdxs.values())   {
-            addrs.addAll(map.keySet());
-        }
-
-        String[] s = addrs.toArray(new String[addrs.size()]);
-
-        return s;
-    }
-
     public String[] getIncomingAddresses(boolean includeArchived)  {
 
         ArrayList<String> addrs = new ArrayList<String>();
         for(String pcode : pcodeIncomingIdxs.keySet())   {
-            if(!includeArchived && pcodeArchived.get(pcode))    {
+            if(!includeArchived && pcodeArchived.get(pcode) != null)    {
                 continue;
             }
             else    {
@@ -232,18 +250,20 @@ public class BIP47Meta {
         ArrayList<String> addrs = new ArrayList<String>();
         while(it.hasNext())   {
             String pcode = it.next();
+            if(getArchived(pcode))    {
+                continue;
+            }
             int idx = getIncomingIdx(pcode);
 
 //            Log.i("APIFactory", "idx:" + idx + " , " + pcode);
 
             for(int i = idx; i < (idx + INCOMING_LOOKAHEAD); i++)   {
                 try {
-                    PaymentAddress receiveAddress = BIP47Util.getInstance(ctx).getReceiveAddress(new PaymentCode(pcode), i);
-//                    Log.i("APIFactory", "receive from " + i + ":" + receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                    BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                    BIP47Meta.getInstance().getIdx4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), i);
-                    BIP47Meta.getInstance().getPCode4AddrLookup().put(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString(), pcode.toString());
-                    addrs.add(receiveAddress.getReceiveECKey().toAddress(MainNetParams.get()).toString());
+                    Log.i("APIFactory", "receive from " + i + ":" + BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
+                    BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
+                    BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i), i);
+                    BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
+                    addrs.add(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
                 }
                 catch(Exception e) {
                     ;
@@ -374,9 +394,8 @@ public class BIP47Meta {
 
             if(idxs != null)    {
                 for(int i = 0; i < idxs.size(); i++)   {
-                    PaymentAddress addr = BIP47Util.getInstance(ctx).getReceiveAddress(new PaymentCode(pcode), idxs.get(i));
-//                    Log.i("BIP47Meta", "address has unspents:" + addr.getReceiveECKey().toAddress(MainNetParams.get()).toString());
-                    ret.add(addr.getReceiveECKey().toAddress(MainNetParams.get()).toString());
+                    Log.i("BIP47Meta", "address has unspents:" + BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), idxs.get(i)));
+                    ret.add(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), idxs.get(i)));
                 }
             }
 
@@ -486,6 +505,7 @@ public class BIP47Meta {
                 pobj.put("payment_code", pcode);
                 pobj.put("label", pcodeLabels.get(pcode));
                 pobj.put("archived", pcodeArchived.get(pcode));
+                pobj.put("segwit", pcodeSegwit.get(pcode));
 
                 if(pcodeIncomingIdxs.containsKey(pcode))    {
                     ConcurrentHashMap<String,Integer> incoming = pcodeIncomingIdxs.get(pcode);
@@ -569,6 +589,7 @@ public class BIP47Meta {
 
                 pcodeLabels.put(obj.getString("payment_code"), obj.getString("label"));
                 pcodeArchived.put(obj.getString("payment_code"), obj.has("archived") ? obj.getBoolean("archived") : false);
+                pcodeSegwit.put(obj.getString("payment_code"), obj.has("segwit") ? obj.getBoolean("segwit") : false);
 
                 if(obj.has("in_idx"))    {
                     ConcurrentHashMap<String,Integer> incoming = new ConcurrentHashMap<String,Integer>();

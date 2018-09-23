@@ -1,6 +1,8 @@
 package com.samourai.wallet.hd;
 
-import org.bitcoinj.core.Address;
+import com.samourai.wallet.SamouraiWallet;
+import com.samourai.wallet.util.FormatsUtil;
+
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.NetworkParameters;
@@ -18,13 +20,15 @@ public class HD_Account {
 
     protected DeterministicKey aKey = null;
     private String strLabel = null;
-    protected int	mAID;
+    protected int mAID;
     private boolean isArchived = false;
 
     private HD_Chain mReceive = null;
     private HD_Chain mChange = null;
 
     protected String strXPUB = null;
+    protected String strYPUB = null;
+    protected String strZPUB = null;
 
     protected NetworkParameters mParams = null;
 
@@ -41,10 +45,12 @@ public class HD_Account {
         childnum |= ChildNumber.HARDENED_BIT;
         aKey = HDKeyDerivation.deriveChildKey(mKey, childnum);
 
-        strXPUB = aKey.serializePubB58(MainNetParams.get());
+        strXPUB = aKey.serializePubB58(SamouraiWallet.getInstance().getCurrentNetworkParams());
+        strYPUB = aKey.serializePubB58(SamouraiWallet.getInstance().getCurrentNetworkParams(), 49);
+        strZPUB = aKey.serializePubB58(SamouraiWallet.getInstance().getCurrentNetworkParams(), 84);
 
-        mReceive = new HD_Chain(mParams, aKey, true, 1);
-        mChange = new HD_Chain(mParams, aKey, false, 1);
+        mReceive = new HD_Chain(mParams, aKey, true);
+        mChange = new HD_Chain(mParams, aKey, false);
 
     }
 
@@ -57,10 +63,10 @@ public class HD_Account {
         // assign master key to account key
         aKey = createMasterPubKeyFromXPub(xpub);
 
-        strXPUB = xpub;
+        strXPUB = strYPUB = strZPUB = xpub;
 
-        mReceive = new HD_Chain(mParams, aKey, true, 10);
-        mChange = new HD_Chain(mParams, aKey, false, 10);
+        mReceive = new HD_Chain(mParams, aKey, true);
+        mChange = new HD_Chain(mParams, aKey, false);
 
     }
 
@@ -69,7 +75,8 @@ public class HD_Account {
         byte[] xpubBytes = Base58.decodeChecked(xpubstr);
 
         ByteBuffer bb = ByteBuffer.wrap(xpubBytes);
-        if(bb.getInt() != 0x0488B21E)   {
+        int version = bb.getInt();
+        if(version != FormatsUtil.MAGIC_XPUB && version != FormatsUtil.MAGIC_TPUB && version != FormatsUtil.MAGIC_YPUB && version != FormatsUtil.MAGIC_UPUB && version != FormatsUtil.MAGIC_ZPUB && version != FormatsUtil.MAGIC_VPUB)   {
             throw new AddressFormatException("invalid xpub version");
         }
 
@@ -90,6 +97,18 @@ public class HD_Account {
     public String xpubstr() {
 
         return strXPUB;
+
+    }
+
+    public String ypubstr() {
+
+        return strYPUB;
+
+    }
+
+    public String zpubstr() {
+
+        return strZPUB;
 
     }
 
@@ -117,15 +136,23 @@ public class HD_Account {
         return (idx == 0) ? mReceive : mChange;
     }
 
-    public int size() {
-        return mReceive.length() + mChange.length();
-    }
-
-    public JSONObject toJSON() {
+    public JSONObject toJSON(int purpose) {
         try {
             JSONObject obj = new JSONObject();
 
-            obj.put("xpub", xpubstr());
+            switch(purpose)    {
+                case 49:
+                    obj.put("ypub", ypubstr());
+                    break;
+                case 84:
+                    obj.put("zpub", zpubstr());
+                    break;
+                // assume purpose == 44
+                default:
+                    obj.put("xpub", xpubstr());
+                    break;
+            }
+
             obj.put("receiveIdx", getReceive().getAddrIdx());
             obj.put("changeIdx", getChange().getAddrIdx());
             obj.put("id", mAID);

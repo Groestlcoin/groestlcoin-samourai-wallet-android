@@ -2,9 +2,7 @@ package com.samourai.wallet.hd;
 
 import android.content.Context;
 
-import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
-import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
@@ -26,7 +24,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +52,8 @@ public class HD_Wallet {
         byte[] hd_seed = MnemonicCode.toSeed(mWordList, strPassphrase);
         mKey = HDKeyDerivation.createMasterPrivateKey(hd_seed);
         DeterministicKey t1 = HDKeyDerivation.deriveChildKey(mKey, purpose|ChildNumber.HARDENED_BIT);
-        mRoot = HDKeyDerivation.deriveChildKey(t1, ChildNumber.HARDENED_BIT);
+        int coin = SamouraiWallet.getInstance().isTestNet() ? (1 | ChildNumber.HARDENED_BIT) : ChildNumber.HARDENED_BIT;
+        mRoot = HDKeyDerivation.deriveChildKey(t1, coin);
 
         mAccounts = new ArrayList<HD_Account>();
         for(int i = 0; i < nbAccounts; i++) {
@@ -108,7 +106,7 @@ public class HD_Wallet {
     }
 
     public String getSeedHex() {
-        return org.spongycastle.util.encoders.Hex.toHexString(mSeed);
+        return org.bouncycastle.util.encoders.Hex.toHexString(mSeed);
     }
 
     public String getMnemonic() {
@@ -127,19 +125,13 @@ public class HD_Wallet {
         return mAccounts.get(accountId);
     }
 
+    public HD_Account getAccountAt(int accountIdx) {
+        return new HD_Account(mParams, mRoot, "", accountIdx);
+    }
+
     public void addAccount() {
         String strName = String.format("Account %d", mAccounts.size());
         mAccounts.add(new HD_Account(mParams, mRoot, strName, mAccounts.size()));
-    }
-
-    public int size() {
-
-        int sz = 0;
-        for(HD_Account acct : mAccounts) {
-            sz += acct.size();
-        }
-
-        return sz;
     }
 
     public String[] getXPUBs() {
@@ -151,61 +143,6 @@ public class HD_Wallet {
         }
 
         return ret;
-    }
-
-    public JSONObject toJSON(Context ctx) {
-        try {
-            JSONObject wallet = new JSONObject();
-
-            if(mSeed != null) {
-                wallet.put("seed", org.spongycastle.util.encoders.Hex.toHexString(mSeed));
-                wallet.put("passphrase", strPassphrase);
-//                obj.put("mnemonic", getMnemonic());
-            }
-
-            JSONArray accts = new JSONArray();
-            for(HD_Account acct : mAccounts) {
-                accts.put(acct.toJSON());
-            }
-            wallet.put("accounts", accts);
-
-            //
-            // can remove ???
-            //
-            /*
-            obj.put("receiveIdx", mAccounts.get(0).getReceive().getAddrIdx());
-            obj.put("changeIdx", mAccounts.get(0).getChange().getAddrIdx());
-            */
-
-            JSONObject meta = new JSONObject();
-            meta.put("prev_balance", APIFactory.getInstance(ctx).getXpubBalance());
-            meta.put("sent_tos", SendAddressUtil.getInstance().toJSON());
-            meta.put("spend_type", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.SPEND_TYPE, 1));
-            meta.put("bip47", BIP47Meta.getInstance().toJSON());
-            meta.put("pin", AccessFactory.getInstance().getPIN());
-            meta.put("pin2", AccessFactory.getInstance().getPIN2());
-
-            meta.put("units", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.BTC_UNITS, 0));
-            meta.put("explorer", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.BLOCK_EXPLORER, 0));
-            meta.put("trusted_no", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.ALERT_MOBILE_NO, ""));
-            meta.put("scramble_pin", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.SCRAMBLE_PIN, false));
-            meta.put("auto_backup", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.AUTO_BACKUP, true));
-            meta.put("remote", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.ACCEPT_REMOTE, false));
-            meta.put("use_trusted", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.TRUSTED_LOCK, false));
-            meta.put("fiat", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_FIAT, "USD"));
-            meta.put("fiat_sel", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_FIAT_SEL, 0));
-            meta.put("fx", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_EXCHANGE, "Bittrex"));
-            meta.put("fx_sel", PrefsUtil.getInstance(ctx).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0));
-
-            JSONObject obj = new JSONObject();
-            obj.put("wallet", wallet);
-            obj.put("meta", meta);
-
-            return obj;
-        }
-        catch(JSONException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
 }

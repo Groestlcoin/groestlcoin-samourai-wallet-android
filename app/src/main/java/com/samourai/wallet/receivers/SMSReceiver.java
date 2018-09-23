@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.telephony.SmsMessage;
 //import android.util.Log;
 
@@ -11,6 +12,7 @@ import org.bitcoinj.crypto.MnemonicException;
 import com.samourai.wallet.access.AccessFactory;
 import com.samourai.wallet.crypto.AESUtil;
 import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.PrefsUtil;
@@ -19,10 +21,8 @@ import com.samourai.wallet.util.SMSSender;
 import org.apache.commons.codec.DecoderException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 public class SMSReceiver extends BroadcastReceiver {
@@ -100,48 +100,61 @@ public class SMSReceiver extends BroadcastReceiver {
         }
     }
 
-    private void doRemote(Context context, String msg, String incomingTelNo, String pin)	{
+    private void doRemote(final Context context, final String msg, final String incomingTelNo, final String pin)	{
 
-        // remote commands: [sw 'command' 'pin']
-        if(msg.startsWith("sw ") && msg.contains(" wipe "))	{
-            AppUtil.getInstance(context).wipeApp();
-            abortBroadcast();
-            System.exit(0);
-        }
-        else if(msg.startsWith("sw ") && msg.contains(" seed "))	{
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-            if(!HD_WalletFactory.getInstance(context).holding())	{
+                Looper.prepare();
 
-                try {
-                    HD_WalletFactory.getInstance(context).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + pin));
+                // remote commands: [sw 'command' 'pin']
+                if(msg.startsWith("sw ") && msg.contains(" wipe "))	{
+                    AppUtil.getInstance(context).wipeApp();
+                    abortBroadcast();
+                    System.exit(0);
                 }
-                catch (MnemonicException.MnemonicLengthException mle) {
-                    mle.printStackTrace();
-                } catch (DecoderException de) {
-                    de.printStackTrace();
-                } finally {
+                else if(msg.startsWith("sw ") && msg.contains(" seed "))	{
+
+                    if(!HD_WalletFactory.getInstance(context).holding())	{
+
+                        try {
+                            PayloadUtil.getInstance(context).restoreWalletfromJSON(new CharSequenceX(AccessFactory.getInstance(context).getGUID() + pin));
+                        }
+                        catch (MnemonicException.MnemonicLengthException mle) {
+                            mle.printStackTrace();
+                        } catch (DecoderException de) {
+                            de.printStackTrace();
+                        } finally {
+                            ;
+                        }
+
+                    }
+
+                    String seed = null;
+                    try {
+                        seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
+                    }
+                    catch(IOException ioe) {
+                        ioe.printStackTrace();
+                    }
+                    catch(MnemonicException.MnemonicLengthException mle) {
+                        mle.printStackTrace();
+                    }
+
+//            Log.i("SMSReceiver", "sending to:" + incomingTelNo);
+                    SMSSender.getInstance(context).send(seed, incomingTelNo);
+
+                }
+                else	{
                     ;
                 }
 
-            }
+                Looper.loop();
 
-            String seed = null;
-            try {
-                seed = HD_WalletFactory.getInstance(context).get().getSeedHex();
             }
-            catch(IOException ioe) {
-                ioe.printStackTrace();
-            }
-            catch(MnemonicException.MnemonicLengthException mle) {
-                mle.printStackTrace();
-            }
+        }).start();
 
-//            Log.i("SMSReceiver", "sending to:" + incomingTelNo);
-            SMSSender.getInstance(context).send(seed, incomingTelNo);
-
-        }
-        else	{
-            ;
-        }
     }
+
 }

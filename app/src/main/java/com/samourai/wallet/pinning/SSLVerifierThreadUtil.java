@@ -7,8 +7,9 @@ import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.samourai.wallet.R;
+import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.ConnectivityStatus;
+import com.samourai.wallet.R;
 
 public class SSLVerifierThreadUtil {
 
@@ -41,7 +42,7 @@ public class SSLVerifierThreadUtil {
             public void run() {
                 Looper.prepare();
 
-                if (ConnectivityStatus.hasConnectivity(context)) {
+                if (!AppUtil.getInstance(context).isOfflineMode()) {
 
                     //Pin SSL certificate
                     switch (SSLVerifierUtil.getInstance(context).certificatePinned()) {

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:title="@string/options_segwit"
+        android:summary="@string/options_segwit_2"
+        android:defaultValue="true"
+        android:key="segwit"
+        />
+
+    <CheckBoxPreference
+        android:title="@string/options_like_typed_change"
+        android:summary="@string/options_like_typed_change2"
+        android:defaultValue="true"
+        android:key="likeTypedChange"
+        />
+
+    <CheckBoxPreference
+        android:title="@string/options_boltzmann"
+        android:summary="@string/options_boltzmann_2"
+        android:defaultValue="true"
+        android:key="boltzmann"
+        />
+
+    <CheckBoxPreference
+        android:title="@string/options_rbf0"
+        android:summary="@string/options_rbf0_2"
+        android:defaultValue="false"
+        android:key="rbf"
+        />
+
+    <Preference
+        android:title="@string/options_trusted_node"
+        android:summary="@string/options_trusted_node2"
+        android:key="trustedNode"
+        />
+
+    <CheckBoxPreference
+        android:title="@string/options_use_trusted_node"
+        android:summary="@string/options_use_trusted_node2"
+        android:defaultValue="false"
+        android:key="useTrustedNode"
+        />
+
+    <Preference
+        android:title="@string/options_fee_provider"
+        android:summary="@string/options_fee_provider2"
+        android:key="feeProvider"
+        />
+
+    <CheckBoxPreference
+        android:title="@string/options_broadcast_on"
+        android:summary="@string/options_broadcast_on2"
+        android:defaultValue="true"
+        android:key="broadcastTx"
+        />
+
+    <Preference
+        android:title="@string/options_broadcast_hex"
+        android:summary="@string/options_broadcast_hex2"
+        android:key="broadcastHex"
+        />
+
+</PreferenceScreen>

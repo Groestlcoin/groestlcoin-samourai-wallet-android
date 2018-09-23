@@ -1,19 +1,8 @@
 package com.samourai.wallet.util;
 
-import android.content.Context;
-import android.util.Log;
-
-import org.bitcoinj.crypto.MnemonicException;
-import com.samourai.wallet.access.AccessFactory;
-import com.samourai.wallet.hd.HD_Address;
-import com.samourai.wallet.hd.HD_WalletFactory;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.simple.JSONValue;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 public class SendAddressUtil {
@@ -34,15 +23,21 @@ public class SendAddressUtil {
         return instance;
     }
 
+    public void reset() {
+        sendAddresses.clear();
+    }
+
     public void add(String addr, boolean showAgain) {
-        sendAddresses.put(addr, showAgain);
+        if(addr.length() >= 12)    {
+            sendAddresses.put(addr.substring(0, 12), showAgain);
+        }
     }
 
     public int get(String addr) {
-        if(sendAddresses.get(addr) == null) {
+        if(addr.length() >= 12 && sendAddresses.get(addr.substring(0, 12)) == null) {
             return -1;
         }
-        else if (sendAddresses.get(addr) == true) {
+        else if(addr.length() >= 12 && sendAddresses.get(addr.substring(0, 12)) == true) {
             return 1;
         }
         else {
@@ -55,9 +50,11 @@ public class SendAddressUtil {
         JSONArray sent_tos = new JSONArray();
         for(String key : sendAddresses.keySet()) {
             JSONArray sent = new JSONArray();
-            sent.put(key);
-            sent.put(sendAddresses.get(key));
-            sent_tos.put(sent);
+            if(key.length() >= 12)    {
+                sent.put(key.substring(0, 12));
+                sent.put(sendAddresses.get(key));
+                sent_tos.put(sent);
+            }
         }
 
         return sent_tos;

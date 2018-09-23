@@ -2,26 +2,35 @@ package com.samourai.wallet.bip47;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
+//import android.util.Log;
 
-import com.samourai.wallet.R;
 import com.samourai.wallet.access.AccessFactory;
-import com.samourai.wallet.hd.HD_WalletFactory;
+import com.samourai.wallet.crypto.DecryptionException;
+import com.samourai.wallet.payload.PayloadUtil;
 import com.samourai.wallet.util.CharSequenceX;
 import com.samourai.wallet.util.FormatsUtil;
+import com.samourai.wallet.R;
+import com.samourai.wallet.util.WebUtil;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONException;
-import org.spongycastle.util.encoders.DecoderException;
+import org.json.JSONObject;
+import org.bouncycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
 
@@ -29,6 +38,8 @@ public class BIP47Add extends Activity {
 
     private EditText edLabel = null;
     private EditText edPCode = null;
+
+    private TextWatcher twPCode = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,28 @@ public class BIP47Add extends Activity {
         if(extras != null && extras.containsKey("label"))	{
             edLabel.setText(extras.getString("label"));
         }
+
+        twPCode = new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+                edPCode.removeTextChangedListener(this);
+
+                final String userInput = edPCode.getText().toString();
+
+                edPCode.addTextChangedListener(twPCode);
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                ;
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ;
+            }
+        };
+
+        edPCode.addTextChangedListener(twPCode);
 
     }
 
@@ -91,7 +124,7 @@ public class BIP47Add extends Activity {
                         Looper.prepare();
 
                         try {
-                            HD_WalletFactory.getInstance(BIP47Add.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Add.this).getGUID() + AccessFactory.getInstance().getPIN()));
+                            PayloadUtil.getInstance(BIP47Add.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Add.this).getGUID() + AccessFactory.getInstance().getPIN()));
                         }
                         catch(MnemonicException.MnemonicLengthException mle) {
                             mle.printStackTrace();
@@ -113,7 +146,12 @@ public class BIP47Add extends Activity {
                             npe.printStackTrace();
                             Toast.makeText(BIP47Add.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
                         }
+                        catch(DecryptionException de) {
+                            de.printStackTrace();
+                            Toast.makeText(BIP47Add.this, R.string.decryption_error, Toast.LENGTH_SHORT).show();
+                        }
                         finally {
+                            ;
                         }
 
                         Looper.loop();
