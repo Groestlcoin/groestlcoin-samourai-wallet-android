@@ -1,5 +1,6 @@
 package com.samourai.wallet.bip47.rpc;
 
+import com.hashengineering.crypto.Groestl;
 import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.hd.HD_Address;
 
@@ -218,7 +219,7 @@ public class PaymentCode {
     }
 
     private String base58EncodeChecked(byte[] buf)  {
-        byte[] checksum = Arrays.copyOfRange(Sha256Hash.hashTwice(buf), 0, 4);
+        byte[] checksum = Arrays.copyOfRange(Groestl.digest(buf), 0, 4);
         byte[] bufChecked = new byte[buf.length + checksum.length];
         System.arraycopy(buf, 0, bufChecked, 0, buf.length);
         System.arraycopy(checksum, 0, bufChecked, bufChecked.length - 4, checksum.length);
