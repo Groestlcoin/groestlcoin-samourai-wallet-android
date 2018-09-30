@@ -1,5 +1,7 @@
 package com.samourai.wallet.util;
 
+import com.samourai.wallet.SamouraiWallet;
+
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
@@ -43,7 +45,7 @@ public class MonetaryUtil {
 	}
 
     public String getBTCUnits() {
-        return "BTC";
+        return SamouraiWallet.getInstance().isTestNet() ? "tGRS" : "GRS";
     }
 
 }
