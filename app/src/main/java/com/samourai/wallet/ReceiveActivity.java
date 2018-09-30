@@ -738,7 +738,7 @@ public class ReceiveActivity extends AppCompatActivity {
                 }
         }
 
-        path += "/0'/0'/0/";
+        path += "/17'/0'/0/";
         path += idx;
 
         tvPath.setText(path);
