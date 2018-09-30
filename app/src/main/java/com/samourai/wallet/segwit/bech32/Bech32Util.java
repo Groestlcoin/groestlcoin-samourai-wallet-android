@@ -42,10 +42,10 @@ public class Bech32Util {
 
         String hrp = null;
         if(SamouraiWallet.getInstance().getCurrentNetworkParams() instanceof TestNet3Params)    {
-            hrp = "tb";
+            hrp = "tgrs";
         }
         else    {
-            hrp = "bc";
+            hrp = "grs";
         }
 
         return Bech32Segwit.encode(hrp, (byte)0x00, Hex.decode(script.substring(4).getBytes()));
@@ -55,10 +55,10 @@ public class Bech32Util {
 
         String hrp = null;
         if(SamouraiWallet.getInstance().getCurrentNetworkParams() instanceof TestNet3Params)    {
-            hrp = "tb";
+            hrp = "tgrs";
         }
         else    {
-            hrp = "bc";
+            hrp = "grs";
         }
 
         byte[] buf = script.getProgram();
@@ -72,12 +72,12 @@ public class Bech32Util {
 
         TransactionOutput output = null;
 
-        if(address.toLowerCase().startsWith("tb") || address.toLowerCase().startsWith("bc"))   {
+        if(address.toLowerCase().startsWith("tgrs") || address.toLowerCase().startsWith("grs"))   {
 
             byte[] scriptPubKey = null;
 
             try {
-                Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", address);
+                Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tgrs" : "grs", address);
                 scriptPubKey = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
             }
             catch(Exception e) {

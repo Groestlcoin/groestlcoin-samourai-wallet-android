@@ -77,7 +77,7 @@ public class SegwitAddress {
         String address = null;
 
         try {
-            address = Bech32Segwit.encode(params instanceof TestNet3Params ? "tb" : "bc", (byte)0x00, Utils.sha256hash160(ecKey.getPubKey()));
+            address = Bech32Segwit.encode(params instanceof TestNet3Params ? "tgrs" : "grs", (byte)0x00, Utils.sha256hash160(ecKey.getPubKey()));
         }
         catch(Exception e) {
             ;

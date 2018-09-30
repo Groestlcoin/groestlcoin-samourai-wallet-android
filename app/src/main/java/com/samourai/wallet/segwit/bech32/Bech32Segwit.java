@@ -19,7 +19,7 @@ public class Bech32Segwit {
         if (!hrp.equalsIgnoreCase(hrpgotStr))    {
             return null;
         }
-        if (!hrpgotStr.equalsIgnoreCase("bc") && !hrpgotStr.equalsIgnoreCase("tb"))    {
+        if (!hrpgotStr.equalsIgnoreCase("grs") && !hrpgotStr.equalsIgnoreCase("tgrs"))    {
             throw new Exception("invalid segwit human readable part");
         }
 

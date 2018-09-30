@@ -276,10 +276,10 @@ public class RicochetMeta {
                 if(Hex.toHexString(script.getProgram()).startsWith("0014"))    {
                     String hrp = null;
                     if(SamouraiWallet.getInstance().getCurrentNetworkParams() instanceof TestNet3Params)    {
-                        hrp = "tb";
+                        hrp = "tgrs";
                     }
                     else    {
-                        hrp = "bc";
+                        hrp = "grs";
                     }
                     try {
                         String _script = Hex.toHexString(script.getProgram());
@@ -542,12 +542,12 @@ public class RicochetMeta {
     private Transaction getHopTx(String prevTxHash, int prevTxN, int prevIndex, long prevSpendAmount, long spendAmount, String destination, Pair<String,Long> samouraiFeePair) {
 
         TransactionOutput output = null;
-        if(destination.toLowerCase().startsWith("tb") || destination.toLowerCase().startsWith("bc"))   {
+        if(destination.toLowerCase().startsWith("tgrs") || destination.toLowerCase().startsWith("grs"))   {
 
             byte[] bScriptPubKey = null;
 
             try {
-                Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", destination);
+                Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tgrs" : "grs", destination);
                 bScriptPubKey = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
             }
             catch(Exception e) {
@@ -573,7 +573,7 @@ public class RicochetMeta {
             byte[] bScriptPubKey = null;
 
             try {
-                Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tb" : "bc", samouraiFeePair.getLeft());
+                Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tgrs" : "grs", samouraiFeePair.getLeft());
                 bScriptPubKey = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
             }
             catch(Exception e) {
