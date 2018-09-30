@@ -70,7 +70,7 @@
     <string name="options_boltzmann_2">Spends will use STONEWALL algorithm for increased obfuscation.</string>
     <string name="options_utxo">Show unspent outputs</string>
     <string name="options_trusted_node">Set trusted node</string>
-    <string name="options_trusted_node2">Specify your own bitcoin node to broadcast transactions.</string>
+    <string name="options_trusted_node2">Specify your own Grostlcoin node to broadcast transactions.</string>
     <string name="options_use_trusted_node">Use trusted node</string>
     <string name="options_use_trusted_node2">Broadcast transactions from your own node.</string>
     <string name="options_rbf0">Spend using RBF</string>
@@ -208,7 +208,7 @@
     <string name="first_use_shuffle">This is your Shifted Account. The Groestlcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
 
     <string name="select_account">Select account</string>
-    <string name="received_bitcoin">Received Bitcoin</string>
+    <string name="received_bitcoin">Received Grostlcoin</string>
     <string name="received">Received</string>
     <string name="sent">Transaction sent</string>
     <string name="total">Total</string>
@@ -289,7 +289,7 @@
     <string name="ricochet_hopping">Ricocheted to</string>
     <string name="ricochet_spend1">Ricochet spend to</string>
     <string name="ricochet_spend2">for a total amount of</string>
-    <string name="ricochet_spend3">(includes 0.002 BTC fee to Samourai and miners\' fees)?</string>
+    <string name="ricochet_spend3">(includes 0.002 GRS fee to Samourai and miners\' fees)?</string>
 
     <string name="action_ricochet">Replay Ricochet</string>
     <string name="action_empty_ricochet">Empty Ricochet queue</string>
@@ -316,10 +316,10 @@
     <string name="trusted_node_ko">Trusted node not recognized. Please check installation.</string>
     <string name="trusted_node_error">Error reaching proposed trusted node.</string>
     <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
-    <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Bitcoin Core 0.13.1 and over.</string>
+    <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Grostlcoin Core 0.13.1 and over.</string>
     <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
     <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
-    <string name="trusted_node_breaks_consensus">Trusted node cannot be set on a bitcoin client that breaks consensus.</string>
+    <string name="trusted_node_breaks_consensus">Trusted node cannot be set on a Grostlcoin client that breaks consensus.</string>
 
     <string name="refresh_tx_pre">Retrieving transactions and balance.</string>
     <string name="refresh_tx">Retrieved transactions and balance.</string>
@@ -395,8 +395,8 @@
     <string name="replay_waiting_for_confirmations">waiting for confirmations</string>
     <string name="replay_confirmed">confirmed</string>
     <string name="replay_confirmations">confirmations:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
-    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+    <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Grostlcoin Cash (Grostlcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay protection awaiting confirmation</string>
     <string name="replay_dismiss">DISMISS ALERT</string>
@@ -411,7 +411,7 @@
     <string name="TestNet">TestNet</string>
 
     <string name="segwit_address">Segwit Address</string>
-    <string name="segwit_switch_prompt">Funds deposited in Segwit addresses are more efficient to transact with. Offering reduced miner fees when sending bitcoin from your wallet.</string>
+    <string name="segwit_switch_prompt">Funds deposited in Segwit addresses are more efficient to transact with. Offering reduced miner fees when sending Grostlcoin from your wallet.</string>
 
     <string name="privkey_clipboard">A private key has been identified in your clipboard. Delete the clipboard contents?</string>
 
@@ -446,14 +446,14 @@
 
     <string name="copy_to_clipboard">Copy to clipboard</string>
 
-    <string name="no_bitpay">Error: This is not a valid bitcoin request. Samourai only supports sending to valid bitcoin addresses.</string>
+    <string name="no_bitpay">Error: This is not a valid Grostlcoin request. Samourai only supports sending to valid Grostlcoin addresses.</string>
     <string name="learn_more">Learn More</string>
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Claim your paynym</string>
     <string name="claim_paynym_title1">Claim your free PayNymID</string>
-    <string name="claim_paynym_text1">Allow your friends &amp; contacts to find and connect to your PayNym directly through compatible bitcoin wallets.</string>
+    <string name="claim_paynym_text1">Allow your friends &amp; contacts to find and connect to your PayNym directly through compatible Grostlcoin wallets.</string>
     <string name="claim_paynym_title2">Benefits of a PayNymID</string>
     <string name="claim_paynym_text2a">Unique name and image generated with a hash of your paynym code. No two will ever be the same!</string>
     <string name="claim_paynym_text2b">No identity checks! Your name and image are based on your paynym code, not any national ID card.</string>
@@ -464,7 +464,7 @@
     <string name="claim_paynym_prompt">Claim my PayNymID and add my public PayNym code to PayNym.is?</string>
 
     <string name="bip47_notif_tx_insufficient_funds_1">Adding a PayNym to your contacts requires a one-time transaction fee for creating the record on the blockchain. Deposit</string>
-    <string name="bip47_notif_tx_insufficient_funds_2">BTC into your wallet and try again.</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">GRS into your wallet and try again.</string>
     <string name="help">Help</string>
 
     <string name="passphrase_disclaimer">I understand that Samourai cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
@@ -492,7 +492,7 @@
     <string name="get_help">Get help</string>
     <string name="offline_mode">Offline mode</string>
     <string name="import_samourai_backup">Import Samourai backup</string>
-    <string name="samourai_bitcoin_wallet">Samourai Bitcoin Wallet</string>
+    <string name="samourai_bitcoin_wallet">Samourai Grostlcoin Wallet</string>
     <string name="enter_your_wallet_passphrase">Enter your wallet passphrase</string>
     <string name="start_new_wallet">Start new wallet</string>
     <string name="get_help_create">Create wallet: Get help</string>

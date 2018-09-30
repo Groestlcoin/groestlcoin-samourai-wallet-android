@@ -281,7 +281,7 @@
     <string name="ricochet_hopping">Отправлено через Ricochet на</string>
     <string name="ricochet_spend1">Отправлено через Ricochet на</string>
     <string name="ricochet_spend2">на общую сумму в</string>
-    <string name="ricochet_spend3">(включая вознаграждение Samourai размером 0,002 BTC и комиссию майнерам)?</string>
+    <string name="ricochet_spend3">(включая вознаграждение Samourai размером 0,002 GRS и комиссию майнерам)?</string>
 
     <string name="action_ricochet">Повторить Ricochet</string>
     <string name="action_empty_ricochet">Пустая Ricochet-очередь</string>
@@ -308,7 +308,7 @@
     <string name="trusted_node_ko">Не удалось определить ноду. Пожалуйста, проверьте конфигурацию.</string>
     <string name="trusted_node_error">Не удаётся связаться с предложенной доверенной нодой</string>
     <string name="trusted_node_tx_error">Транзакция дала сбой на доверенной ноде.</string>
-    <string name="trusted_node_not_core_131">Доверенная нода не указана. Имейте в виду, что кошелёк Samourai поддерживает Bitcoin Core 0.13.1 и выше.</string>
+    <string name="trusted_node_not_core_131">Доверенная нода не указана. Имейте в виду, что кошелёк Samourai поддерживает Grostlcoin Core 0.13.1 и выше.</string>
     <string name="trusted_node_tx_sent">Транзакция отправлена через доверенную ноду.</string>
     <string name="trusted_node_not_responding">Доверенная нода не отвечает. Пожалуйста, проверьте конфигурацию.</string>
     <string name="trusted_node_breaks_consensus">Доверенная нода не может быть установлена на биткоин-клиент, нарушающий правила работы сети.</string>
@@ -387,8 +387,8 @@
     <string name="replay_waiting_for_confirmations">ожидаем подтверждений</string>
     <string name="replay_confirmed">подтверждено</string>
     <string name="replay_confirmations">подтверждения:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
-    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+    <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Grostlcoin Cash (Grostlcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay-защита ожидает подтверждения</string>
     <string name="replay_dismiss">ПРОИГНОРИРОВАТЬ ПРЕДУПРЕЖДЕНИЕ</string>
@@ -456,7 +456,7 @@
     <string name="claim_paynym_prompt">Запросить мой PayNymID и добавить мой публичный PayNym код к PayNym.is?</string>
 
     <string name="bip47_notif_tx_insufficient_funds_1">Добавление PayNym к вашим контактам требует разовой уплаты комиссии за транзакцию для создания записи в блокчейне. Пополните свой кошелёк на</string>
-    <string name="bip47_notif_tx_insufficient_funds_2">BTC и попробуйте ещё раз.</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">GRS и попробуйте ещё раз.</string>
     <string name="help">Помощь</string>
 
     <string name="passphrase_disclaimer">Я понимаю, что Samourai не сможет мне помочь, если я забуду или потеряю свою парольную фразу. У Samourai нет никаких данных о ней.</string>

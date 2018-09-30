@@ -204,7 +204,7 @@
 
     <string name="max_available">Макс. налични:</string>
 
-    <string name="first_use_shuffle">This is your Shifted Account. The Bitcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
+    <string name="first_use_shuffle">This is your Shifted Account. The Grostlcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
 
     <string name="select_account">Изберете акаунт</string>
     <string name="received_bitcoin">Получени биткойни</string>
@@ -288,7 +288,7 @@
     <string name="ricochet_hopping">Рикоширано до</string>
     <string name="ricochet_spend1">Изпращане чрез Рикошет</string>
     <string name="ricochet_spend2">на общо количество от</string>
-    <string name="ricochet_spend3">(включва такса от 0.002 BTC към Самурай и копачите)?</string>
+    <string name="ricochet_spend3">(включва такса от 0.002 GRS към Самурай и копачите)?</string>
 
     <string name="action_ricochet">Повтаряне на Рикошет</string>
     <string name="action_empty_ricochet">Изпразни опашката за Рикошет</string>
@@ -315,7 +315,7 @@
     <string name="trusted_node_ko">Довереният node неразпознат. Моля проверете инсталацията.</string>
     <string name="trusted_node_error">Грешка при свързването с доверения node</string>
     <string name="trusted_node_tx_error">Грешка с транзакцията от страна на доверения node</string>
-    <string name="trusted_node_not_core_131">Довереният node зададен. Самурай Портфейл поддържа Bitcoin Core 0.13.1 и нагоре.</string>
+    <string name="trusted_node_not_core_131">Довереният node зададен. Самурай Портфейл поддържа Grostlcoin Core 0.13.1 и нагоре.</string>
     <string name="trusted_node_tx_sent">Транзакцията изпратена чрез доверения node</string>
     <string name="trusted_node_not_responding">Довереният node не отговаря. Моля проверете инсталацията.</string>
     <string name="trusted_node_breaks_consensus">Довереният node не може да бъде зададен на Биткойн клиент, който нарушава консенсуса!</string>
@@ -394,7 +394,7 @@
     <string name="replay_waiting_for_confirmations">Изчакване за потвърждения</string>
     <string name="replay_confirmed">Потвърдено</string>
     <string name="replay_confirmations">Потвърждения:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">BCash (Bitcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay защита в очакване на потвърждение</string>
@@ -463,7 +463,7 @@
     <string name="claim_paynym_prompt"> Получаване на моя PayNymID и добавяне на моя публичен PayNym код в PayNym.is?</string>
 
     <string name="bip47_notif_tx_insufficient_funds_1">Добавянето на PayNym към контактите Ви изисква еднократна такса към копачите за създаване на записа на блокчейна. Депозирайте</string>
-    <string name="bip47_notif_tx_insufficient_funds_2">BTC в портфейла си и опитайте отново</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">GRS в портфейла си и опитайте отново</string>
     <string name="help">Помощ</string>
 
     <string name="passphrase_disclaimer">Разбирам, че Самурай не може да ми асистира ако забравя тайната си фраза. Самурай никога не знае нищо за моята тайна фраза.</string>

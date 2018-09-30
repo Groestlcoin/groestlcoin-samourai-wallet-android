@@ -68,7 +68,7 @@
     <string name="options_bip126_2">Envíos usarán BIP126 para mayor ofuscación.</string>
     <string name="options_utxo">Mostrar salidas no utilizadas (UTXOs)</string>
     <string name="options_trusted_node">Definir modo de confianza</string>
-    <string name="options_trusted_node2">Especificar tu propio nodo bitcoin al cual enviar las transacciones.</string>
+    <string name="options_trusted_node2">Especificar tu propio nodo Grostlcoin al cual enviar las transacciones.</string>
     <string name="options_use_trusted_node">Usar nodo de confianza</string>
     <string name="options_use_trusted_node2">Enviar transacciones desde tu propio nodo.</string>
     <string name="options_rbf0">Enviar usando RBF</string>
@@ -194,10 +194,10 @@
 
     <string name="max_available">Máximo disponible</string>
 
-    <string name="first_use_shuffle">Esta esta tu billetera Shifted. Los bitcoins que recibas mediante ShapeShift se almacenarán en esta dirección que no comparte el espacio de direcciones de tu billetera principal.</string>
+    <string name="first_use_shuffle">Esta esta tu billetera Shifted. Los Grostlcoins que recibas mediante ShapeShift se almacenarán en esta dirección que no comparte el espacio de direcciones de tu billetera principal.</string>
 
     <string name="select_account">Elegir cuenta</string>
-    <string name="received_bitcoin">Bitcoin recibido</string>
+    <string name="received_bitcoin">Grostlcoin recibido</string>
     <string name="received">Recibido</string>
     <string name="sent">Transacción enviada</string>
     <string name="total">Total</string>
@@ -278,7 +278,7 @@
     <string name="ricochet_hopping">Ricochet para</string>
     <string name="ricochet_spend1">Ricochet enviado para</string>
     <string name="ricochet_spend2">por un monto total de</string>
-    <string name="ricochet_spend3">(incluye 0.001 BTC de comisión a Samourai y mineros)?</string>
+    <string name="ricochet_spend3">(incluye 0.001 GRS de comisión a Samourai y mineros)?</string>
 
     <string name="action_ricochet">Repetir Ricochet</string>
     <string name="action_empty_ricochet">Vaciar lista de espera Ricochet</string>
@@ -305,10 +305,10 @@
     <string name="trusted_node_ko">Nodo de confianza no reconocido. Por favor revisa la instalación.</string>
     <string name="trusted_node_error">Error tratando de contactar el nodo de confianza propuesto.</string>
     <string name="trusted_node_tx_error">La transacción falló en el nodo de confianza.</string>
-    <string name="trusted_node_not_core_131">Nodo de confianza configurado. Recuerda que Samourai soporta nodos Bitcoin Core 0.13.1 y superiores.</string>
+    <string name="trusted_node_not_core_131">Nodo de confianza configurado. Recuerda que Samourai soporta nodos Grostlcoin Core 0.13.1 y superiores.</string>
     <string name="trusted_node_tx_sent">Transacción enviada mediante un nodo de confianza.</string>
     <string name="trusted_node_not_responding">El nodo de confianza no responde. Por favor revisa su instalación y status.</string>
-    <string name="trusted_node_breaks_consensus">El nodo de confianza no puede establecerse con un cliente bitcoin que rompe el consenso.</string>
+    <string name="trusted_node_breaks_consensus">El nodo de confianza no puede establecerse con un cliente Grostlcoin que rompe el consenso.</string>
 
     <string name="refresh_tx_pre">Obteniendo transacciones y balance.</string>
     <string name="refresh_tx">Transacciones y balance obtenidos correctamente.</string>
@@ -384,8 +384,8 @@
     <string name="replay_waiting_for_confirmations">esperando confirmaciones</string>
     <string name="replay_confirmed">confirmada</string>
     <string name="replay_confirmations">confirmaciones:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
-    <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+    <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Grostlcoin Cash (Grostlcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay protection esperando confirmación</string>
     <string name="replay_dismiss">DESCARTAR ALERTA</string>
@@ -400,7 +400,7 @@
     <string name="TestNet">TestNet</string>
 
     <string name="segwit_address">Dirección SegWit</string>
-    <string name="segwit_switch_prompt">Los fondos depositados en direcciones SegWit son más eficientes para realizar transacciones. Permitiendo menores comisiones cuando envias bitcoin desde tu billetera.</string>
+    <string name="segwit_switch_prompt">Los fondos depositados en direcciones SegWit son más eficientes para realizar transacciones. Permitiendo menores comisiones cuando envias Grostlcoin desde tu billetera.</string>
 
     <string name="privkey_clipboard">Una clave privada fue detectada en tu portapapeles. Deseas limpiar el contenido del portapapeles?</string>
 
@@ -435,14 +435,14 @@
 
     <string name="copy_to_clipboard">Copiar al portapapeles</string>
 
-    <string name="no_bitpay">Error: No es una solicitud bitcoin válida. Samourai sólo soporta enviar a direcciones bitcoin válidas.</string>
+    <string name="no_bitpay">Error: No es una solicitud Grostlcoin válida. Samourai sólo soporta enviar a direcciones Grostlcoin válidas.</string>
     <string name="learn_more">Saber más...</string>
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Solicitá tu paynym</string>
     <string name="claim_paynym_title1">Solicitá tu PayNymID gratuito</string>
-    <string name="claim_paynym_text1">Permite que tus amigos y contactos encuentren y se conecten con tu PayNym directamente mediante billeteras bitcoin compatibles.</string>
+    <string name="claim_paynym_text1">Permite que tus amigos y contactos encuentren y se conecten con tu PayNym directamente mediante billeteras Grostlcoin compatibles.</string>
     <string name="claim_paynym_title2">Beneficios de un PayNymID</string>
     <string name="claim_paynym_text2a">Imagen y nombre único generados con un hash de tu código PayNym. Nunca habrá dos iguales!</string>
     <string name="claim_paynym_text2b">Sin verificaciones de identidad! Tu nombre y tu imágen se basan en tu código PayNym y no en un ID de ciudadano.</string>
@@ -453,7 +453,7 @@
     <string name="claim_paynym_prompt">Solicitar mi PayNymID y mi código PayNym público en PayNym.is?</string>
 
     <string name="bip47_notif_tx_insufficient_funds_1">Agregar un PayNym a tus contactos requiere una comisión por única vez para crear el registro en la blockchain. Depositar</string>
-    <string name="bip47_notif_tx_insufficient_funds_2">BTC en tu billetera e inténtalo nuevamente.</string>
+    <string name="bip47_notif_tx_insufficient_funds_2">GRS en tu billetera e inténtalo nuevamente.</string>
     <string name="help">Ayuda</string>
 
     <string name="fee">Comisión de mineros</string>

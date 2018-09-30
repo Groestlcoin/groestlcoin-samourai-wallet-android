@@ -70,7 +70,7 @@
   <string name="options_boltzmann_2">Harcamalar arttırılmış belirsizleştirme için STONEWALL algoritmasını kullanır.</string>
   <string name="options_utxo">Harcanmamış çıkışları göster</string>
   <string name="options_trusted_node">Güvenilen düğüm tanımla</string>
-  <string name="options_trusted_node2">İşlemleri yayınlamak için kendi Bitcoin düğümünüzü tanımlayın.</string>
+  <string name="options_trusted_node2">İşlemleri yayınlamak için kendi Grostlcoin düğümünüzü tanımlayın.</string>
   <string name="options_use_trusted_node">Güvenilen düğüm kullan</string>
   <string name="options_use_trusted_node2">İşlemleri kendi düğümünüzden yayınlayın.</string>
   <string name="options_rbf0">RBF kullanarak harca</string>
@@ -203,10 +203,10 @@
 
   <string name="max_available">En fazla mümkün:</string>
 
-  <string name="first_use_shuffle">Bu sizin Shifted hesabınız. ShapeShift üzerinden alacağınız Bitcoin\'ler ana cüzdan hesabınız ile aynı adres alanını paylaşmayan bu hesap üzerinde tutulacaktır.</string>
+  <string name="first_use_shuffle">Bu sizin Shifted hesabınız. ShapeShift üzerinden alacağınız Grostlcoin\'ler ana cüzdan hesabınız ile aynı adres alanını paylaşmayan bu hesap üzerinde tutulacaktır.</string>
 
   <string name="select_account">Hesap seç</string>
-  <string name="received_bitcoin">Alınan Bitcoin</string>
+  <string name="received_bitcoin">Alınan Grostlcoin</string>
   <string name="received">Alındı</string>
   <string name="sent">İşlem gönderildi</string>
   <string name="total">Toplam</string>
@@ -287,7 +287,7 @@
   <string name="ricochet_hopping">Ricochet yapılan:</string>
   <string name="ricochet_spend1">Harcanacak Ricochet</string>
   <string name="ricochet_spend2">toplam tutar</string>
-  <string name="ricochet_spend3">(Samourai ve madencilerin\' 0.002 BTC işlem masrafını içerir)?</string>
+  <string name="ricochet_spend3">(Samourai ve madencilerin\' 0.002 GRS işlem masrafını içerir)?</string>
 
   <string name="action_ricochet">Ricochet\'i tekrarla</string>
   <string name="action_empty_ricochet">Ricochet kuyruğunu boşalt</string>
@@ -314,10 +314,10 @@
   <string name="trusted_node_ko">Güvenilen düğüm işlenemedi. Lütfen kurulumu denetleyin.</string>
   <string name="trusted_node_error">Önerilen güvenilen düğüme ulaşmada hata</string>
   <string name="trusted_node_tx_error">Güvenilen düğümde işlem başarısız oldu.</string>
-  <string name="trusted_node_not_core_131">Güvenilen düğüm ayarlandı. Samourai Cüzdan\'ın Bitcoin Core 0.13.1 ve üzeri sürümleri desteklediğini lütfen not alın.</string>
+  <string name="trusted_node_not_core_131">Güvenilen düğüm ayarlandı. Samourai Cüzdan\'ın Grostlcoin Core 0.13.1 ve üzeri sürümleri desteklediğini lütfen not alın.</string>
   <string name="trusted_node_tx_sent">İşlem güvenilen düğüm üzerinden gönderildi.</string>
   <string name="trusted_node_not_responding">Güvenilen düğüm yanıt vermiyor. Lütfen kurulumu denetleyin.</string>
-  <string name="trusted_node_breaks_consensus">Güvenilen düğüm fikir birliğini geçersiz sayan bir Bitcoin istemcisinde ayarlanamaz.</string>
+  <string name="trusted_node_breaks_consensus">Güvenilen düğüm fikir birliğini geçersiz sayan bir Grostlcoin istemcisinde ayarlanamaz.</string>
 
   <string name="refresh_tx_pre">İşlemler ve hesap özeti alınıyor...</string>
   <string name="refresh_tx">İşlemler ve hesap özeti alındı.</string>
@@ -393,8 +393,8 @@
   <string name="replay_waiting_for_confirmations">onaylar için bekliyor</string>
   <string name="replay_confirmed">onaylandı</string>
   <string name="replay_confirmations">onaylar:</string>
-  <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
-  <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
+  <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+  <string name="replay_bcc_user_agent">Grostlcoin Cash (Grostlcoin ABC)</string>
 
   <string name="replay_awaiting_confirmation">Tekrar koruması onay bekliyor</string>
   <string name="replay_dismiss">UYARIYI YOKSAY</string>
@@ -409,7 +409,7 @@
   <string name="TestNet">Sınama ağı</string>
 
   <string name="segwit_address">Segwit Adresi</string>
-  <string name="segwit_switch_prompt">Segwit adreslerinde tutulan fonlar ile yapılan işlemler daha ekonomiktir. Cüzdanınızdan Bitcoin gönderirken daha az madenci masrafı ödersiniz.</string>
+  <string name="segwit_switch_prompt">Segwit adreslerinde tutulan fonlar ile yapılan işlemler daha ekonomiktir. Cüzdanınızdan Grostlcoin gönderirken daha az madenci masrafı ödersiniz.</string>
 
   <string name="privkey_clipboard">Panonuzda bir özel anahtar algılandı. Pano içeriği silinsin mi?</string>
 
@@ -444,14 +444,14 @@
 
   <string name="copy_to_clipboard">Panoya kopyala</string>
 
-  <string name="no_bitpay">Hata: Bu geçerli bir bitcoin isteği değil. Samourai yalnızca geçerli bitcoin adreslerine göndermeyi destekler.</string>
+  <string name="no_bitpay">Hata: Bu geçerli bir Grostlcoin isteği değil. Samourai yalnızca geçerli Grostlcoin adreslerine göndermeyi destekler.</string>
   <string name="learn_more">Daha fazla öğrenin</string>
 
   <string name="paynym">PayNym</string>
   <string name="paynyms">PayNym\'ler</string>
   <string name="claim_paynym">Paynym\'inizi alın</string>
   <string name="claim_paynym_title1">Ücretsiz PayNymID\'inizi alın</string>
-  <string name="claim_paynym_text1">Arkadaşlarınızın sizi &amp; uyumlu bitcoin cüzdanları ile bulup PayNym\'inize bağlanmasına izin verin.</string>
+  <string name="claim_paynym_text1">Arkadaşlarınızın sizi &amp; uyumlu Grostlcoin cüzdanları ile bulup PayNym\'inize bağlanmasına izin verin.</string>
   <string name="claim_paynym_title2">Bir PayNymID\'sinin yararları</string>
   <string name="claim_paynym_text2a">Size özel bir ad ve PayNym kodunuzun sağlamasını içeren bir görsel oluşturuldu. Hiçbir zaman aynısı olmaz!</string>
   <string name="claim_paynym_text2b">Kimlik denetimi yok! Adınız ve görseliniz PayNym kodunuzu esas alır, herhangi bir geçerli kimlik belgesini değil.</string>
@@ -462,7 +462,7 @@
   <string name="claim_paynym_prompt">PayNymID\'mi alıp halka açık PayNym kodum PayNym.is\'ye eklensin mi?</string>
 
   <string name="bip47_notif_tx_insufficient_funds_1">Kişilerinize bir PayNym eklemek blok zincirinde kaydı oluşturmak için bir kerelik bir işlem gerektirir. Hesabınıza</string>
-  <string name="bip47_notif_tx_insufficient_funds_2">BTC koyun ve yeniden deneyin.</string>
+  <string name="bip47_notif_tx_insufficient_funds_2">GRS koyun ve yeniden deneyin.</string>
   <string name="help">Yardım</string>
 
   <string name="passphrase_disclaimer">Samourai\'ın parolanızı kaybetmeniz veya unutmanız durumunda yardım sağlayamayacağını kabul ediyorum. Samourai\'ın benim parolam hakkında hiçbir zaman bir bilgisi olmamıştır.</string>
@@ -490,7 +490,7 @@
   <string name="get_help">Yardım al</string>
   <string name="offline_mode">Çevrimdışı kip</string>
   <string name="import_samourai_backup">Samourai yedeğini içe aktar</string>
-  <string name="samourai_bitcoin_wallet">Samourai Bitcoin Cüzdanı</string>
+  <string name="samourai_bitcoin_wallet">Samourai Grostlcoin Cüzdanı</string>
   <string name="enter_your_wallet_passphrase">Cüzdan parolanızı girin</string>
   <string name="start_new_wallet">Yeni bir cüzdan oluşturun</string>
   <string name="get_help_create">Cüzdan oluşturma: Yardım alın</string>

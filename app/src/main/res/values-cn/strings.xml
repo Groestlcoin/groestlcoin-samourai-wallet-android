@@ -287,7 +287,7 @@
     <string name="ricochet_hopping">Ricochet到</string>
     <string name="ricochet_spend1">Ricochet付款到</string>
     <string name="ricochet_spend2">总费</string>
-    <string name="ricochet_spend3">（包含0.002BTC给武士钱包和矿工的费用）？</string>
+    <string name="ricochet_spend3">（包含0.002GRS给武士钱包和矿工的费用）？</string>
 
     <string name="action_ricochet">重发Ricochet</string>
     <string name="action_empty_ricochet">清理Ricochet队列</string>
@@ -314,7 +314,7 @@
     <string name="trusted_node_ko">无法识别可信任节点。请检查节点信息</string>
     <string name="trusted_node_error">连接可信任节点错误</string>
     <string name="trusted_node_tx_error">可信任节点交易失败</string>
-    <string name="trusted_node_not_core_131">可信任节点已设定。请注意武士钱包支持Bitcoin Core 0.13.1以上的版本</string>
+    <string name="trusted_node_not_core_131">可信任节点已设定。请注意武士钱包支持Grostlcoin Core 0.13.1以上的版本</string>
     <string name="trusted_node_tx_sent">交易已由可信任节点发送</string>
     <string name="trusted_node_not_responding">可信任节点无响应，请检查节点信息</string>
     <string name="trusted_node_breaks_consensus">可信任节不允许设定违犯比特币共识的节点</string>
@@ -393,7 +393,7 @@
     <string name="replay_waiting_for_confirmations">等待确认</string>
     <string name="replay_confirmed">已确认</string>
     <string name="replay_confirmations">确认数:</string>
-    <string name="replay_samourai_user_agent">Bitcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">Bitcoin Cash (Bitcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">重播保护正在等待确认</string>
