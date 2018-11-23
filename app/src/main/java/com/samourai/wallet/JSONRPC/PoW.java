@@ -13,6 +13,7 @@ import static org.bouncycastle.util.Arrays.reverse;
 
 import android.util.Log;
 
+import com.hashengineering.crypto.Groestl;
 import com.samourai.wallet.SamouraiWallet;
 
 public class PoW {
@@ -92,7 +93,7 @@ public class PoW {
             String strHeader = strVersionHex + strPrevBlock + strMerkleRoot + strTS + strBits + strNonce;
 
             byte[] buf = Hex.decode(strHeader);
-            hash = Hex.toHexString(reverse(Sha256Hash.hashTwice(buf)));
+            hash = Hex.toHexString(reverse(Groestl.digest(buf)));
             Log.i("PoW", "hash:" + hash);
         }
         catch(org.bouncycastle.util.encoders.DecoderException de) {
