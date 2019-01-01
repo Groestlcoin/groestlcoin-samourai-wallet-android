@@ -166,7 +166,7 @@
     <string name="destination">Address or payment channel</string>
 
     <string name="insufficient_funds">Insufficient funds</string>
-    <string name="tx_length_error">Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
+    <string name="tx_length_error">Groestlcoin Samourai does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
     <string name="invalid_amount">Invalid amount</string>
     <string name="amount">Amount</string>
 
@@ -595,5 +595,5 @@
     <string name="address_type">Address Type</string>
     <string name="path">Path</string>
 
-    <string name="version_name">0.98</string>
+    <!--string name="version_name">0.98</string-->
 </resources>
