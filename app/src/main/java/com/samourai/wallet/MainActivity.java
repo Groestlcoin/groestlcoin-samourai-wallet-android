@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.samourai.wallet.util.PrefsUtil;
 
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
 //import android.util.Log;
 
@@ -19,7 +17,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.main);
 
-        if(PrefsUtil.getInstance(MainActivity.this).getValue(PrefsUtil.TESTNET, false) == true)    {
+        if(BuildConfig.APPLICATION_ID.contains("testnet"))
+        /*if(PrefsUtil.getInstance(MainActivity.this).getValue(PrefsUtil.TESTNET, false) == true)*/    {
             SamouraiWallet.getInstance().setCurrentNetworkParams(TestNet3Params.get());
         }
 

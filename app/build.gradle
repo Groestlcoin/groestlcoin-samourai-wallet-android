@@ -21,9 +21,6 @@ android {
         }
     }
     productFlavors {
-        android {
-
-        }
         blackberry {
             targetSdkVersion 17
         }
@@ -48,12 +45,12 @@ android {
     }
     productFlavors {
         production {
-            applicationId 'com.samourai.wallet'
+            applicationId 'hashengineering.groestlcoin.samourai.wallet'
             minSdkVersion 21
             targetSdkVersion 26
             versionCode 118
             versionName "0.98.86"
-            resValue "string", "app_name", "Samourai"
+            resValue "string", "app_name", "Groestlcoin Samourai"
             resValue "string", "version_name", "0.98.86"
         }
         staging {
@@ -63,6 +60,15 @@ android {
             versionCode 118
             versionName "0.98.86"
             resValue "string", "app_name", "Samourai Staging"
+            resValue "string", "version_name", "0.98.86"
+        }
+        _testnet {
+            applicationId 'hashengineering.groestlcoin.samourai.wallet.testnet'
+            minSdkVersion 21
+            targetSdkVersion 26
+            versionCode 118
+            versionName "0.98.86"
+            resValue "string", "app_name", "Groestlcoin Samourai"
             resValue "string", "version_name", "0.98.86"
         }
     }

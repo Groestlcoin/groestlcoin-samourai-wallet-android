@@ -125,7 +125,7 @@ public class MainActivity2 extends Activity {
             BackgroundManager.get(MainActivity2.this).addListener(bgListener);
 //        }
 
-        //if(SamouraiWallet.USE_SHAPESHIFT) {
+
             getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
             ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
                 @Override
@@ -164,7 +164,7 @@ public class MainActivity2 extends Activity {
             };
 
             getActionBar().setListNavigationCallbacks(adapter, navigationListener);
-            getActionBar().setSelectedNavigationItem(1);
+            getActionBar().setSelectedNavigationItem(0);
         //}
         /*else
         {
@@ -187,7 +187,7 @@ public class MainActivity2 extends Activity {
         else  {
 //            SSLVerifierThreadUtil.getInstance(MainActivity2.this).validateSSLThread();
 //            APIFactory.getInstance(MainActivity2.this).validateAPIThread();
-            ExchangeRateFactory.getInstance(MainActivity2.this).exchangeRateThread();
+            //ExchangeRateFactory.getInstance(MainActivity2.this).exchangeRateThread();
 
             boolean isDial = false;
             String strUri = null;
@@ -409,7 +409,11 @@ public class MainActivity2 extends Activity {
 
     private void doSelectNet()  {
 
-        AlertDialog.Builder dlg = new AlertDialog.Builder(this)
+        if(BuildConfig.APPLICATION_ID.contains("testnet"))
+            SamouraiWallet.getInstance().setCurrentNetworkParams(TestNet3Params.get());
+        else SamouraiWallet.getInstance().setCurrentNetworkParams(MainNetParams.get());
+
+        /*AlertDialog.Builder dlg = new AlertDialog.Builder(this)
                 .setTitle(R.string.app_name)
                 .setMessage(R.string.select_network)
                 .setCancelable(false)
@@ -435,7 +439,8 @@ public class MainActivity2 extends Activity {
                 });
         if(!isFinishing())    {
             dlg.show();
-        }
+        }*/
+        initDialog();
 
     }
 
