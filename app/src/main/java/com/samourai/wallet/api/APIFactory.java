@@ -46,6 +46,7 @@ import com.samourai.wallet.R;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.core.Coin;
@@ -96,6 +97,8 @@ public class APIFactory	{
 
     private static HashMap<String, Long> bip47_amounts = null;
 
+    private static HashMap<String, String> xpub_pathaddressmap = null;
+
     private static long latest_block_height = -1L;
     private static String latest_block_hash = null;
 
@@ -121,6 +124,7 @@ public class APIFactory	{
             unspentBIP49 = new HashMap<String, Integer>();
             unspentBIP84 = new HashMap<String, Integer>();
             utxos = new HashMap<String, UTXO>();
+            xpub_pathaddressmap = new HashMap<>();
             instance = new APIFactory();
         }
 
@@ -137,6 +141,7 @@ public class APIFactory	{
         unspentBIP49 = new HashMap<String, Integer>();
         unspentBIP84 = new HashMap<String, Integer>();
         utxos = new HashMap<String, UTXO>();
+        xpub_pathaddressmap.clear();
 
         UTXOFactory.getInstance().clear();
     }
@@ -408,7 +413,7 @@ public class APIFactory	{
                     boolean hasOnlyBIP47Input = true;
                     boolean hasChangeOutput = false;
 
-                    boolean useManualAmount = false;
+                    boolean useManualAmount = true;
                     long manual_amount = 0;
 
 
@@ -437,16 +442,21 @@ public class APIFactory	{
                         JSONObject inputObj = null;
                         for(int j = 0; j < inputArray.length(); j++)  {
                             inputObj = (JSONObject)inputArray.get(j);
-
-                            if(/*inputObj.has("prev_out")*/true)  {
-                                JSONObject prevOutObj = inputObj; //(JSONObject)inputObj.get("prev_out");
+                            if(true/*inputObj.has("prev_out")*/)  {
+                                JSONObject prevOutObj = inputObj;//(JSONObject)inputObj.get("prev_out");
+                                input_amount += prevOutObj.getLong("value");
                                 if(prevOutObj.has("xpub"))  {
                                     JSONObject xpubObj = (JSONObject)prevOutObj.get("xpub");
                                     addr = xpubObj.has("m") ? (String)xpubObj.get("m") : xpub;
+                                    input_xpub = addr;
+                                    xpub_input_amount -= prevOutObj.getLong("value");
+                                    hasOnlyBIP47Input = false;
                                     if(useManualAmount) manual_amount-=prevOutObj.getLong("value");
                                 }
                                 else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr((String)prevOutObj.get("addr")) != null)  {
                                     _addr = (String)prevOutObj.get("addr");
+									hasBIP47Input = true;
+                                    bip47_input_amount -= prevOutObj.getLong("value");	
                                 }
                                 else  {
                                     _addr = (String)prevOutObj.get("addr");
@@ -461,9 +471,17 @@ public class APIFactory	{
                         for(int j = 0; j < outArray.length(); j++)  {
                             outObj = (JSONObject)outArray.get(j);
                             if(outObj.has("xpub"))  {
+                                output_amount += outObj.getLong("value");
                                 JSONObject xpubObj = (JSONObject)outObj.get("xpub");
                                 addr = xpubObj.has("m") ? (String)xpubObj.get("m") : xpub;
+                                if(xpubObj.has("path"))
+                                    path = xpubObj.getString("path");
                                 if(useManualAmount) manual_amount+=outObj.getLong("value");
+                                if(outObj.has("addr")) {
+                                    _addr = (String) outObj.get("addr");
+                                }
+                                if(_addr != null  && path != null)
+                                    xpub_pathaddressmap.put(_addr, path);
                             }
                             else  {
                                 _addr = (String)outObj.get("addr");
@@ -490,9 +508,35 @@ public class APIFactory	{
                             addr = _addr;
                         }
 
-                        if(useManualAmount)
+                        if(useManualAmount) {
                             amount = manual_amount;
 
+                        }
+                        xpub_balance += amount;
+
+                        //String pmtcode = null;
+
+                        Iterator<Tx> txs = xpub_txs.get(xpub).iterator();
+                        boolean foundIt = false;
+                        Tx thisTx = null;
+                        while(txs.hasNext())
+                        {
+                            thisTx = txs.next();
+                            if(thisTx.getHash().equals(hash))
+                            {
+                                foundIt = true;
+                                //pmtcode = thisTx.getPaymentCode();
+                                //txs.remove();
+                                //Log.i("APIFactory", "deleting BIP47 transaction: "+ hash);
+                                break;
+                            }
+
+                        }
+
+                        if(foundIt) {
+                            amount = (int) thisTx.getAmount() + amount;
+                            txs.remove();
+                        }
                         Tx tx = new Tx(hash, addr, amount, ts, (latest_block_height > 0L && height > 0L) ? (latest_block_height - height) + 1 : 0);
                         if(BIP47Meta.getInstance().getPCode4Addr(addr) != null)    {
                             tx.setPaymentCode(BIP47Meta.getInstance().getPCode4Addr(addr));
@@ -762,7 +806,7 @@ public class APIFactory	{
 
         try {
             StringBuilder url = new StringBuilder(_url);
-            url.append("multiaddr?active=");
+            url.append("multiaddr&active=");
             url.append(addr);
 //            Log.i("APIFactory", "Notif address:" + url.toString());
             String response = WebUtil.getInstance(null).getURL(url.toString());
@@ -1010,7 +1054,7 @@ public class APIFactory	{
             }
             else if(!TorUtil.getInstance(context).statusFromBroadcast())    {
                 StringBuilder args = new StringBuilder();
-                args.append("active=");
+                args.append("xpub=");
                 args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
                 Log.d("APIFactory", "UTXO args:" + args.toString());
                 response = WebUtil.getInstance(context).getURL(_url + "unspent&" + args.toString());
@@ -1465,11 +1509,11 @@ public class APIFactory	{
                 }
                 APIFactory.getInstance(context).getXPUB(all, true);
                 String[] xs = new String[4];
-                xs[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).ypubstr();
-                xs[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).zpubstr();
-                xs[2] = BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr();
-                xs[3] = BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr();
-                getUnspentOutputs(xs);
+                xs[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
+                xs[1] = HD_WalletFactory.getInstance(context).get().getAccount(1).xpubstr();
+                xs[2] = BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr();
+                xs[3] = BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr();
+                getUnspentOutputs_chainz(xs);
                 getDynamicFees();
             }
 
@@ -1731,21 +1775,21 @@ public class APIFactory	{
 
             if(!TorUtil.getInstance(context).statusFromBroadcast())    {
                 StringBuilder args = new StringBuilder();
-                args.append("active=");
+                args.append("&active=");
                 args.append(address);
 //                Log.d("APIFactory", args.toString());
-                response = WebUtil.getInstance(context).getURL(_url + "unspent&active="+ args.toString());
+                response = WebUtil.getInstance(context).getURL(_url + "unspent"+ args.toString());
 //                Log.d("APIFactory", response);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("active", address);
 //                Log.d("APIFactory", args.toString());
-                response = WebUtil.getInstance(context).tor_getURL(_url + "unspent&active=" + args.toString());
+                response = WebUtil.getInstance(context).tor_getURL(_url + "unspent" + args.toString());
 //                Log.d("APIFactory", response);
             }
 
-            return parseUnspentOutputsForSweep(response);
+            return parseUnspentOutputsForSweep(response, address);
 
         }
         catch(Exception e) {
@@ -1755,7 +1799,7 @@ public class APIFactory	{
         return null;
     }
 
-    private synchronized UTXO parseUnspentOutputsForSweep(String unspents)   {
+    private synchronized UTXO parseUnspentOutputsForSweep(String unspents, String addressDestination)   {
 
         UTXO utxo = null;
 
@@ -1780,8 +1824,9 @@ public class APIFactory	{
 
                     byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
                     Sha256Hash txHash = Sha256Hash.wrap(hashBytes);
-                    int txOutputN = ((Number)outDict.get("tx_output_n")).intValue();
-                    BigInteger value = BigInteger.valueOf(((Number)outDict.get("value")).longValue());
+                    int txOutputN = ((Number)outDict.get("tx_ouput_n")).intValue();
+                    BigInteger value = //BigInteger.valueOf(((Number)outDict.get("value")).longValue());
+                                        new BigInteger(outDict.get("value").toString(), 10);
                     String script = (String)outDict.get("script");
                     byte[] scriptBytes = Hex.decode(script);
                     int confirmations = ((Number)outDict.get("confirmations")).intValue();
@@ -1789,11 +1834,21 @@ public class APIFactory	{
                     try {
                         String address = null;
 
-                        if(Bech32Util.getInstance().isBech32Script(script))    {
-                            address = Bech32Util.getInstance().getAddressFromScript(script);
+                        if(Bech32Util.getInstance().isBech32Script(script) || addressDestination.toLowerCase().startsWith("grs") || addressDestination.toLowerCase().startsWith("tgrs"))    {
+                            if(Bech32Util.getInstance().isBech32Script(script))
+                                address = Bech32Util.getInstance().getAddressFromScript(script);
+                            else {
+                                address = addressDestination;
+                                Pair<Byte, byte[]> pair = Bech32Segwit.decode(SamouraiWallet.getInstance().isTestNet() ? "tgrs" : "grs", address.toLowerCase());
+                                scriptBytes = Bech32Segwit.getScriptPubkey(pair.getLeft(), pair.getRight());
+                            }
                             Log.d("address parsed:", address);
                         }
-                        else    {
+                        else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), addressDestination).isP2SHAddress()) {
+                            address = addressDestination;
+                            scriptBytes = SegwitAddress.segWitOutputScript(address).getProgram();
+                        }
+                        else {
                             address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                         }
 
@@ -1846,6 +1901,434 @@ public class APIFactory	{
             return ret;
         }
 
+    }
+
+    public synchronized JSONObject getUnspentOutputs_chainz(String[] xpubs) {
+
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
+        JSONObject jsonObject  = null;
+
+        try {
+
+            String [] responses = new String[xpubs.length];
+
+            for(int i = 0; i < xpubs.length; ++i) {
+
+                if (AppUtil.getInstance(context).isOfflineMode()) {
+                    responses[i] = PayloadUtil.getInstance(context).deserializeUTXO().toString();
+                } else if (!TorUtil.getInstance(context).statusFromBroadcast()) {
+                    StringBuilder args = new StringBuilder();
+                    //ArrayList<String> unspentAddresses = getXPUB_unspent_addresses(xpubs);
+                    args.append("xpub=" + xpubs[i]);
+                    //args.append(StringUtils.join(unspentAddresses, URLEncoder.encode("|", "UTF-8")));
+                    Log.d("APIFactory", "UTXO args:" + args.toString());
+                    responses[i] = WebUtil.getInstance(context).getURL(_url + "unspent&" + args.toString());
+                    Log.d("APIFactory", "UTXO:" + responses[i]);
+                } else {
+                    HashMap<String, String> args = new HashMap<String, String>();
+                    ArrayList<String> unspentAddresses = getXPUB_unspent_addresses(xpubs);
+                    args.put("active", StringUtils.join(unspentAddresses, "|"));
+                    responses[i] = WebUtil.getInstance(context).tor_getURL(_url + "unspent" + args.toString());
+                }
+            }
+
+            parseUnspentOutputs_chainz(xpubs, responses);
+
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    private synchronized boolean parseUnspentOutputs_chainz(String [] xpubs, String [] unspents) {
+        boolean success = true;
+        for(int i = 0; i < unspents.length; ++i) {
+            success = parseUnspentOutputs_chainz(xpubs[i], unspents[i]);
+        }
+        return success;
+    }
+
+    private synchronized boolean parseUnspentOutputs_chainz(String xpub, String unspents)   {
+
+        if(unspents != null)    {
+
+            try {
+                JSONObject jsonObj = new JSONObject(unspents);
+
+                if(jsonObj == null || !jsonObj.has("unspent_outputs"))    {
+                    return false;
+                }
+                JSONArray utxoArray = jsonObj.getJSONArray("unspent_outputs");
+                if(utxoArray == null || utxoArray.length() == 0) {
+                    return false;
+                }
+
+                String last3address = null;
+
+                for (int i = 0; i < utxoArray.length(); i++) {
+
+                    JSONObject outDict = utxoArray.getJSONObject(i);
+
+                    byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
+                    Sha256Hash txHash = Sha256Hash.wrap(hashBytes);
+                    int txOutputN = ((Number)outDict.get("tx_ouput_n")).intValue();
+                    BigInteger value = new BigInteger(outDict.get("value").toString(), 10);
+                    String script = (String)outDict.get("script");
+                    byte[] scriptBytes = Hex.decode(script);
+                    int confirmations = ((Number)outDict.get("confirmations")).intValue();
+
+                    try {
+                        String address = null;
+                        if(Bech32Util.getInstance().isBech32Script(script))    {
+                            address = Bech32Util.getInstance().getAddressFromScript(script);
+                        }
+                        else    {
+                            address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                            /*if(address.startsWith("3") || address.startsWith("2"))
+                                last3address = address;
+                            else if(address.startsWith("F") || address.startsWith("m") || address.startsWith("n") && last3address != null)
+                            {
+                                //determine if the hash160 of this address matches the previous 3 address.
+                                Address Faddress = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
+                                byte [] hash160_F = Faddress.getHash160();
+                                Address last3addr = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), last3address);
+                                byte [] hash160_3 = last3addr.getHash160();
+                                if(Arrays.equals(hash160_F, hash160_3)) {
+                                    address = last3address;
+                                    scriptBytes = SegwitAddress.segWitOutputScript(address).getProgram();
+                                }
+                            }*/
+                        }
+
+                        if(outDict.has("xpub"))    {
+                            JSONObject xpubObj = (JSONObject)outDict.get("xpub");
+                            String path = (String)xpubObj.get("path");
+                            String m = (String)xpubObj.get("m");
+                            unspentPaths.put(address, path);
+                            if(m.equals(BIP49Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
+                                unspentBIP49.put(address, 0);   // assume account 0
+                            }
+                            else if(m.equals(BIP84Util.getInstance(context).getWallet().getAccount(0).xpubstr()))    {
+                                unspentBIP84.put(address, 0);   // assume account 0
+                            }
+                            else    {
+                                unspentAccounts.put(address, AddressFactory.getInstance(context).xpub2account().get(m));
+                            }
+                        }
+                        else if(outDict.has("pubkey"))    {
+                            int idx = BIP47Meta.getInstance().getIdx4AddrLookup().get(outDict.getString("pubkey"));
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(address, idx);
+                            String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(outDict.getString("pubkey"));
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
+                        }
+                        else    {
+                            unspentPaths.put(address, xpub_pathaddressmap.get(address));
+                            try {
+                                Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
+                                unspentAccounts.put(address, 0);
+                            } catch (AddressFormatException x) {
+                                String _script1 = outDict.getString("script");
+                                //Script _script = new Script(Utils.HEX.decode(outDict.getString("script")));
+                                if(Bech32Util.getInstance().isBech32Script(_script1)) {
+                                    unspentBIP84.put(address, 0);
+                                } else {
+                                    unspentBIP49.put(address, 0);
+                                }
+                            }
+                        }
+
+                        // Construct the output
+                        MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);
+                        outPoint.setConfirmations(confirmations);
+
+                        if(utxos.containsKey(script))    {
+                            utxos.get(script).getOutpoints().add(outPoint);
+                        }
+                        else    {
+                            UTXO utxo = new UTXO();
+                            utxo.getOutpoints().add(outPoint);
+                            utxos.put(script, utxo);
+                        }
+
+                        if(!BlockedUTXO.getInstance().contains(txHash.toString(), txOutputN))    {
+
+                            if(Bech32Util.getInstance().isBech32Script(script))    {
+                                UTXOFactory.getInstance().addP2WPKH(script, utxos.get(script));
+                            }
+                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                                UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
+                            }
+                            else    {
+                                UTXOFactory.getInstance().addP2PKH(script, utxos.get(script));
+                            }
+
+                        }
+
+                    }
+                    catch(Exception e) {
+                        ;
+                    }
+
+                }
+
+                try {
+                    PayloadUtil.getInstance(context).serializeUTXO(jsonObj);
+                }
+                catch(IOException | DecryptionException e) {
+                    ;
+                }
+
+                return true;
+
+            }
+            catch(JSONException je) {
+                ;
+            }
+
+        }
+
+        return false;
+
+    }
+
+    private synchronized ArrayList<String> getXPUB_unspent_addresses(String[] xpubs) {
+
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
+        org.json.JSONObject jsonObject  = null;
+        ArrayList<String> addresses = null;
+
+        for(int i = 0; i < xpubs.length; i++)   {
+            try {
+                StringBuilder url = new StringBuilder(_url);
+                String response;
+                boolean extendedKey = xpubs[i].startsWith("xpub") || xpubs[i].startsWith("ypub") || xpubs[i].startsWith("zpub") ||
+                        xpubs[i].startsWith("tpub") || xpubs[i].startsWith("upub") || xpubs[i].startsWith("vpub");
+                if(extendedKey) {
+                    url.append("xpub2&xpub=");
+                    url.append(xpubs[i]);
+                    Log.i("APIFactory", "XPUB:" + url.toString());
+                    response = WebUtil.getInstance(null).getURL(url.toString());
+                    Log.i("APIFactory", "XPUB response:" + response);
+                }
+                else {
+                    url.append("unspent&active=");
+                    url.append(xpubs[i]);
+                    Log.i("APIFactory", "MultiAddr:" + url.toString());
+                    response = WebUtil.getInstance(null).getURL(url.toString());
+                    Log.i("APIFactory", "MultiAddr response:" + response);
+                }
+                try {
+                    jsonObject = new org.json.JSONObject(response);
+
+                    ArrayList<String> theseaddresses;
+                    if(extendedKey)
+                        theseaddresses = parseXPUB_unspent_addresses(jsonObject, xpubs[i]);
+                    else theseaddresses = parseAddress_unspent_addresses(jsonObject, xpubs[i]);
+
+                    if(theseaddresses != null) {
+                        if(addresses == null )
+                            addresses = new ArrayList<String>();
+                        addresses.addAll(theseaddresses);
+                    }
+                }
+                catch(JSONException je) {
+                    je.printStackTrace();
+                    jsonObject = null;
+                }
+            }
+            catch(Exception e) {
+                jsonObject = null;
+                e.printStackTrace();
+            }
+        }
+
+        return addresses;
+    }
+    private synchronized ArrayList<String> parseAddress_unspent_addresses(org.json.JSONObject jsonObject, String address) throws JSONException {
+
+        if(jsonObject == null)
+            return null;
+        if(jsonObject.has("unspent_outputs"))
+        {
+            ArrayList<String> addresses = new ArrayList<String>();
+            org.json.JSONArray unspent_outputs = jsonObject.getJSONArray("unspent_outputs");
+            if(unspent_outputs.length() > 0) {
+                addresses.add(address);
+                return addresses;
+            }
+        }
+        return null;
+    }
+    private synchronized ArrayList<String> parseXPUB_unspent_addresses(org.json.JSONObject jsonObject, String xpub) throws JSONException  {
+
+
+        if(jsonObject != null)  {
+            ArrayList<String> addresses = new ArrayList<String>();
+/*
+
+            if(jsonObject.has("wallet"))  {
+                JSONObject walletObj = (JSONObject)jsonObject.get("wallet");
+                if(walletObj.has("final_balance"))  {
+                    xpub_balance = walletObj.getLong("final_balance");
+                }
+            }
+*/
+            long latest_block = 0L;
+
+            if(jsonObject.has("info"))  {
+                org.json.JSONObject infoObj = (org.json.JSONObject)jsonObject.get("info");
+                if(infoObj.has("latest_block"))  {
+                    org.json.JSONObject blockObj = (org.json.JSONObject)infoObj.get("latest_block");
+                    if(blockObj.has("height"))  {
+                        latest_block = blockObj.getLong("height");
+                    }
+                }
+            }
+
+            if(jsonObject.has("addresses"))  {
+
+                JSONArray addressesArray = (JSONArray)jsonObject.get("addresses");
+                org.json.JSONObject addrObj = null;
+                for(int i = 0; i < addressesArray.length(); i++)  {
+                    addrObj = (org.json.JSONObject)addressesArray.get(i);
+                    if(i == 1 && addrObj.has("n_tx") && addrObj.getInt("n_tx") > 0)  {
+                    }
+                    if(addrObj.has("final_balance") && addrObj.has("address"))  {
+                    }
+                }
+            }
+
+            if(jsonObject.has("txs"))  {
+
+                JSONArray txArray = (JSONArray)jsonObject.get("txs");
+                org.json.JSONObject txObj = null;
+                for(int i = 0; i < txArray.length(); i++)  {
+
+                    txObj = (org.json.JSONObject)txArray.get(i);
+                    long height = 0L;
+                    long amount = 0L;
+                    long ts = 0L;
+                    String hash = null;
+                    String addr = null;
+                    String _addr = null;
+                    String path = null;
+                    String input_xpub = null;
+                    String output_xpub = null;
+                    long move_amount = 0L;
+                    long input_amount = 0L;
+                    long output_amount = 0L;
+                    long bip47_input_amount = 0L;
+                    long xpub_input_amount = 0L;
+                    long change_output_amount = 0L;
+                    boolean hasBIP47Input = false;
+                    boolean hasOnlyBIP47Input = true;
+                    boolean hasChangeOutput = false;
+
+                    if(txObj.has("block_height"))  {
+                        height = txObj.getLong("block_height");
+                    }
+                    else  {
+                        height = -1L;  // 0 confirmations
+                    }
+                    if(txObj.has("hash"))  {
+                        hash = (String)txObj.get("hash");
+                    }
+                    if(txObj.has("result"))  {
+                        amount = txObj.getLong("result");
+                    }
+                    if(txObj.has("time"))  {
+                        ts = txObj.getLong("time");
+                    }
+
+                    if(txObj.has("inputs"))  {
+                        JSONArray inputArray = (JSONArray)txObj.get("inputs");
+                        org.json.JSONObject inputObj = null;
+                        for(int j = 0; j < inputArray.length(); j++)  {
+                            inputObj = (org.json.JSONObject)inputArray.get(j);
+                            if(inputObj.has("prev_out"))  {
+                                org.json.JSONObject prevOutObj = (org.json.JSONObject)inputObj.get("prev_out");
+                                input_amount += prevOutObj.getLong("value");
+                                if(prevOutObj.has("xpub"))  {
+                                    org.json.JSONObject xpubObj = (org.json.JSONObject)prevOutObj.get("xpub");
+                                    addr = (String)xpubObj.get("m");
+                                    input_xpub = addr;
+                                    xpub_input_amount -= prevOutObj.getLong("value");
+                                    hasOnlyBIP47Input = false;
+                                }
+                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) != null)  {
+                                    hasBIP47Input = true;
+                                    bip47_input_amount -= prevOutObj.getLong("value");
+                                }
+                                else if(prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) == null)  {
+                                    hasOnlyBIP47Input = false;
+                                }
+                                else  {
+                                    _addr = (String)prevOutObj.get("addr");
+                                }
+                            }
+                        }
+                    }
+
+                    if(txObj.has("out"))  {
+                        JSONArray outArray = (JSONArray)txObj.get("out");
+                        org.json.JSONObject outObj = null;
+                        for(int j = 0; j < outArray.length(); j++)  {
+                            outObj = (org.json.JSONObject)outArray.get(j);
+                            output_amount += outObj.getLong("value");
+                            if(outObj.has("xpub"))  {
+                                org.json.JSONObject xpubObj = (org.json.JSONObject)outObj.get("xpub");
+                                //addr = (String)xpubObj.get("m");
+                                addr = xpub;
+                                change_output_amount += outObj.getLong("value");
+                                path = xpubObj.getString("path");
+                                if(outObj.has("spent"))  {
+                                    if(outObj.getBoolean("spent") == false && outObj.has("addr"))  {
+                                        if(!addresses.contains(outObj.getString("addr")))
+                                            addresses.add(outObj.getString("addr"));
+                                        //froms.put(outObj.getString("addr"), path);
+                                    }
+                                }
+                                if(input_xpub != null && !input_xpub.equals(addr))    {
+                                    output_xpub = addr;
+                                    move_amount = outObj.getLong("value");
+                                }
+                            }
+                            else  {
+                                _addr = (String)outObj.get("addr");
+                            }
+                        }
+
+                        if(hasOnlyBIP47Input && !hasChangeOutput)    {
+                            amount = bip47_input_amount;
+                        }
+                        else if(hasBIP47Input)    {
+                            amount = bip47_input_amount + xpub_input_amount + change_output_amount;
+                        }
+                        else    {
+                            ;
+                        }
+
+                    }
+
+                    if(addr != null)  {
+
+                        //
+                        // test for MOVE from Shuffling -> Samourai account
+                        //
+
+
+                    }
+                }
+
+            }
+            return addresses;
+        }
+        return null;
     }
 
 }
