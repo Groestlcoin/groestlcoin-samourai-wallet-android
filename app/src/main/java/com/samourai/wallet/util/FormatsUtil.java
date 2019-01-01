@@ -230,7 +230,7 @@ public class FormatsUtil {
 				ret = false;
 			}
 			else	{
-				Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(address.substring(0, 2), address);
+				Pair<Byte, byte[]> pair1 = Bech32Segwit.decode(address.substring(0, SamouraiWallet.getInstance().isTestNet() ? 4 : 3), address);
 				if(pair1.getLeft() == null || pair1.getRight() == null)	{
 					ret = false;
 				}
