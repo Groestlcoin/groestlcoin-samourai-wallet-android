@@ -191,13 +191,8 @@ public class SweepUtil  {
                                     else    {
                                         response = PushTx.getInstance(context).samourai(hexTx);
 
-                                        if(response != null)    {
-                                            JSONObject jsonObject = new org.json.JSONObject(response);
-                                            if(jsonObject.has("status"))    {
-                                                if(jsonObject.getString("status").equals("ok"))    {
+                                        if(response != null && com.samourai.wallet.util.PushTx.chainz_valid(response))    {
                                                     Toast.makeText(context, R.string.tx_sent, Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
                                         }
                                         else    {
                                             Toast.makeText(context, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
