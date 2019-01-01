@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="enter_xpub">Enter TPUB or Groestlcoin address.</string>
+    <string name="xpub_error">There was an error creating a wallet from your TPUBs/Groestlcoin addresses. Please try again.</string>
+    <string name="invalid_entry">Invalid TPUB or groestlcoin address</string>
+
+    <string name="unknown_xpub">TPUB depth</string>
+
+
+    <string name="xpub_add_ok">TPUB added successfully</string>
+    <string name="xpub_add_ko">TPUB add failed</string>
+    <string name="select_bip44_xpub2">groestlcoin wallet via TPUB (BIP44)</string>
+    <string name="select_bip49_xpub2">groestlcoin wallet via Segwit UPUB/VPUB (BIP49/84)</string>
+    <string name="add_first_address">Add any Groestlcoin address or TPUB and Groestlcoin Sentinel will be activated</string>
+    <string name="options_cat_other">Groestlcoin Sentinel TestNet</string>
+    <string name="about_us">About Groestlcoin Sentinel TestNet (Lollipop+)</string>
+</resources>
