@@ -1,5 +1,6 @@
 package com.samourai.wallet.segwit;
 
+import com.samourai.wallet.SamouraiWallet;
 import com.samourai.wallet.segwit.bech32.Bech32Segwit;
 
 import org.bitcoinj.core.Address;
@@ -122,6 +123,23 @@ public class SegwitAddress {
         buf[0] = (byte)0x00;  // OP_0
         buf[1] = (byte)0x14;  // push 20 bytes
         System.arraycopy(hash, 0, buf, 2, hash.length); // keyhash
+
+        return new Script(buf);
+    }
+
+    public static Script segWitOutputScript(String address)    {
+
+        Address addr = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
+
+        //
+        // OP_HASH160 hash160(redeemScript) OP_EQUAL
+        //
+        byte[] hash = addr.getHash160();
+        byte[] buf = new byte[3 + hash.length];
+        buf[0] = (byte)0xa9;    // HASH160
+        buf[1] = (byte)0x14;    // push 20 bytes
+        System.arraycopy(hash, 0, buf, 2, hash.length); // keyhash
+        buf[22] = (byte)0x87;   // OP_EQUAL
 
         return new Script(buf);
     }
