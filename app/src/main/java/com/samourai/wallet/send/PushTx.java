@@ -39,13 +39,13 @@ public class PushTx {
 
     public String samourai(String hexString) {
 
-        String _url = SamouraiWallet.getInstance().isTestNet() ? "test/v2/pushtx/" : "v2/pushtx/";
+        String _url = "pushtx";
 
         try {
             String response = null;
 
             if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                response = WebUtil.getInstance(context).postURL(WebUtil.SAMOURAI_API + _url, "tx=" + hexString);
+                response = WebUtil.getInstance(context).postURL("text/plain", WebUtil.SAMOURAI_API + _url, hexString);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
