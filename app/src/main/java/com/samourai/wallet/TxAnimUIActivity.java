@@ -211,13 +211,8 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                             }
                                         } else {
 
-                                            if (response != null) {
-                                                JSONObject jsonObject = new org.json.JSONObject(response);
-                                                if (jsonObject.has("status")) {
-                                                    if (jsonObject.getString("status").equals("ok")) {
-                                                        isOK = true;
-                                                    }
-                                                }
+                                            if (response != null && com.samourai.wallet.util.PushTx.chainz_valid(response)) {
+                                                isOK = true;
                                             } else {
                                                 Toast.makeText(TxAnimUIActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
                                                 failTx(R.string.tx_broadcast_ko);
