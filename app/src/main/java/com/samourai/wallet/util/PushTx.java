@@ -72,9 +72,9 @@ public class PushTx {
         }
     }
 
-    public boolean chainz_valid(String result)
+    public static boolean chainz_valid(String result)
     {
-        if(result.length() > 67 && result.charAt(66) == '\n' && result.charAt(67) == '\n')
+        if(result.length() > 67 && result.charAt(66) == '\n')
             return true;
         else return false;
     }
