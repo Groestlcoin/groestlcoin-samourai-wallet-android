@@ -224,6 +224,19 @@ public class PayloadUtil	{
         return deserializeAux(null, strFX_BFX);
     }
 
+    public JSONObject deserializeFX_Binance()  throws IOException, JSONException  {
+        return deserializeAux(null, strFX_BFX);
+    }
+    public JSONObject deserializeFX_Bittrex()  throws IOException, JSONException  {
+        return deserializeAux(null, strFX_BFX);
+    }
+    public JSONObject deserializeFX_Cryptopia()  throws IOException, JSONException  {
+        return deserializeAux(null, strFX_BFX);
+    }
+    public JSONObject deserializeFX_Upbit()  throws IOException, JSONException  {
+        return deserializeAux(null, strFX_BFX);
+    }
+
     public JSONObject deserializeFees()  throws IOException, JSONException  {
         return deserializeAux(null, strFeesFilename);
     }
