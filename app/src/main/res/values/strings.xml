@@ -492,7 +492,7 @@
     <string name="get_help">Get help</string>
     <string name="offline_mode">Offline mode</string>
     <string name="import_samourai_backup">Import Samourai backup</string>
-    <string name="samourai_bitcoin_wallet">Samourai Grostlcoin Wallet</string>
+    <string name="samourai_bitcoin_wallet">Grostlcoin Samourai Wallet</string>
     <string name="enter_your_wallet_passphrase">Enter your wallet passphrase</string>
     <string name="start_new_wallet">Start new wallet</string>
     <string name="get_help_create">Create wallet: Get help</string>
