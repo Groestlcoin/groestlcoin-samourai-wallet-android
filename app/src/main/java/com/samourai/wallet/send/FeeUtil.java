@@ -18,7 +18,7 @@ import org.bitcoinj.core.Transaction;
 public class FeeUtil  {
 
     private static String[] providers = {
-            "Samourai (bitcoind)",
+            "Groestlcoin Samourai (groestlcoind)",
     };
 
     private static final int ESTIMATED_INPUT_LEN_P2PKH = 158;       // (148), compressed key (180 uncompressed key)
