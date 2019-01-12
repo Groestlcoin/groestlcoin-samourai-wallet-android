@@ -181,8 +181,7 @@ public class RicochetActivity extends Activity {
 
                                 String response = PushTx.getInstance(RicochetActivity.this).samourai(txs[i]);
                                 Log.d("RicochetActivity", "pushTx:" + response);
-                                JSONObject jsonObject = new JSONObject(response);
-                                if(jsonObject.has("status") && jsonObject.getString("status").equals("ok"))    {
+                                if(com.samourai.wallet.util.PushTx.chainz_valid(response))    {
                                     isOK = true;
                                 }
 

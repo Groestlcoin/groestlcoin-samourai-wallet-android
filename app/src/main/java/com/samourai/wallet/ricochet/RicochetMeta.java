@@ -56,13 +56,13 @@ import org.spongycastle.util.encoders.Hex;
 
 public class RicochetMeta {
 
-    private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "bc1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsw3c9cm";
-    private final static String TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "tb1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsyhrkrg";
+    //private final static String SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "bc1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsw3c9cm";
+    //private final static String TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS = "tb1qkymumss6zj0rxy9l3v5vqxqwwffy8jjsyhrkrg";
 
     private final static int RICOCHET_ACCOUNT = Integer.MAX_VALUE;
 
-    public final static BigInteger samouraiFeeAmountV1 = BigInteger.valueOf(200000L);
-    public final static BigInteger samouraiFeeAmountV2 = BigInteger.valueOf(200000L);
+    public final static BigInteger samouraiFeeAmountV1 = BigInteger.ZERO;//valueOf(200000L);
+    public final static BigInteger samouraiFeeAmountV2 = BigInteger.ZERO;//valueOf(200000L);
 
     private static RicochetMeta instance = null;
 
@@ -513,7 +513,7 @@ public class RicochetMeta {
 //        Log.d("RicochetMeta", "fee:" + fee);
 //        Log.d("RicochetMeta", "totalValueSelected:" + totalValueSelected);
 
-        BigInteger samouraiFeeAmount = samouraiFeeAmountV2;
+        BigInteger samouraiFeeAmount = BigInteger.ZERO;//samouraiFeeAmountV2;
 
         long changeAmount = totalValueSelected - (spendAmount + fee);
 //        Log.d("RicochetMeta", "changeAmount:" + changeAmount);
@@ -529,7 +529,7 @@ public class RicochetMeta {
             receivers.put(destination, BigInteger.valueOf(spendAmount));
         }
         else    {
-            receivers.put(SamouraiWallet.getInstance().isTestNet() ? TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS : SAMOURAI_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
+            //receivers.put(SamouraiWallet.getInstance().isTestNet() ? TESTNET_SAMOURAI_RICOCHET_TX_FEE_ADDRESS : SAMOURAI_RICOCHET_TX_FEE_ADDRESS, samouraiFeeAmount);
             receivers.put(destination, BigInteger.valueOf(spendAmount - samouraiFeeAmount.longValue()));
         }
 
