@@ -1588,8 +1588,8 @@ public class SettingsActivity2 extends PreferenceActivity	{
             }
 
             Intent email = new Intent(Intent.ACTION_SEND);
-            email.putExtra(Intent.EXTRA_EMAIL, new String[] { "support@samouraiwallet.com" } );
-            email.putExtra(Intent.EXTRA_SUBJECT, "Samourai Wallet support backup");
+            email.putExtra(Intent.EXTRA_EMAIL, new String[] { "groestlcoin@gmail.com" } );
+            email.putExtra(Intent.EXTRA_SUBJECT, "Groestlcoin Samourai Wallet support backup");
             email.putExtra(Intent.EXTRA_TEXT, jsonObject.toString());
             email.setType("message/rfc822");
             startActivity(Intent.createChooser(email, SettingsActivity2.this.getText(R.string.choose_email_client)));
