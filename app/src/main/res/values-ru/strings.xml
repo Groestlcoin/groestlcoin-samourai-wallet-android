@@ -192,7 +192,7 @@
     <string name="custom_fee">Своя</string>
     <string name="sat_b">сат/б</string>
 
-    <string name="account_Groestlcoin Samourai">Кошелёк</string>
+    <string name="account_Samourai">Кошелёк</string>
     <string name="account_shuffling">Shifted</string>
 
     <string name="max_available">Макс. доступно:</string>

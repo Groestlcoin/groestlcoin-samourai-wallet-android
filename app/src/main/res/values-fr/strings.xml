@@ -192,7 +192,7 @@
     <string name="custom_fee">Frais personnalisés</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Groestlcoin Samourai">Portefeuille</string>
+    <string name="account_Samourai">Portefeuille</string>
     <string name="account_shuffling">Échangé</string>
 
     <string name="max_available">Max. disponible:</string>

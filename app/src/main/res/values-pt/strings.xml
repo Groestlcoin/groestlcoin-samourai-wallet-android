@@ -186,7 +186,7 @@
     <string name="custom_fee">Personalizada</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Groestlcoin Samourai">Carteira</string>
+    <string name="account_Samourai">Carteira</string>
     <string name="account_shuffling">Shifted</string>
 
     <string name="max_available">Máx. disponível:</string>

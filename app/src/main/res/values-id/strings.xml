@@ -192,7 +192,7 @@
     <string name="custom_fee">Tentukan sendiri</string>
     <string name="sat_b">sat/b</string>
 
-    <string name="account_Groestlcoin Samourai">Wallet</string>
+    <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Pindahkan</string>
 
     <string name="max_available">Max. tersedia:</string>

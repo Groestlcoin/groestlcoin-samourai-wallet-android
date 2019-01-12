@@ -198,7 +198,7 @@
   <string name="custom_fee">Özel</string>
   <string name="sat_b">sat/b</string>
 
-  <string name="account_Groestlcoin Samourai">Cüzdan</string>
+  <string name="account_Samourai">Cüzdan</string>
   <string name="account_shuffling">Shifted</string>
 
   <string name="max_available">En fazla mümkün:</string>
