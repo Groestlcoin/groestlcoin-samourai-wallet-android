@@ -308,7 +308,7 @@
     <string name="trusted_node">Nodo Affidabile</string>
     <string name="trusted_node_user_hint">Nome utente rpc</string>
     <string name="trusted_node_ip_hint">Indirizzo IP</string>
-    <string name="trusted_node_port_hint">Porta (8332 default)</string>
+    <string name="trusted_node_port_hint">Porta (1441 default)</string>
     <string name="trusted_node_password_hint">Password utente rpc</string>
     <string name="trusted_node_not_valid">Fornisci info valide al tuo nodo affidabile.</string>
     <string name="trusted_node_ko">Nodo affidabile non riconosciuto. Controlla l\'installazione.</string>

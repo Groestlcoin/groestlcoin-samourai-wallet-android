@@ -299,7 +299,7 @@
     <string name="trusted_node">Nodo de confianza</string>
     <string name="trusted_node_user_hint">Usuario RPC</string>
     <string name="trusted_node_ip_hint">Dirección IP</string>
-    <string name="trusted_node_port_hint">Puerto (8332 predeterminado)</string>
+    <string name="trusted_node_port_hint">Puerto (1441 predeterminado)</string>
     <string name="trusted_node_password_hint">Contraseña RPC</string>
     <string name="trusted_node_not_valid">Por favor ingrese información valida para tu nodo de confianza.</string>
     <string name="trusted_node_ko">Nodo de confianza no reconocido. Por favor revisa la instalación.</string>

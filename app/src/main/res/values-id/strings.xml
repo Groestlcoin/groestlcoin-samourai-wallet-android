@@ -302,7 +302,7 @@
     <string name="trusted_node">Node terpercaya</string>
     <string name="trusted_node_user_hint">nama user rpc</string>
     <string name="trusted_node_ip_hint">IP address</string>
-    <string name="trusted_node_port_hint">Port (standar 8332)</string>
+    <string name="trusted_node_port_hint">Port (standar 1441)</string>
     <string name="trusted_node_password_hint">kata sandi user rpc</string>
     <string name="trusted_node_not_valid">Harap berikan info valid untuk node terpercaya anda.</string>
     <string name="trusted_node_ko">Node terpercaya tidak dapat dikenali. Silahkan periksa instalasi.</string>

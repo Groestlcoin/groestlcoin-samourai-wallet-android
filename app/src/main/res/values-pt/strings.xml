@@ -296,7 +296,7 @@
     <string name="trusted_node">Nó confiável</string>
     <string name="trusted_node_user_hint">nome de utilizador do rpc</string>
     <string name="trusted_node_ip_hint">Endereço de IP</string>
-    <string name="trusted_node_port_hint">Porta (8332 padrão)</string>
+    <string name="trusted_node_port_hint">Porta (1441 padrão)</string>
     <string name="trusted_node_password_hint">senha do rpc</string>
     <string name="trusted_node_not_valid">Por favor forneça informação válida para o seu nó confiável.</string>
     <string name="trusted_node_ko">Nó confiável não reconhecido. Por favor verifique a instalação.</string>

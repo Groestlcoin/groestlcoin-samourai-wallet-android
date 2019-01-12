@@ -309,7 +309,7 @@
     <string name="trusted_node">Vertrauenswürdiger Peer</string>
     <string name="trusted_node_user_hint">RPC Benutzername</string>
     <string name="trusted_node_ip_hint">IP Adresse</string>
-    <string name="trusted_node_port_hint">Port (8332 Standard)</string>
+    <string name="trusted_node_port_hint">Port (1441 Standard)</string>
     <string name="trusted_node_password_hint">RPC Beutzerpasswort</string>
     <string name="trusted_node_not_valid">Bitte gültige Informationen für den vertrauenswürdigen Peer eingeben.</string>
     <string name="trusted_node_ko">Vertrauenswürdiger Peer nicht erkannt. Bitte überprüfe die Installation.</string>

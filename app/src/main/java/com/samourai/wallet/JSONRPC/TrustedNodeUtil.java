@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 public class TrustedNodeUtil {
 
-    public static final int DEFAULT_PORT = 8332;
+    public static final int DEFAULT_PORT = 1441;
 
     private static String node = null;
     private static int port = DEFAULT_PORT;

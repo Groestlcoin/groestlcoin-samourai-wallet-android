@@ -308,7 +308,7 @@
   <string name="trusted_node">Güvenilen düğüm</string>
   <string name="trusted_node_user_hint">rpc kullanıcı adı</string>
   <string name="trusted_node_ip_hint">IP adresi</string>
-  <string name="trusted_node_port_hint">Port (varsayılan 8332)</string>
+  <string name="trusted_node_port_hint">Port (varsayılan 1441)</string>
   <string name="trusted_node_password_hint">rpc kullanıcı şifresi</string>
   <string name="trusted_node_not_valid">Güvenilen düğümünüz için lütfen geçerli bilgi sağlayın.</string>
   <string name="trusted_node_ko">Güvenilen düğüm işlenemedi. Lütfen kurulumu denetleyin.</string>

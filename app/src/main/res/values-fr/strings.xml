@@ -302,7 +302,7 @@
     <string name="trusted_node">Noeud sécurisé</string>
     <string name="trusted_node_user_hint">Nom d\'utilisateur rpc</string>
     <string name="trusted_node_ip_hint">Adresse IP</string>
-    <string name="trusted_node_port_hint">Port (8332 par défaut)</string>
+    <string name="trusted_node_port_hint">Port (1441 par défaut)</string>
     <string name="trusted_node_password_hint">Mot de passe utilisateur rpc</string>
     <string name="trusted_node_not_valid">Veuillez fournir des informations valides concernant votre noeud sécurisé.</string>
     <string name="trusted_node_ko">Noeud sécurisé non reconnu. Veuillez vérifier votre installation.</string>

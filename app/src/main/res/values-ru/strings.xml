@@ -302,7 +302,7 @@
     <string name="trusted_node">Доверенная нода</string>
     <string name="trusted_node_user_hint">rpc-имя пользователя</string>
     <string name="trusted_node_ip_hint">IP-адрес</string>
-    <string name="trusted_node_port_hint">Порт (по умолчанию 8332)</string>
+    <string name="trusted_node_port_hint">Порт (по умолчанию 1441)</string>
     <string name="trusted_node_password_hint">rpc-пароль</string>
     <string name="trusted_node_not_valid">Пожалуйста, укажите верные данные своей доверенной ноды.</string>
     <string name="trusted_node_ko">Не удалось определить ноду. Пожалуйста, проверьте конфигурацию.</string>

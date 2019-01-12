@@ -308,7 +308,7 @@
     <string name="trusted_node">可信任节点</string>
     <string name="trusted_node_user_hint">rpc用户名</string>
     <string name="trusted_node_ip_hint">IP地址</string>
-    <string name="trusted_node_port_hint">端口（默认：8332）</string>
+    <string name="trusted_node_port_hint">端口（默认：1441）</string>
     <string name="trusted_node_password_hint">rpc用户密码</string>
     <string name="trusted_node_not_valid">请提供可信任节点的有效信息</string>
     <string name="trusted_node_ko">无法识别可信任节点。请检查节点信息</string>

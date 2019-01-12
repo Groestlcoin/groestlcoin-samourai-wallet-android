@@ -305,7 +305,7 @@
     <string name="trusted_node">Node confiável</string>
     <string name="trusted_node_user_hint">nome de usuário do rpc</string>
     <string name="trusted_node_ip_hint">Endereço de IP</string>
-    <string name="trusted_node_port_hint">Porta (8332 padrão)</string>
+    <string name="trusted_node_port_hint">Porta (1441 padrão)</string>
     <string name="trusted_node_password_hint">senha do rpc</string>
     <string name="trusted_node_not_valid">Por favor forneça informação válida para seu node confiável.</string>
     <string name="trusted_node_ko">Node confiável não reconhecido. Por favor verifique a instalação.</string>
