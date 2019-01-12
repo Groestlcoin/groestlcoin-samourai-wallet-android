@@ -157,7 +157,7 @@ public class BalanceActivity extends Activity {
     private FloatingActionsMenu ibQuickSend = null;
     private FloatingActionButton actionReceive = null;
     private FloatingActionButton actionSend = null;
-    private FloatingActionButton actionBIP47 = null;
+    //private FloatingActionButton actionBIP47 = null;
 
     private boolean isBTC = true;
 
@@ -450,14 +450,14 @@ public class BalanceActivity extends Activity {
             }
         });
 
-        actionBIP47 = (FloatingActionButton)findViewById(R.id.bip47);
+        /*actionBIP47 = (FloatingActionButton)findViewById(R.id.bip47);
         actionBIP47.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 Intent intent = new Intent(BalanceActivity.this, com.samourai.wallet.bip47.BIP47Activity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
         txs = new ArrayList<Tx>();
         txStates = new HashMap<String, Boolean>();
@@ -614,6 +614,7 @@ public class BalanceActivity extends Activity {
             PermissionsUtil.getInstance(BalanceActivity.this).showRequestPermissionsInfoAlertDialog(PermissionsUtil.CAMERA_PERMISSION_CODE);
         }
 
+        /*
         if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true && PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_FEATURED_SEGWIT, false) == false)    {
             doFeaturePayNymUpdate();
         }
@@ -624,6 +625,7 @@ public class BalanceActivity extends Activity {
         else    {
             ;
         }
+        */
 
         if(!AppUtil.getInstance(BalanceActivity.this).isClipboardSeen())    {
             doClipboardCheck();
@@ -942,10 +944,10 @@ public class BalanceActivity extends Activity {
 
     }
 
-    private void doClaimPayNym() {
+    /*private void doClaimPayNym() {
         Intent intent = new Intent(BalanceActivity.this, ClaimPayNymActivity.class);
         startActivity(intent);
-    }
+    }*/
 
     private void doSettings()	{
         TimeOutUtil.getInstance().updatePin();

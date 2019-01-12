@@ -25,10 +25,10 @@
         android:key="acalc"
         />
 
-    <Preference
+    <!--Preference
         android:title="@string/options_paynym_calc"
         android:summary="@string/options_paynym_calc2"
         android:key="pcalc"
-        />
+        /-->
 
 </PreferenceScreen>
