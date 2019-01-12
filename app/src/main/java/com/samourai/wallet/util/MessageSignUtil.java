@@ -127,15 +127,15 @@ public class MessageSignUtil {
         String ret = null;
 
         if(sig != null)    {
-            ret = "-----BEGIN BITCOIN SIGNED MESSAGE-----\n";
+            ret = "-----BEGIN GROESTLCOIN SIGNED MESSAGE-----\n";
             ret += strMessage;
             ret += "\n";
-            ret += "-----BEGIN BITCOIN SIGNATURE-----\n";
-            ret += "Version: Bitcoin-qt (1.0)\n";
+            ret += "-----BEGIN GROESTLCOIN SIGNATURE-----\n";
+            ret += "Version: Groestlcoin-qt (1.0)\n";
             ret += "Address: " + key.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString() + "\n\n";
             ret += sig;
             ret += "\n";
-            ret += "-----END BITCOIN SIGNATURE-----\n";
+            ret += "-----END GROESTLCOIN SIGNATURE-----\n";
         }
 
         return ret;
