@@ -197,7 +197,7 @@
     <string name="priority_fee">HOHE GEBÜHR</string>
     <string name="low_fee">NIEDRIGE GEBÜHR</string>
     <string name="custom_fee">Eigene</string>
-    <string name="sat_b">sat/b</string>
+    <string name="sat_b">gro/b</string>
 
     <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Getauscht</string>
@@ -342,8 +342,8 @@
     <string name="current_hi_fee_value">Derzeitig hohe Gebühr:</string>
     <string name="current_mid_fee_value">Derzeitig normale Gebühr:</string>
     <string name="current_lo_fee_value">Derzeitig niedrige Gebühr:</string>
-    <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Eigene Gebühr in sat/b festlegen.</string>
+    <string name="slash_sat">gro/b</string>
+    <string name="set_sat">Eigene Gebühr in gro/b festlegen.</string>
     <string name="custom_fee_too_low">Eigene Gebühr ist zu niedrig.</string>
     <string name="custom_fee_too_high">Eigene Gebühr ist zu hoch.</string>
 

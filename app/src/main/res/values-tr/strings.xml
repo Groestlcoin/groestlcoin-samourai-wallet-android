@@ -196,7 +196,7 @@
   <string name="priority_fee">ÖNCELİKLİ MASRAF</string>
   <string name="low_fee">DÜŞÜK MASRAF</string>
   <string name="custom_fee">Özel</string>
-  <string name="sat_b">sat/b</string>
+  <string name="sat_b">gro/b</string>
 
   <string name="account_Samourai">Cüzdan</string>
   <string name="account_shuffling">Shifted</string>
@@ -341,8 +341,8 @@
   <string name="current_hi_fee_value">Güncel yüksek masraf:</string>
   <string name="current_mid_fee_value">Güncel normal masraf:</string>
   <string name="current_lo_fee_value">Güncel düşük masraf:</string>
-  <string name="slash_sat">sat/b</string>
-  <string name="set_sat">Özel masraf seçiminizi sat/b cinsinden ayarlayın.</string>
+  <string name="slash_sat">gro/b</string>
+  <string name="set_sat">Özel masraf seçiminizi gro/b cinsinden ayarlayın.</string>
   <string name="custom_fee_too_low">Özel masraf çok düşük.</string>
   <string name="custom_fee_too_high">Özel masraf çok yüksek.</string>
 

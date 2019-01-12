@@ -190,7 +190,7 @@
     <string name="priority_fee">BIAYA DENGAN PRIORITAS</string>
     <string name="low_fee">BIAYA RENDAH</string>
     <string name="custom_fee">Tentukan sendiri</string>
-    <string name="sat_b">sat/b</string>
+    <string name="sat_b">gro/b</string>
 
     <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Pindahkan</string>
@@ -335,8 +335,8 @@
     <string name="current_hi_fee_value">Biaya tinggi saat ini:</string>
     <string name="current_mid_fee_value">Biaya normal saat ini:</string>
     <string name="current_lo_fee_value">Biaya rendah saat ini:</string>
-    <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Tetapkan biaya khusus anda sendiri di sat/b.</string>
+    <string name="slash_sat">gro/b</string>
+    <string name="set_sat">Tetapkan biaya khusus anda sendiri di gro/b.</string>
     <string name="custom_fee_too_low">Biaya khusus yang anda tetapkan terlalu rendah.</string>
     <string name="custom_fee_too_high">Biaya khusus yang anda tetapkan terlalu tinggi.</string>
 

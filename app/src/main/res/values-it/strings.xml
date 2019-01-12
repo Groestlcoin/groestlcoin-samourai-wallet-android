@@ -196,7 +196,7 @@
     <string name="priority_fee">FEE ALTA</string>
     <string name="low_fee">FEE BASSA</string>
     <string name="custom_fee">Personalizzata</string>
-    <string name="sat_b">sat/b</string>
+    <string name="sat_b">gro/b</string>
 
     <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Shifted</string>
@@ -341,8 +341,8 @@
     <string name="current_hi_fee_value">Fee alta corrente:</string>
     <string name="current_mid_fee_value">Fee standard corrente:</string>
     <string name="current_lo_fee_value">Fee bassa corrente:</string>
-    <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Imposta la tua fee personalizzata in sat/b.</string>
+    <string name="slash_sat">gro/b</string>
+    <string name="set_sat">Imposta la tua fee personalizzata in gro/b.</string>
     <string name="custom_fee_too_low">La fee personalizzata è troppo bassa.</string>
     <string name="custom_fee_too_high">La fee personalizzata è troppo alta.</string>
 

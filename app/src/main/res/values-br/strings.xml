@@ -193,7 +193,7 @@
     <string name="priority_fee">TAXA PRIORITÁRIA</string>
     <string name="low_fee">TAXA BAIXA</string>
     <string name="custom_fee">Personalizada</string>
-    <string name="sat_b">sat/b</string>
+    <string name="sat_b">gro/b</string>
 
     <string name="account_Samourai">Carteira</string>
     <string name="account_shuffling">Shifted</string>
@@ -338,8 +338,8 @@
     <string name="current_hi_fee_value">Taxa alta atual:</string>
     <string name="current_mid_fee_value">Taxa normal atual:</string>
     <string name="current_lo_fee_value">Taxa baixa atual:</string>
-    <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Selecione sua taxa personalizada em sat/b.</string>
+    <string name="slash_sat">gro/b</string>
+    <string name="set_sat">Selecione sua taxa personalizada em gro/b.</string>
     <string name="custom_fee_too_low">Taxa personalizada selecionada está baixa demais.</string>
     <string name="custom_fee_too_high">Taxa personalizada selecionada está alta demais.</string>
 

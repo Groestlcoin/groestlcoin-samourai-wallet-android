@@ -196,7 +196,7 @@
     <string name="priority_fee">PRIORITY FEE</string>
     <string name="low_fee">LOW FEE</string>
     <string name="custom_fee">Custom</string>
-    <string name="sat_b">sat/b</string>
+    <string name="sat_b">gro/b</string>
 
 
     <string name="account_Samourai">Wallet</string>
@@ -279,9 +279,9 @@
 
     <string name="change_is_dust">The change from this transaction is a dust amount. Try again and either modify the spend amount or spend the entire balance.</string>
 
-    <string name="tor_routing_on">Samourai is routing via Tor.</string>
-    <string name="tor_routing_off">Samourai is not routing via Tor. Tap to activate.</string>
-    <string name="tor_install">Tap to install Orbot and route Samourai through Tor.</string>
+    <string name="tor_routing_on">Groestlcoin Samourai is routing via Tor.</string>
+    <string name="tor_routing_off">Groestlcoin Samourai is not routing via Tor. Tap to activate.</string>
+    <string name="tor_install">Tap to install Orbot and route Groestlcoin Samourai through Tor.</string>
 
     <string name="premium_addons">Premium Addons</string>
 
@@ -289,7 +289,7 @@
     <string name="ricochet_hopping">Ricocheted to</string>
     <string name="ricochet_spend1">Ricochet spend to</string>
     <string name="ricochet_spend2">for a total amount of</string>
-    <string name="ricochet_spend3">(includes 0.002 GRS fee to Samourai and miners\' fees)?</string>
+    <string name="ricochet_spend3">(includes 0.002 GRS fee to Groestlcoin Samourai and miners\' fees)?</string>
 
     <string name="action_ricochet">Replay Ricochet</string>
     <string name="action_empty_ricochet">Empty Ricochet queue</string>
@@ -343,8 +343,8 @@
     <string name="current_hi_fee_value">Current high fee:</string>
     <string name="current_mid_fee_value">Current normal fee:</string>
     <string name="current_lo_fee_value">Current low fee:</string>
-    <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Set your custom fee in sat/b.</string>
+    <string name="slash_sat">gro/b</string>
+    <string name="set_sat">Set your custom fee in gro/b.</string>
     <string name="custom_fee_too_low">Custom fee is set too low.</string>
     <string name="custom_fee_too_high">Custom fee is set too high.</string>
 

@@ -187,7 +187,7 @@
     <string name="priority_fee">Comisión PRIORITARIA</string>
     <string name="low_fee">Comisión BAJA</string>
     <string name="custom_fee">Personalizada</string>
-    <string name="sat_b">sat/b</string>
+    <string name="sat_b">gro/b</string>
 
     <string name="account_Samourai">Wallet</string>
     <string name="account_shuffling">Shifted</string>
@@ -332,8 +332,8 @@
     <string name="current_hi_fee_value">Comisión alta actual:</string>
     <string name="current_mid_fee_value">Comisión normal actual:</string>
     <string name="current_lo_fee_value">Comisión baja actual:</string>
-    <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Define tu comisión personalizada en sat/b.</string>
+    <string name="slash_sat">gro/b</string>
+    <string name="set_sat">Define tu comisión personalizada en gro/b.</string>
     <string name="custom_fee_too_low">La comisión personalizada es demasiado baja.</string>
     <string name="custom_fee_too_high">La comisión personalizada es demasiado alta.</string>
 

@@ -196,7 +196,7 @@
     <string name="priority_fee">偏高（快）</string>
     <string name="low_fee">偏低（慢）</string>
     <string name="custom_fee">自定手续费</string>
-    <string name="sat_b">sat/b</string>
+    <string name="sat_b">gro/b</string>
 
     <string name="account_Samourai">钱包</string>
     <string name="account_shuffling">已兑换</string>
@@ -341,8 +341,8 @@
     <string name="current_hi_fee_value">偏高费：</string>
     <string name="current_mid_fee_value">正常费：</string>
     <string name="current_lo_fee_value">偏低费：</string>
-    <string name="slash_sat">sat/b</string>
-    <string name="set_sat">以sat/b制定矿工费</string>
+    <string name="slash_sat">gro/b</string>
+    <string name="set_sat">以gro/b制定矿工费</string>
     <string name="custom_fee_too_low">自定义矿工费太低</string>
     <string name="custom_fee_too_high">自定义矿工费太高</string>
 

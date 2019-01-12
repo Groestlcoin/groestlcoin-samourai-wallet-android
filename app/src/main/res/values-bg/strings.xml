@@ -197,7 +197,7 @@
     <string name="priority_fee">ПРИОРИТЕТНА ТАКСА</string>
     <string name="low_fee">НИСКА ТАКСА</string>
     <string name="custom_fee">По избор</string>
-    <string name="sat_b">sat/b</string>
+    <string name="sat_b">gro/b</string>
 
     <string name="account_Samourai">Портфейл</string>
     <string name="account_shuffling">Shifted</string>
@@ -342,8 +342,8 @@
     <string name="current_hi_fee_value">Сегашната висока такса е:</string>
     <string name="current_mid_fee_value">Сегашната нормална такса е:</string>
     <string name="current_lo_fee_value">Сегашната ниска такса е:</string>
-    <string name="slash_sat">sat/b</string>
-    <string name="set_sat">Задайте такса по избор в sat/b(сатошита за байт).</string>
+    <string name="slash_sat">gro/b</string>
+    <string name="set_sat">Задайте такса по избор в gro/b(сатошита за байт).</string>
     <string name="custom_fee_too_low">Таксата по избор е твърде ниска</string>
     <string name="custom_fee_too_high">Таксата по избор е твърде висока</string>
 
