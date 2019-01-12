@@ -42,6 +42,7 @@ import com.samourai.wallet.util.AppUtil;
 import com.samourai.wallet.util.BlockExplorerUtil;
 import com.samourai.wallet.util.FormatsUtil;
 import com.samourai.wallet.util.MessageSignUtil;
+import com.samourai.wallet.util.MonetaryUtil;
 import com.samourai.wallet.util.PrefsUtil;
 
 import org.bitcoinj.core.Address;
@@ -466,7 +467,7 @@ public class UTXOActivity extends Activity {
             df.setMinimumFractionDigits(8);
             df.setMaximumFractionDigits(8);
 
-            text1.setText(df.format(((double)(data.get(position).amount) / 1e8)) + " BTC");
+            text1.setText(df.format(((double)(data.get(position).amount) / 1e8)) + " " + MonetaryUtil.getInstance().getBTCUnits());
 
             String addr = data.get(position).addr;
             text2.setText(addr);
