@@ -556,10 +556,10 @@ public class ReceiveActivity extends AppCompatActivity {
                 }
                 break;
             }
-            case R.id.action_support: {
+            /*case R.id.action_support: {
                 doSupport();
                 break;
-            }
+            }*/
 
 //           Handle Toolbar back button press
             case android.R.id.home: {

@@ -620,9 +620,9 @@ public class BIP47Activity extends Activity {
                 Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
             }
         }
-        else if(id == R.id.action_support) {
+        /*else if(id == R.id.action_support) {
             doSupport();
-        }
+        }*/
         else {
             ;
         }

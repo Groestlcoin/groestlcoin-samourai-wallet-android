@@ -10,10 +10,10 @@
         android:visible="true"
         app:showAsAction="ifRoom" />
 
-    <item
+    <!--item
         android:id="@+id/action_support"
         android:orderInCategory="100"
         android:title="@string/action_support"
-        app:showAsAction="never" />
+        app:showAsAction="never" /-->
 
 </menu>
