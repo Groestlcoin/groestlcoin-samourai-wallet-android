@@ -187,7 +187,7 @@ public class FormatsUtil {
 				(SamouraiWallet.getInstance().isTestNet() && address.toLowerCase().startsWith("tgrs")))	{
 
 			try	{
-				Pair<Byte, byte[]> pair = Bech32Segwit.decode(address.substring(0, 2), address);
+				Pair<Byte, byte[]> pair = Bech32Segwit.decode(address.substring(0, SamouraiWallet.getInstance().isTestNet() ? 4 : 3), address);
 				if(pair.getLeft() == null || pair.getRight() == null)	{
 					;
 				}
