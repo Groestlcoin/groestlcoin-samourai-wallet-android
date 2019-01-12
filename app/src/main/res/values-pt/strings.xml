@@ -191,10 +191,10 @@
 
     <string name="max_available">Máx. disponível:</string>
 
-    <string name="first_use_shuffle">Esta é sua Conta Shifted. As Grostlcoins recebidas através do ShapeShift serão guardadas nesta conta que não faz parte do espaço de endereços da sua carteira principal.</string>
+    <string name="first_use_shuffle">Esta é sua Conta Shifted. As Groestlcoins recebidas através do ShapeShift serão guardadas nesta conta que não faz parte do espaço de endereços da sua carteira principal.</string>
 
     <string name="select_account">Selecionar conta</string>
-    <string name="received_bitcoin">Grostlcoin recebido</string>
+    <string name="received_bitcoin">Groestlcoin recebido</string>
     <string name="received">Recebido</string>
     <string name="sent">Transação enviada</string>
     <string name="total">Total</string>
@@ -302,10 +302,10 @@
     <string name="trusted_node_ko">Nó confiável não reconhecido. Por favor verifique a instalação.</string>
     <string name="trusted_node_error">Erro ao aceder ao nó confiável proposto.</string>
     <string name="trusted_node_tx_error">Transação falhou no nó confiável.</string>
-    <string name="trusted_node_not_core_131">Nó confiável está definido. Note que a Groestlcoin Samourai suporta Grostlcoin Core 0.13.1 e posteriores.</string>
+    <string name="trusted_node_not_core_131">Nó confiável está definido. Note que a Groestlcoin Samourai suporta Groestlcoin Core 0.13.1 e posteriores.</string>
     <string name="trusted_node_tx_sent">Transação enviada através de nó confiável.</string>
     <string name="trusted_node_not_responding">O nó confiável não está a responder. Por favor verifique a instalação.</string>
-    <string name="trusted_node_breaks_consensus">O nó confiável não pode ser configurado num cliente Grostlcoin que quebre o consenso.</string>
+    <string name="trusted_node_breaks_consensus">O nó confiável não pode ser configurado num cliente Groestlcoin que quebre o consenso.</string>
 
     <string name="refresh_tx_pre">Recuperando transações e saldo.</string>
     <string name="refresh_tx">Transações e saldo recuperados.</string>
@@ -381,8 +381,8 @@
     <string name="replay_waiting_for_confirmations">a aguardar confirmações</string>
     <string name="replay_confirmed">confirmado</string>
     <string name="replay_confirmations">confirmações</string>
-    <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
-    <string name="replay_bcc_user_agent">Grostlcoin Cash (Grostlcoin ABC)</string>
+    <string name="replay_samourai_user_agent">Groestlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Groestlcoin Cash (Groestlcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay protection a aguardar confirmação</string>
     <string name="replay_dismiss">IGNORAR ALERTA</string>
@@ -397,7 +397,7 @@
     <string name="TestNet">TestNet</string>
 
     <string name="segwit_address">Endereço Segwit</string>
-    <string name="segwit_switch_prompt">Fundos depositados em endereços Segwit são mais eficientes ao enviar. Oferecendo taxas de mineiros reduzidas quando envia Grostlcoin da sua carteira.</string>
+    <string name="segwit_switch_prompt">Fundos depositados em endereços Segwit são mais eficientes ao enviar. Oferecendo taxas de mineiros reduzidas quando envia Groestlcoin da sua carteira.</string>
 
     <string name="privkey_clipboard">Uma chave privada foi identificada na sua área de transferência. Apagar o conteúdo da área de transferência?</string>
 
@@ -431,14 +431,14 @@
 
     <string name="copy_to_clipboard">Copiar para área de transferência</string>
 
-    <string name="no_bitpay">Erro: Este não é um pedido válido de Grostlcoin. A Groestlcoin Samourai suporta apenas envios para endereços Grostlcoin válidos.</string>
+    <string name="no_bitpay">Erro: Este não é um pedido válido de Groestlcoin. A Groestlcoin Samourai suporta apenas envios para endereços Groestlcoin válidos.</string>
     <string name="learn_more">Aprenda Mais</string>
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Reinvidique a sua paynym</string>
     <string name="claim_paynym_title1">Reinvidique a sua PayNymID gratuita</string>
-    <string name="claim_paynym_text1">Autorize os seus amigos &amp; contactos a encontrar e conectar ao seu PayNym diretamente através de carteiras Grostlcoin compatíveis.</string>
+    <string name="claim_paynym_text1">Autorize os seus amigos &amp; contactos a encontrar e conectar ao seu PayNym diretamente através de carteiras Groestlcoin compatíveis.</string>
     <string name="claim_paynym_title2">Benefícios de uma PayNymID</string>
     <string name="claim_paynym_text2a">Nome e imagem únicos gerados através de um hash de seu código paynym. Nunca haverá dois iguais!</string>
     <string name="claim_paynym_text2b">Sem verificações de identidade. O seu nome e imagem são baseados em seu código paynim, não num documento nacional de identidade.</string>

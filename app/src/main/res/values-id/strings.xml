@@ -70,7 +70,7 @@
     <string name="options_boltzmann_2">Pengeluaran ini menggunakan algoritma STONEWALL untuk menaikkan tingkat kerumitan agar tidak mudah terbaca.</string>
     <string name="options_utxo">Tunjukkan output yang belum terpakai</string>
     <string name="options_trusted_node">Atur node terpercaya</string>
-    <string name="options_trusted_node2">Tentukan node Grostlcoin anda sendiri untuk menyiarkan transaksi.</string>
+    <string name="options_trusted_node2">Tentukan node Groestlcoin anda sendiri untuk menyiarkan transaksi.</string>
     <string name="options_use_trusted_node">Gunakan node terpercaya</string>
     <string name="options_use_trusted_node2">Siarkan transaksi dari node anda sendiri.</string>
     <string name="options_rbf0">Pegeluaran menggunakan RBF</string>
@@ -197,10 +197,10 @@
 
     <string name="max_available">Max. tersedia:</string>
 
-    <string name="first_use_shuffle">Ini adalah akun yang anda pindahkan. Grostlcoin yang anda terima melalui ShapeShift akan disimpan dalam akun ini, tidak berbagi ruang address yang sama dengan akun utama wallet anda.</string>
+    <string name="first_use_shuffle">Ini adalah akun yang anda pindahkan. Groestlcoin yang anda terima melalui ShapeShift akan disimpan dalam akun ini, tidak berbagi ruang address yang sama dengan akun utama wallet anda.</string>
 
     <string name="select_account">Pilih akun</string>
-    <string name="received_bitcoin">Menerima Grostlcoin</string>
+    <string name="received_bitcoin">Menerima Groestlcoin</string>
     <string name="received">Diterima</string>
     <string name="sent">Transaksi terkirim</string>
     <string name="total">Total</string>
@@ -308,10 +308,10 @@
     <string name="trusted_node_ko">Node terpercaya tidak dapat dikenali. Silahkan periksa instalasi.</string>
     <string name="trusted_node_error">Kesalahan saat mencapai node terpercaya yang dikehendaki.</string>
     <string name="trusted_node_tx_error">Transaksi gagal pada node terpercaya.</string>
-    <string name="trusted_node_not_core_131">Node terpercaya telah ditetapkan. Perlu dicatat bahwa Wallet Groestlcoin Samourai telah mendukung Grostlcoin Core 0.13.1 dan versi diatasnya.</string>
+    <string name="trusted_node_not_core_131">Node terpercaya telah ditetapkan. Perlu dicatat bahwa Wallet Groestlcoin Samourai telah mendukung Groestlcoin Core 0.13.1 dan versi diatasnya.</string>
     <string name="trusted_node_tx_sent">Transaksi dikirimkan melalui node terpercaya.</string>
     <string name="trusted_node_not_responding">Node terpercaya tidak merespon. Harap periksa instalasi.</string>
-    <string name="trusted_node_breaks_consensus">Node terpercaya tidak dapat digunakan pada klien Grostlcoin yang dapat merusak konsensus.</string>
+    <string name="trusted_node_breaks_consensus">Node terpercaya tidak dapat digunakan pada klien Groestlcoin yang dapat merusak konsensus.</string>
 
     <string name="refresh_tx_pre">Mengambil informasi transaksi dan saldo.</string>
     <string name="refresh_tx">Transaksi dan saldo yang telah diperoleh.</string>
@@ -387,8 +387,8 @@
     <string name="replay_waiting_for_confirmations">menunggu konfirmasi</string>
     <string name="replay_confirmed">terkonfirmasi</string>
     <string name="replay_confirmations">konfirmasi:</string>
-    <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
-    <string name="replay_bcc_user_agent">Grostlcoin Cash (Grostlcoin ABC)</string>
+    <string name="replay_samourai_user_agent">Groestlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Groestlcoin Cash (Groestlcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Menunggu konfirmasi Replay protection</string>
     <string name="replay_dismiss">ABAIKAN PERINGATAN</string>
@@ -403,7 +403,7 @@
     <string name="TestNet">TestNet</string>
 
     <string name="segwit_address">Address Segwit</string>
-    <string name="segwit_switch_prompt">Dana yang tersimpan di address Segwit lebih efisien untuk bertransaksi. Menawarkan biaya penambang lebih murah saat mengirim Grostlcoin dari wallet anda.</string>
+    <string name="segwit_switch_prompt">Dana yang tersimpan di address Segwit lebih efisien untuk bertransaksi. Menawarkan biaya penambang lebih murah saat mengirim Groestlcoin dari wallet anda.</string>
 
     <string name="privkey_clipboard">Private key telah diidentifikasi di clipboard anda. Hapus isi clipboard?</string>
 
@@ -438,14 +438,14 @@
 
     <string name="copy_to_clipboard">Salin pada clipboard</string>
 
-    <string name="no_bitpay">Kesalahan: Ini bukanlah permintaan Grostlcoin yang valid. Groestlcoin Samourai hanya mendukung pengiriman address Grostlcoin yang valid.</string>
+    <string name="no_bitpay">Kesalahan: Ini bukanlah permintaan Groestlcoin yang valid. Groestlcoin Samourai hanya mendukung pengiriman address Groestlcoin yang valid.</string>
     <string name="learn_more">Pelajari lagi</string>
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Klaim paynym anda</string>
     <string name="claim_paynym_title1">Klaim PayNymID gratis anda</string>
-    <string name="claim_paynym_text1">Ijinkan teman anda &amp; mengontak untuk menemukan dan terhubung dengan PayNym anda secara langsung melalui wallet Grostlcoin yang kompatibel.</string>
+    <string name="claim_paynym_text1">Ijinkan teman anda &amp; mengontak untuk menemukan dan terhubung dengan PayNym anda secara langsung melalui wallet Groestlcoin yang kompatibel.</string>
     <string name="claim_paynym_title2">Manfaat PayNymID</string>
     <string name="claim_paynym_text2a">Nama dan gambar unik yang dihasilkan dengan hash kode paynym anda. Tidak akan pernah sama!</string>
     <string name="claim_paynym_text2b">Tidak butuh pemeriksaan identitas! Nama dan gambar anda didasarkan pada kode paynym anda, bukan kartu ID nasional.</string>
@@ -484,7 +484,7 @@
     <string name="get_help">Dapatkan bantuan</string>
     <string name="offline_mode">Mode Offline</string>
     <string name="import_samourai_backup">Impor cadangan Groestlcoin Samourai</string>
-    <string name="samourai_bitcoin_wallet">Wallet Grostlcoin Groestlcoin Samourai</string>
+    <string name="samourai_bitcoin_wallet">Wallet Groestlcoin Groestlcoin Samourai</string>
     <string name="enter_your_wallet_passphrase">Masukkan frase kata sandi wallet anda</string>
     <string name="start_new_wallet">Mulai wallet baru</string>
   <string name="get_help_create">Buat wallet: Dapatkan bantuan</string>

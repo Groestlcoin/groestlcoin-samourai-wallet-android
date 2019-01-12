@@ -70,7 +70,7 @@
     <string name="options_boltzmann_2">Les Dépenses vont utiliser l\'algorithme STONEWALL pour maximiser l\'obfuscation.</string>
     <string name="options_utxo">Montrer les sorties de transaction non dépensées ("UTXO")</string>
     <string name="options_trusted_node">Définir un noeud ("node") sécurisé</string>
-    <string name="options_trusted_node2">Indiquer votre propre noeud Grostlcoin pour émettre les transactions.</string>
+    <string name="options_trusted_node2">Indiquer votre propre noeud Groestlcoin pour émettre les transactions.</string>
     <string name="options_use_trusted_node">Utiliser un noeud sécurisé</string>
     <string name="options_use_trusted_node2">Émettre les transactions à partir de votre propre noeud.</string>
     <string name="options_rbf0">Envoyer en utilisant RBF</string>
@@ -197,10 +197,10 @@
 
     <string name="max_available">Max. disponible:</string>
 
-    <string name="first_use_shuffle">Ceci est votre Compte Shift. Les Grostlcoin que vous recevez via ShapeShift seront stockés sur ce compte qui ne partage pas d\'espace adresses commun avec le compte principal de votre portefeuille.</string>
+    <string name="first_use_shuffle">Ceci est votre Compte Shift. Les Groestlcoin que vous recevez via ShapeShift seront stockés sur ce compte qui ne partage pas d\'espace adresses commun avec le compte principal de votre portefeuille.</string>
 
     <string name="select_account">Sélectionnez votre compte</string>
-    <string name="received_bitcoin">Grostlcoin Reçus</string>
+    <string name="received_bitcoin">Groestlcoin Reçus</string>
     <string name="received">Reçus</string>
     <string name="sent">Transaction envoyée</string>
     <string name="total">Total</string>
@@ -269,7 +269,7 @@
     <string name="please_wait_sending">Envoi de la transaction, veuillez patienter.</string>
     <string name="please_wait_ricochet">Traitement file d\'attente Ricochet, veuillez patienter.</string>
 
-    <string name="change_is_dust">La monnaie restante de cette transaction est de la poussière de Grostlcoin ("Dust"). Recommencer en modifiant le montant de la somme ou en dépensant la totalité du solde.</string>
+    <string name="change_is_dust">La monnaie restante de cette transaction est de la poussière de Groestlcoin ("Dust"). Recommencer en modifiant le montant de la somme ou en dépensant la totalité du solde.</string>
 
     <string name="tor_routing_on">L\'acheminement de Groestlcoin Samourai se fait via Tor.</string>
     <string name="tor_routing_off">L\'acheminement de Groestlcoin Samourai ne se fait pas via Tor. Appuyer pour activer.</string>
@@ -308,10 +308,10 @@
     <string name="trusted_node_ko">Noeud sécurisé non reconnu. Veuillez vérifier votre installation.</string>
     <string name="trusted_node_error">Erreur survenue lors de la tentative d\'accès au noeud sécurisé sélectionné.</string>
     <string name="trusted_node_tx_error">Échec de la transaction sur le noeud sécurisé.</string>
-    <string name="trusted_node_not_core_131">Le noeud sécurisé est prêt à l\'utilisation. Notez que le portefeuille Groestlcoin Samourai est compatible avec les versions 0.13.1 et supérieure de Grostlcoin Core.</string>
+    <string name="trusted_node_not_core_131">Le noeud sécurisé est prêt à l\'utilisation. Notez que le portefeuille Groestlcoin Samourai est compatible avec les versions 0.13.1 et supérieure de Groestlcoin Core.</string>
     <string name="trusted_node_tx_sent">Transaction envoyée via le noeud sécurisé.</string>
     <string name="trusted_node_not_responding">Le noeud sécurisé ne répond pas. Veuillez vérifier votre installation.</string>
-    <string name="trusted_node_breaks_consensus">Le noeud sécurisé ne peut être paramétré avec une application Grostlcoin qui rompt le principe du consensus.</string>
+    <string name="trusted_node_breaks_consensus">Le noeud sécurisé ne peut être paramétré avec une application Groestlcoin qui rompt le principe du consensus.</string>
 
     <string name="refresh_tx_pre">Récupération des transactions et du solde.</string>
     <string name="refresh_tx">Transactions et solde récupérés.</string>
@@ -342,7 +342,7 @@
 
     <string name="cpfp_spent">Transaction CPFP envoyée.</string>
     <string name="rbf_spent">Transaction RBF envoyée.</string>
-    <string name="cannot_output_dust">Transaction impossible avec de la poussière de Grostlcoin en sortie.</string>
+    <string name="cannot_output_dust">Transaction impossible avec de la poussière de Groestlcoin en sortie.</string>
     <string name="cannot_create_change_output">Rendu monnaie impossible sur cette sortie de transaction.</string>
     <string name="cannot_create_cpfp">Création transaction CPFP impossible.</string>
 
@@ -387,8 +387,8 @@
     <string name="replay_waiting_for_confirmations">en attente de confirmations</string>
     <string name="replay_confirmed">confirmée</string>
     <string name="replay_confirmations">confirmations:</string>
-    <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
-    <string name="replay_bcc_user_agent">Grostlcoin Cash (Grostlcoin ABC)</string>
+    <string name="replay_samourai_user_agent">Groestlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Groestlcoin Cash (Groestlcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Protection Rejeu en attente de confirmation</string>
     <string name="replay_dismiss">DÉSACTIVER ALERTE</string>
@@ -403,7 +403,7 @@
     <string name="TestNet">TestNet</string>
 
     <string name="segwit_address">Adresse Segwit</string>
-    <string name="segwit_switch_prompt">Les fonds déposés sur des adresses Segwit donnent lieu à des transactions plus efficaces. Les frais des mineurs lors de l\'envoi de Grostlcoin à partir de votre portefeuille sont réduits.</string>
+    <string name="segwit_switch_prompt">Les fonds déposés sur des adresses Segwit donnent lieu à des transactions plus efficaces. Les frais des mineurs lors de l\'envoi de Groestlcoin à partir de votre portefeuille sont réduits.</string>
 
     <string name="privkey_clipboard">Une clé privée a été identifiée dans votre presse-papiers. Effacer contenu presse-papiers?</string>
 
@@ -438,14 +438,14 @@
 
     <string name="copy_to_clipboard">Copier dans le presse-papiers</string>
 
-    <string name="no_bitpay">Erreur: Ceci n\'est pas une requête Grostlcoin valide. Les envois sur Groestlcoin Samourai se font uniquement vers des adresses Grostlcoin valides.</string>
+    <string name="no_bitpay">Erreur: Ceci n\'est pas une requête Groestlcoin valide. Les envois sur Groestlcoin Samourai se font uniquement vers des adresses Groestlcoin valides.</string>
     <string name="learn_more">En savoir plus</string>
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Demander votre Paynym</string>
     <string name="claim_paynym_title1">Demander votre identifiant PayNym gratuit</string>
-    <string name="claim_paynym_text1">Permettre à vos amis &amp; contacts de vous trouver en accédant directement à votre PayNym à partir de portefeuilles Grostlcoin compatibles.</string>
+    <string name="claim_paynym_text1">Permettre à vos amis &amp; contacts de vous trouver en accédant directement à votre PayNym à partir de portefeuilles Groestlcoin compatibles.</string>
     <string name="claim_paynym_title2">Avantages d\'un identifiant PayNym</string>
     <string name="claim_paynym_text2a">Un nom unique et une image générés avec un hachage de votre code Paynym. Une empreinte unique!</string>
     <string name="claim_paynym_text2b">Pas de vérification d\'identité! Votre nom et votre image sont établis à partir de votre code Paynym et non d\'une carte d\'identité nationale.</string>
@@ -484,7 +484,7 @@
     <string name="get_help">Obtenir de l\'aide</string>
     <string name="offline_mode">Mode hors-ligne</string>
     <string name="import_samourai_backup">Importer sauvegarde Groestlcoin Samourai</string>
-    <string name="samourai_bitcoin_wallet">Portefeuille Grostlcoin Groestlcoin Samourai</string>
+    <string name="samourai_bitcoin_wallet">Portefeuille Groestlcoin Groestlcoin Samourai</string>
     <string name="enter_your_wallet_passphrase">Saisir la passphrase de votre portefeuille</string>
     <string name="start_new_wallet">Lancer nouveau portefeuille</string>
   <string name="get_help_create">Créer un portefeuille: obtenir de l\'aide</string>

@@ -71,7 +71,7 @@
     <string name="options_boltzmann_2">Zahlungen werden den STONEWALL Algorithmus verwenden, um die Privatsphäre zu erhöhen.</string>
     <string name="options_utxo">Ungenutzte Outputs anzeigen</string>
     <string name="options_trusted_node">Vertrauenswürdigen Peer festlegen</string>
-    <string name="options_trusted_node2">Gib deine eigene Grostlcoin-Node an, um Transaktionen darüber zu veröffentlichen.</string>
+    <string name="options_trusted_node2">Gib deine eigene Groestlcoin-Node an, um Transaktionen darüber zu veröffentlichen.</string>
     <string name="options_use_trusted_node">Vertrauenswürdigen Peer verwenden</string>
     <string name="options_use_trusted_node2">Transaktionen über den eigenen, vertrauenswürdigen Peer veröffentlichen.</string>
     <string name="options_rbf0">RBF für Zahlungen verwenden</string>
@@ -204,10 +204,10 @@
 
     <string name="max_available">Max. verfügbar:</string>
 
-    <string name="first_use_shuffle">Dies ist dein Tausch-Account. Grostlcoin, die du über ShapeShift erhältst, werden in diesem Account gespeichert. Dieser Account teilt seinen Adressbereich nicht mit deiner primären Wallet.</string>
+    <string name="first_use_shuffle">Dies ist dein Tausch-Account. Groestlcoin, die du über ShapeShift erhältst, werden in diesem Account gespeichert. Dieser Account teilt seinen Adressbereich nicht mit deiner primären Wallet.</string>
 
     <string name="select_account">Account wählen</string>
-    <string name="received_bitcoin">Empfangene Grostlcoin</string>
+    <string name="received_bitcoin">Empfangene Groestlcoin</string>
     <string name="received">Empfangen</string>
     <string name="sent">Transaktion gesendet</string>
     <string name="total">Gesamt</string>
@@ -315,7 +315,7 @@
     <string name="trusted_node_ko">Vertrauenswürdiger Peer nicht erkannt. Bitte überprüfe die Installation.</string>
     <string name="trusted_node_error">Vertrauenswürdiger Peer kann nicht erreicht werden.</string>
     <string name="trusted_node_tx_error">Transaktion auf dem vertrauenswürdigen Peer fehlgeschlagen.</string>
-    <string name="trusted_node_not_core_131">Vertrauenswürdiger Peer eingestellt. Groestlcoin Samourai Wallet unterstützt Grostlcoin Core 0.13.1 und höher.</string>
+    <string name="trusted_node_not_core_131">Vertrauenswürdiger Peer eingestellt. Groestlcoin Samourai Wallet unterstützt Groestlcoin Core 0.13.1 und höher.</string>
     <string name="trusted_node_tx_sent">Transaktion über vertrauenswürdigen Peer gesendet.</string>
     <string name="trusted_node_not_responding">Der vertrauenswürdige Peer antwortet nicht. Bitte überprüfe die Installation.</string>
     <string name="trusted_node_breaks_consensus">Ein Peer, der die Konsensregeln bricht, kann nicht als vertrauenswürdiger Peer gewählt werden.</string>
@@ -394,8 +394,8 @@
     <string name="replay_waiting_for_confirmations">warten auf Bestätigungen</string>
     <string name="replay_confirmed">bestätigt</string>
     <string name="replay_confirmations">Bestätigungen:</string>
-    <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
-    <string name="replay_bcc_user_agent">Grostlcoin Cash (Grostlcoin ABC)</string>
+    <string name="replay_samourai_user_agent">Groestlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_bcc_user_agent">Groestlcoin Cash (Groestlcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay Schutz wartet auf Bestätigung</string>
     <string name="replay_dismiss">WARNUNG SCHLIEßEN</string>
@@ -410,7 +410,7 @@
     <string name="TestNet">TestNet</string>
 
     <string name="segwit_address">SegWit Adresse</string>
-    <string name="segwit_switch_prompt">Guthaben auf einer SegWit Adresse kann effizienter versendet werden. Dies ermöglicht geringere Transaktionsgebühren beim Versenden von Grostlcoins.</string>
+    <string name="segwit_switch_prompt">Guthaben auf einer SegWit Adresse kann effizienter versendet werden. Dies ermöglicht geringere Transaktionsgebühren beim Versenden von Groestlcoins.</string>
 
     <string name="privkey_clipboard">Ein Private Key wurde in deiner Zwischenablage gefunden. Zwischenablage leeren?</string>
 
@@ -445,14 +445,14 @@
 
     <string name="copy_to_clipboard">In die Zwischenablage kopieren</string>
 
-    <string name="no_bitpay">Fehler: Das ist keine gültige Grostlcoin Anfrage. Groestlcoin Samourai unterstützt nur das Senden an gültige Grostlcoin Adressen.</string>
+    <string name="no_bitpay">Fehler: Das ist keine gültige Groestlcoin Anfrage. Groestlcoin Samourai unterstützt nur das Senden an gültige Groestlcoin Adressen.</string>
     <string name="learn_more">Mehr erfahren</string>
 
     <string name="paynym">PayNym</string>
     <string name="paynyms">PayNyms</string>
     <string name="claim_paynym">Dein PayNym anfordern</string>
     <string name="claim_paynym_title1">Fordere deine kostenlose PayNymID an</string>
-    <string name="claim_paynym_text1">Erlaube deinen Freunden und Kontakten dich direkt über kompatible Grostlcoin Wallets zu finden und sich mit deinem PayNym zu verbinden.</string>
+    <string name="claim_paynym_text1">Erlaube deinen Freunden und Kontakten dich direkt über kompatible Groestlcoin Wallets zu finden und sich mit deinem PayNym zu verbinden.</string>
     <string name="claim_paynym_title2">Vorteile einer PayNymID</string>
     <string name="claim_paynym_text2a">Name und Bild sind einzigartig, da sie mit dem Hash deines PayNym-Codes generiert werden. Es wird nie zwei gleiche geben!</string>
     <string name="claim_paynym_text2b">Keine Identitätsprüfung! Dein Name und dein Bild basieren auf deinem PayNym-Code, nicht auf irgendeinem Ausweis.</string>
@@ -596,7 +596,7 @@
 	Einige Fachbegriffe oder bereits eingedeutschte Wörter habe ich englisch gelassen, da es meiner Meinung nach sinnvoller ist.
 	
 	Folgende Begriffe sind betroffen: 
-	Backup, Grostlcoin-Node, Block-Explorer, Chain, Chain Split, Cloud, Dust,
+	Backup, Groestlcoin-Node, Block-Explorer, Chain, Chain Split, Cloud, Dust,
 	Exchange, Payment-Code, MainNet, PayNym, Premium Addons, Private Key, Proof-of-Work,    
 	Public Key, replace-by-fee, Replay, Ricochet, STONEWALL, TestNet, Wallet
 

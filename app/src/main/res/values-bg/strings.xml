@@ -204,7 +204,7 @@
 
     <string name="max_available">Макс. налични:</string>
 
-    <string name="first_use_shuffle">This is your Shifted Account. The Grostlcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
+    <string name="first_use_shuffle">This is your Shifted Account. The Groestlcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
 
     <string name="select_account">Изберете акаунт</string>
     <string name="received_bitcoin">Получени биткойни</string>
@@ -315,7 +315,7 @@
     <string name="trusted_node_ko">Довереният node неразпознат. Моля проверете инсталацията.</string>
     <string name="trusted_node_error">Грешка при свързването с доверения node</string>
     <string name="trusted_node_tx_error">Грешка с транзакцията от страна на доверения node</string>
-    <string name="trusted_node_not_core_131">Довереният node зададен. Самурай Портфейл поддържа Grostlcoin Core 0.13.1 и нагоре.</string>
+    <string name="trusted_node_not_core_131">Довереният node зададен. Самурай Портфейл поддържа Groestlcoin Core 0.13.1 и нагоре.</string>
     <string name="trusted_node_tx_sent">Транзакцията изпратена чрез доверения node</string>
     <string name="trusted_node_not_responding">Довереният node не отговаря. Моля проверете инсталацията.</string>
     <string name="trusted_node_breaks_consensus">Довереният node не може да бъде зададен на Биткойн клиент, който нарушава консенсуса!</string>
@@ -394,7 +394,7 @@
     <string name="replay_waiting_for_confirmations">Изчакване за потвърждения</string>
     <string name="replay_confirmed">Потвърдено</string>
     <string name="replay_confirmations">Потвърждения:</string>
-    <string name="replay_samourai_user_agent">Grostlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
+    <string name="replay_samourai_user_agent">Groestlcoin (Satoshi:0.14.2/UASF-BIP148)</string>
     <string name="replay_bcc_user_agent">BCash (Bitcoin ABC)</string>
 
     <string name="replay_awaiting_confirmation">Replay защита в очакване на потвърждение</string>
