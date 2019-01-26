@@ -893,13 +893,13 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                /*Preference paynymCalcPref = (Preference) findPreference("pcalc");
+                Preference paynymCalcPref = (Preference) findPreference("pcalc");
                 paynymCalcPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
                         doPayNymCalc();
                         return true;
                     }
-                });*/
+                });
 
             }
             else if(strBranch.equals("other"))   {
@@ -1613,10 +1613,10 @@ public class SettingsActivity2 extends PreferenceActivity	{
         startActivity(intent);
     }
 
-    /*private void doPayNymCalc()    {
+    private void doPayNymCalc()    {
         Intent intent = new Intent(SettingsActivity2.this, PayNymCalcActivity.class);
         startActivity(intent);
-    }*/
+    }
 
     private void doBroadcastHex()    {
 
