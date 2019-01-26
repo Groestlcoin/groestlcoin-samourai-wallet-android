@@ -1631,9 +1631,9 @@ public class SendActivity extends Activity {
         else if (id == R.id.action_utxo) {
             doUTXO();
         }
-        else if (id == R.id.action_fees) {
+        /*else if (id == R.id.action_fees) {
             doFees();
-        }
+        }*/
         else if (id == R.id.action_batch) {
             doBatchSpend();
         }
