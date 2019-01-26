@@ -37,4 +37,6 @@
     <string name="import_samourai_backup">Import Groestlcoin Samourai Testnet backup</string>
     <string name="samourai_bitcoin_wallet">Groestlcoin Samourai Testnet Wallet</string>
     <string name="in_offline_mode">Groestlcoin Samourai Testnet Wallet is in offline mode.</string>
+    <string name="trusted_node_port_hint">Port (17766 Standard)</string>
+
 </resources>
