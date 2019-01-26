@@ -14,4 +14,27 @@
     <string name="add_first_address">Add any Groestlcoin address or TPUB and Samourai Sentinel will be activated</string>
     <string name="options_cat_other">Groestlcoin Samourai TestNet</string>
     <string name="about_us">About Groestlcoin Samourai TestNet (Lollipop+)</string>
+    <string name="import_samourai_backup">Import Groestlcoin Samourai Testnet backup</string>
+    <string name="samourai_bitcoin_wallet">Groestlcoin Samourai Testnet Wallet</string>
+    <string name="about_us">About Groestlcoin Samourai Testnet Wallet</string>
+    <string name="options_stealth_display2">Remove Groestlcoin Samourai Testnet from the Android launcher and home screen. You must dial **YOUR_PIN_CODE# from the phone dialer to launch Groestlcoin Samourai.</string>
+
+    <string name="ask_you_sure_exit">Are you sure you want to exit Groestlcoin SamouraiTestnet ?</string>
+    <string name="sim_warning">Your Groestlcoin Samourai Testnet Wallet device now has a different SIM card corresponding to incoming number of this text message.</string>
+    <string name="tx_length_error">Groestlcoin Samourai Testnet does not handle transactions over 100KB in size. Please try splitting your transaction.</string>
+    <string name="first_use_shuffle">This is your Shifted Account. The Groestlcoin you receive through ShapeShift will be stored in this account which does not share the same address space as your primary wallet account.</string>
+
+    <string name="cannot_launch_app">Groestlcoin Samourai Testnet Wallet cannot be run on this device</string>
+    <string name="tor_routing_on">Groestlcoin Samourai Testnet is routing via Tor.</string>
+    <string name="tor_routing_off">Groestlcoin Samourai Testnet is not routing via Tor. Tap to activate.</string>
+    <string name="tor_install">Tap to install Orbot and route Groestlcoin Samourai Testnet through Tor.</string>
+
+    <string name="ricochet_spend3">(includes 0.002 GRS fee to Groestlcoin Samourai Testnet and miners\' fees)?</string>
+
+    <string name="trusted_node_not_core_131">Trusted node is set. Note that Groestlcoin Samourai Testnet Wallet supports Groestlcoin Core 2.13.1 and over.</string>
+    <string name="passphrase_disclaimer">I understand that Groestlcoin Samourai Testnet cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
+    <string name="import_an_encrypted_samourai_wallet">import an encrypted groestlcoin samourai testnet backup to restore a wallet with all meta-data intact</string>
+    <string name="import_samourai_backup">Import Groestlcoin Samourai Testnet backup</string>
+    <string name="samourai_bitcoin_wallet">Groestlcoin Samourai Testnet Wallet</string>
+    <string name="in_offline_mode">Groestlcoin Samourai Testnet Wallet is in offline mode.</string>
 </resources>

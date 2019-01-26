@@ -269,8 +269,8 @@
     <string name="passphrase_needed_for_backup">Your wallet is not protected by a passphrase. Wallet backups are encrypted using your wallet passphrase. If you would like to use encrypted wallet backups and other Groestlcoin Samourai Wallet features create your wallet using Groestlcoin Samourai Wallet and transfer your funds.</string>
     <string name="passphrase_required">A passphrase is required to use this function. Please consider creating a new wallet which will automatically include a passphrase.</string>
 
-    <string name="cannot_reach_api">Samourai APIs cannot be reached. Please verify connection and try again or try later.</string>
-    <string name="api_error">Samourai APIs are returning an error. Please try again or try later.</string>
+    <string name="cannot_reach_api">Groestlcoin Samourai APIs cannot be reached. Please verify connection and try again or try later.</string>
+    <string name="api_error">Groestlcoin Samourai APIs are returning an error. Please try again or try later.</string>
 
     <string name="cannot_recognize_privkey">Cannot recognize private key</string>
     <string name="cannot_sweep_privkey">Error sweeping private key</string>
@@ -316,7 +316,7 @@
     <string name="trusted_node_ko">Trusted node not recognized. Please check installation.</string>
     <string name="trusted_node_error">Error reaching proposed trusted node.</string>
     <string name="trusted_node_tx_error">Transaction failed on trusted node.</string>
-    <string name="trusted_node_not_core_131">Trusted node is set. Note that Samourai Wallet supports Groestlcoin Core 0.13.1 and over.</string>
+    <string name="trusted_node_not_core_131">Trusted node is set. Note that Groestlcoin Samourai Wallet supports Groestlcoin Core 2.13 and over.</string>
     <string name="trusted_node_tx_sent">Transaction sent via trusted node.</string>
     <string name="trusted_node_not_responding">Trusted node not responding. Please check installation.</string>
     <string name="trusted_node_breaks_consensus">Trusted node cannot be set on a Groestlcoin client that breaks consensus.</string>
@@ -378,7 +378,7 @@
     <string name="opendime_topup">TOP UP</string>
 
     <string name="select_app">Select application</string>
-    <string name="samourai_opendime">Samourai: OpenDime</string>
+    <string name="samourai_opendime">Groestlcoin Samourai: OpenDime</string>
 
     <string name="replay_protection">Replay protection</string>
     <string name="replay_unprotected">Unprotected</string>
@@ -446,7 +446,7 @@
 
     <string name="copy_to_clipboard">Copy to clipboard</string>
 
-    <string name="no_bitpay">Error: This is not a valid Groestlcoin request. Samourai only supports sending to valid Groestlcoin addresses.</string>
+    <string name="no_bitpay">Error: This is not a valid Groestlcoin request. Groestlcoin Samourai only supports sending to valid Groestlcoin addresses.</string>
     <string name="learn_more">Learn More</string>
 
     <string name="paynym">PayNym</string>
@@ -467,7 +467,7 @@
     <string name="bip47_notif_tx_insufficient_funds_2">GRS into your wallet and try again.</string>
     <string name="help">Help</string>
 
-    <string name="passphrase_disclaimer">I understand that Samourai cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
+    <string name="passphrase_disclaimer">I understand that Groestlcoin Samourai cannot provide assistance in the case of lost or forgotten passphrases. Groestlcoin Samourai never has any knowledge of my passphrase.</string>
     <string name="confirm_pin_code">Confirm pin code</string>
     <string name="re_enter_your_pin_code">Re-enter your PIN code</string>
     <string name="re_enter_a_passphrase">Re-enter a passphrase</string>
@@ -491,7 +491,7 @@
     <string name="last_updated">Last updated</string>
     <string name="get_help">Get help</string>
     <string name="offline_mode">Offline mode</string>
-    <string name="import_samourai_backup">Import Samourai backup</string>
+    <string name="import_samourai_backup">Import Groestlcoin Samourai backup</string>
     <string name="samourai_bitcoin_wallet">Groestlcoin Samourai Wallet</string>
     <string name="enter_your_wallet_passphrase">Enter your wallet passphrase</string>
     <string name="start_new_wallet">Start new wallet</string>
@@ -562,7 +562,7 @@
         <item>Legacy (P2PKH)</item>
     </string-array>
 
-    <string name="in_offline_mode">Samourai Wallet is in offline mode.</string>
+    <string name="in_offline_mode">Groestlcoin Samourai Wallet is in offline mode.</string>
     <string name="tx_standby">Transaction in stand-by</string>
     <string name="show_hex">Display Hex Code</string>
     <string name="tx_tenna_coming_soon">txTenna on Android coming soon</string>
