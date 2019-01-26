@@ -1184,7 +1184,9 @@ public class BalanceActivity extends Activity {
                                         Toast.makeText(BalanceActivity.this, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
                                     } else {
                                         Intent email = new Intent(Intent.ACTION_SEND);
-                                        email.putExtra(Intent.EXTRA_SUBJECT, "Groestlcoin Samourai Wallet backup");
+                                        email.putExtra(Intent.EXTRA_SUBJECT, SamouraiWallet.getInstance().isTestNet() ?
+                                                "Groestlcoin Samourai Testnet Wallet backup" :
+                                                "Groestlcoin Samourai Wallet backup");
                                         email.putExtra(Intent.EXTRA_TEXT, obj.toString());
                                         email.setType("message/rfc822");
                                         startActivity(Intent.createChooser(email, BalanceActivity.this.getText(R.string.choose_email_client)));
