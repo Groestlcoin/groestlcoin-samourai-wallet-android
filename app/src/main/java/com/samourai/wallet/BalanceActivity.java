@@ -725,12 +725,12 @@ public class BalanceActivity extends Activity {
         else    {
             menu.findItem(R.id.action_tor).setIcon(R.drawable.tor_off);
         }
-        menu.findItem(R.id.action_refresh).setVisible(false);
+        menu.findItem(R.id.action_refresh).setVisible(true);
         menu.findItem(R.id.action_share_receive).setVisible(false);
         menu.findItem(R.id.action_ricochet).setVisible(false);
         menu.findItem(R.id.action_empty_ricochet).setVisible(false);
         menu.findItem(R.id.action_sign).setVisible(false);
-        menu.findItem(R.id.action_fees).setVisible(false);
+        //menu.findItem(R.id.action_fees).setVisible(false);
         menu.findItem(R.id.action_batch).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
@@ -744,6 +744,13 @@ public class BalanceActivity extends Activity {
         int id = item.getItemId();
 
         // noinspection SimplifiableIfStatement
+        if (id == R.id.action_refresh)
+        {
+            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+            intent.putExtra("notfTx", false);
+            intent.putExtra("fetch", true);
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+        }
         if (id == R.id.action_settings) {
             doSettings();
         }
