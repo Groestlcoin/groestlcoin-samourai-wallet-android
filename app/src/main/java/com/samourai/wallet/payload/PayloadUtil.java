@@ -81,8 +81,9 @@ public class PayloadUtil	{
     private final static String strFeesFilename = "samourai.fees";
     private final static String strPayNymFilename = "samourai.paynyms";
 
-    private final static String strOptionalBackupDir = "/samourai";
-    private final static String strOptionalFilename = "samourai.txt";
+    private final static String strOptionalBackupDir = "/groestlcoin-samourai";
+    private final static String strOptionalFilename = "groestlcoin-samourai.txt";
+    private final static String strOptionalFilenameTestnet = "groestlcoin-samourai-testnet.txt";
 
     private static Context context = null;
 
@@ -110,7 +111,7 @@ public class PayloadUtil	{
         else    {
             dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
         }
-        File file = new File(dir, strOptionalFilename);
+        File file = new File(dir, SamouraiWallet.getInstance().isTestNet() ? strOptionalFilenameTestnet : strOptionalFilename);
 
         return file;
     }
@@ -990,7 +991,7 @@ public class PayloadUtil	{
             dir.setWritable(true, true);
             dir.setReadable(true, true);
         }
-        File newfile = new File(dir, strOptionalFilename);
+        File newfile = new File(dir, SamouraiWallet.getInstance().isTestNet() ? strOptionalFilenameTestnet : strOptionalFilename);
         newfile.setWritable(true, true);
         newfile.setReadable(true, true);
 
