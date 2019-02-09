@@ -35,14 +35,14 @@ public class HD_Wallet {
 
     private DeterministicKey mKey = null;
     protected DeterministicKey mRoot = null;
-
+    protected DeterministicKey mLegacyRoot = null;
     protected ArrayList<HD_Account> mAccounts = null;
 
     private NetworkParameters mParams = null;
 
     private HD_Wallet() { ; }
 
-    public HD_Wallet(int purpose, MnemonicCode mc, NetworkParameters params, byte[] seed, String passphrase, int nbAccounts) throws MnemonicException.MnemonicLengthException {
+    public HD_Wallet(int purpose, MnemonicCode mc, NetworkParameters params, byte[] seed, String passphrase, int nbAccounts, boolean legacy) throws MnemonicException.MnemonicLengthException {
 
         mParams = params;
         mSeed = seed;
@@ -54,16 +54,22 @@ public class HD_Wallet {
         DeterministicKey t1 = HDKeyDerivation.deriveChildKey(mKey, purpose|ChildNumber.HARDENED_BIT);
         int coin = SamouraiWallet.getInstance().isTestNet() ? (1 | ChildNumber.HARDENED_BIT) : (17 | ChildNumber.HARDENED_BIT);
         mRoot = HDKeyDerivation.deriveChildKey(t1, coin);
+        if(legacy) {
+            int legacyCoin = SamouraiWallet.getInstance().isTestNet() ? (1 | ChildNumber.HARDENED_BIT) : (0 | ChildNumber.HARDENED_BIT);
+            mLegacyRoot = HDKeyDerivation.deriveChildKey(t1, legacyCoin);
+        }
 
         mAccounts = new ArrayList<HD_Account>();
         for(int i = 0; i < nbAccounts; i++) {
             String acctName = String.format("account %02d", i);
             mAccounts.add(new HD_Account(mParams, mRoot, acctName, i));
+            if(legacy)
+                mAccounts.add(new HD_Account(mParams, mLegacyRoot, acctName, i));
         }
 
     }
 
-    public HD_Wallet(Context ctx, int purpose, JSONObject jsonobj, NetworkParameters params) throws DecoderException, JSONException, IOException, MnemonicException.MnemonicLengthException {
+    public HD_Wallet(Context ctx, int purpose, JSONObject jsonobj, NetworkParameters params, boolean legacy) throws DecoderException, JSONException, IOException, MnemonicException.MnemonicLengthException {
 
         mParams = params;
         int nbAccounts = SamouraiWallet.NB_ACCOUNTS;
@@ -83,11 +89,17 @@ public class HD_Wallet {
         DeterministicKey t1 = HDKeyDerivation.deriveChildKey(mKey, purpose|ChildNumber.HARDENED_BIT);
         int coin = SamouraiWallet.getInstance().isTestNet() ? (1 | ChildNumber.HARDENED_BIT) : (17 | ChildNumber.HARDENED_BIT);
         mRoot = HDKeyDerivation.deriveChildKey(t1, coin);
+        if(legacy) {
+            int legacyCoin = SamouraiWallet.getInstance().isTestNet() ? (1 | ChildNumber.HARDENED_BIT) : (0 | ChildNumber.HARDENED_BIT);
+            mLegacyRoot = HDKeyDerivation.deriveChildKey(t1, legacyCoin);
+        }
 
         mAccounts = new ArrayList<HD_Account>();
         for(int i = 0; i < nbAccounts; i++) {
             String acctName = String.format("account %02d", i);
             mAccounts.add(new HD_Account(mParams, mRoot, acctName, i));
+            if(legacy)
+                mAccounts.add(new HD_Account(mParams, mLegacyRoot, acctName, i));
         }
 
     }

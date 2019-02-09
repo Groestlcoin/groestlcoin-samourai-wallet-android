@@ -490,7 +490,7 @@ public class PayloadUtil	{
                     PrefsUtil.getInstance(context).removeValue(PrefsUtil.TESTNET);
                 }
 
-                hdw = new HD_Wallet(context, 44, wallet, params);
+                hdw = new HD_Wallet(context, 44, wallet, params, true);
                 hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getReceive().setAddrIdx(wallet.has("receiveIdx") ? wallet.getInt("receiveIdx") : 0);
                 hdw.getAccount(SamouraiWallet.SAMOURAI_ACCOUNT).getChange().setAddrIdx(wallet.has("changeIdx") ? wallet.getInt("changeIdx") : 0);
 
