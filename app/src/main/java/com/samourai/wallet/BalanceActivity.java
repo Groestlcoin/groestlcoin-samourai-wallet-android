@@ -619,7 +619,7 @@ public class BalanceActivity extends Activity {
         }
         else if(PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == false &&
                 PrefsUtil.getInstance(BalanceActivity.this).getValue(PrefsUtil.PAYNYM_REFUSED, false) == false)    {
-            doClaimPayNym();
+            //doClaimPayNym();
         }
         else    {
             ;
