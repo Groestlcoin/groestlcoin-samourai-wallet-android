@@ -196,14 +196,14 @@ public class LandingActivity extends Activity implements PopupMenu.OnMenuItemCli
                 startActivity(intent);
                 return false;
             }
-            case R.id.get_help_menu_create: {
+            /*case R.id.get_help_menu_create: {
                 doSupportCreate();
                 return false;
             }
             case R.id.get_help_menu_restore: {
                 doSupportRestore();
                 return false;
-            }
+            }*/
             default: {
                 return false;
             }
