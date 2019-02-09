@@ -12,9 +12,9 @@
     <string name="select_bip44_xpub2">groestlcoin wallet via TPUB (BIP44)</string>
     <string name="select_bip49_xpub2">groestlcoin wallet via Segwit UPUB/VPUB (BIP49/84)</string>
     <string name="add_first_address">Add any Groestlcoin address or TPUB and Samourai Sentinel will be activated</string>
-    <string name="options_cat_other">Groestlcoin Samourai TestNet</string>
-    <string name="about_us">About Groestlcoin Samourai TestNet (Lollipop+)</string>
+    <string name="options_cat_other">About</string>
     <string name="import_samourai_backup">Import Groestlcoin Samourai Testnet backup</string>
+    <string name="import_samourai_wallet">Import groestlcoin samourai testnet backup</string>
     <string name="samourai_bitcoin_wallet">Groestlcoin Samourai Testnet Wallet</string>
     <string name="about_us">About Groestlcoin Samourai Testnet Wallet</string>
     <string name="options_stealth_display2">Remove Groestlcoin Samourai Testnet from the Android launcher and home screen. You must dial **YOUR_PIN_CODE# from the phone dialer to launch Groestlcoin Samourai.</string>
@@ -34,8 +34,6 @@
     <string name="trusted_node_not_core_131">Trusted node is set. Note that Groestlcoin Samourai Testnet Wallet supports Groestlcoin Core 2.13.1 and over.</string>
     <string name="passphrase_disclaimer">I understand that Groestlcoin Samourai Testnet cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
     <string name="import_an_encrypted_samourai_wallet">import an encrypted groestlcoin samourai testnet backup to restore a wallet with all meta-data intact</string>
-    <string name="import_samourai_backup">Import Groestlcoin Samourai Testnet backup</string>
-    <string name="samourai_bitcoin_wallet">Groestlcoin Samourai Testnet Wallet</string>
     <string name="in_offline_mode">Groestlcoin Samourai Testnet Wallet is in offline mode.</string>
     <string name="trusted_node_port_hint">Port (17766 Standard)</string>
 

@@ -476,7 +476,7 @@
     <string name="set_pin_code">Set Pin code</string>
     <string name="accept_disclaimer_error">You need to accept disclaimer</string>
     <string name="import_external_wallet">Import external wallet</string>
-    <string name="import_samourai_wallet">Import samourai backup</string>
+    <string name="import_samourai_wallet">Import groestlcoin samourai backup</string>
     <string name="backup_file">Backup file</string>
     <string name="import_an_encrypted_samourai_wallet">import an encrypted groestlcoin samourai backup to restore a wallet with all meta-data intact</string>
     <string name="back">BACK</string>
