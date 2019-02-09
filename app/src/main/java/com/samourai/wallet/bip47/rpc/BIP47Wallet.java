@@ -28,9 +28,9 @@ public class BIP47Wallet extends HD_Wallet {
      * @param int nbAccounts number of accounts to create
      *
      */
-    public BIP47Wallet(int purpose, MnemonicCode mc, NetworkParameters params, byte[] seed, String passphrase, int nbAccounts) throws MnemonicException.MnemonicLengthException {
+    public BIP47Wallet(int purpose, MnemonicCode mc, NetworkParameters params, byte[] seed, String passphrase, int nbAccounts, boolean legacy) throws MnemonicException.MnemonicLengthException {
 
-        super(purpose, mc, params, seed, passphrase, nbAccounts);
+        super(purpose, mc, params, seed, passphrase, nbAccounts, legacy);
 
         mAccount = new BIP47Account(SamouraiWallet.getInstance().getCurrentNetworkParams(), mRoot, 17);
 
