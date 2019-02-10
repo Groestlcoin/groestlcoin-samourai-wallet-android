@@ -611,7 +611,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
                     SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                     String strTS = sd.format(System.currentTimeMillis());
-                    String event = strTS + " " + TxAnimUIActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) SendParams.getInstance().getSpendAmount() / 1e8) + " BTC";
+                    String event = strTS + " " + TxAnimUIActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) SendParams.getInstance().getSpendAmount() / 1e8) + " GRS";
                     BIP47Meta.getInstance().setLatestEvent(SendParams.getInstance().getPCode(), event);
                 }
                 else if(SendParams.getInstance().getBatchSend() != null)   {
@@ -626,7 +626,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
                             SimpleDateFormat sd = new SimpleDateFormat("dd MMM");
                             String strTS = sd.format(System.currentTimeMillis());
-                            String event = strTS + " " + TxAnimUIActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) d.amount / 1e8) + " BTC";
+                            String event = strTS + " " + TxAnimUIActivity.this.getString(R.string.sent) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) d.amount / 1e8) + " GRS";
                             BIP47Meta.getInstance().setLatestEvent(pcode, event);
 
                         }

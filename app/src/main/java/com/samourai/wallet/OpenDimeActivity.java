@@ -708,7 +708,7 @@ public class OpenDimeActivity extends Activity {
                                                     fiat_balance = btc_fx * btc_balance;
                                                 }
 
-                                                String strBalance = "" + btc_balance + " BTC";
+                                                String strBalance = "" + btc_balance + " GRS";
                                                 if(balance > 0L && strPrivKey != null && strPrivKey.length() > 0)    {
                                                     strBalance += " " + MonetaryUtil.getInstance().getFiatFormat(strFiat).format(fiat_balance) + " " + strFiat;
                                                     btSweep.setVisibility(View.VISIBLE);

@@ -329,7 +329,7 @@ public class BalanceActivity extends Activity {
                                     message += BalanceActivity.this.getString(R.string.dusting_attempt_amount);
                                     message += " ";
                                     message += Coin.valueOf(amount).toPlainString();
-                                    message += " BTC\n";
+                                    message += " GRS\n";
                                     message += BalanceActivity.this.getString(R.string.dusting_attempt_id);
                                     message += " ";
                                     message += hash + "-" + idx;
@@ -1876,7 +1876,7 @@ public class BalanceActivity extends Activity {
                             message += BalanceActivity.this.getString(R.string.fee_bump_not_necessary);
                             message += "\n\n";
                         }
-                        message += BalanceActivity.this.getString(R.string.bump_fee) + " " + Coin.valueOf(remainingFee).toPlainString() + " BTC";
+                        message += BalanceActivity.this.getString(R.string.bump_fee) + " " + Coin.valueOf(remainingFee).toPlainString() + " GRS";
 
                         AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                                 .setTitle(R.string.app_name)
@@ -2426,7 +2426,7 @@ public class BalanceActivity extends Activity {
                         message += BalanceActivity.this.getString(R.string.fee_bump_not_necessary);
                         message += "\n\n";
                     }
-                    message += BalanceActivity.this.getString(R.string.bump_fee) + " " + Coin.valueOf(remainingFee).toPlainString() + " BTC";
+                    message += BalanceActivity.this.getString(R.string.bump_fee) + " " + Coin.valueOf(remainingFee).toPlainString() + " GRS";
 
                     AlertDialog.Builder dlg = new AlertDialog.Builder(BalanceActivity.this)
                             .setTitle(R.string.app_name)

@@ -1004,7 +1004,7 @@ public class BatchSendActivity extends Activity {
 
             String strChangeIsDust = "";
             String strPrivacyWarning = "";
-            String strMessage = strChangeIsDust + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " BTC. (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?\n";
+            String strMessage = strChangeIsDust + strPrivacyWarning + "Send " + Coin.valueOf(amount).toPlainString() + " GRS. (fee:" + Coin.valueOf(fee.longValue()).toPlainString() + ")?\n";
 
             final long _change = changeAmount;
             final String _change_address = change_address;
@@ -1256,7 +1256,7 @@ public class BatchSendActivity extends Activity {
             df.setMinimumFractionDigits(8);
             df.setMaximumFractionDigits(8);
 
-            text2.setText(df.format(((double)(data.get(position).amount) / 1e8)) + " BTC");
+            text2.setText(df.format(((double)(data.get(position).amount) / 1e8)) + " GRS");
 
             return view;
         }

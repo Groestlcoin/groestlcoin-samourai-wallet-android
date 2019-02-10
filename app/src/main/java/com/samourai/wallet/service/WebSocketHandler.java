@@ -346,7 +346,7 @@ public class WebSocketHandler {
 
                                         String title = context.getString(R.string.app_name);
                                         if (total_value > 0L) {
-                                            String marquee = context.getString(R.string.received_bitcoin) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) total_value / 1e8) + " BTC";
+                                            String marquee = context.getString(R.string.received_bitcoin) + " " + MonetaryUtil.getInstance().getBTCFormat().format((double) total_value / 1e8) + " GRS";
                                             if (in_addr !=null && in_addr.length() > 0) {
                                                 marquee += " from " + in_addr;
                                             }

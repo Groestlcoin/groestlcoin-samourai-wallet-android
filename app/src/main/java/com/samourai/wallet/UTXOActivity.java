@@ -552,13 +552,13 @@ public class UTXOActivity extends Activity {
         df.setMinimumFractionDigits(8);
         df.setMaximumFractionDigits(8);
 
-        String message = getText(R.string.total_p2pkh) + " " + df.format(((double)(totalP2PKH) / 1e8)) + " BTC";
+        String message = getText(R.string.total_p2pkh) + " " + df.format(((double)(totalP2PKH) / 1e8)) + " GRS";
         message += "\n";
-        message += getText(R.string.total_p2sh_p2wpkh) + " " + df.format(((double)(totalP2SH_P2WPKH) / 1e8)) + " BTC";
+        message += getText(R.string.total_p2sh_p2wpkh) + " " + df.format(((double)(totalP2SH_P2WPKH) / 1e8)) + " GRS";
         message += "\n";
-        message += getText(R.string.total_p2wpkh) + " " + df.format(((double)(totalP2WPKH) / 1e8)) + " BTC";
+        message += getText(R.string.total_p2wpkh) + " " + df.format(((double)(totalP2WPKH) / 1e8)) + " GRS";
         message += "\n";
-        message += getText(R.string.total_blocked) + " " + df.format(((double)(totalBlocked) / 1e8)) + " BTC";
+        message += getText(R.string.total_blocked) + " " + df.format(((double)(totalBlocked) / 1e8)) + " GRS";
         message += "\n";
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(UTXOActivity.this)
