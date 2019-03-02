@@ -460,10 +460,10 @@ public class SendActivity extends Activity {
         FEE_TYPE = PrefsUtil.getInstance(SendActivity.this).getValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
 
         long lo = FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L;
-        long mi = FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
-        long hi = FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
+        long mi = lo; //FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L;
+        long hi = lo; //FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L;
 
-        if(lo == mi && mi == hi) {
+        /*if(lo == mi && mi == hi) {
             lo = (long) ((double) mi * 0.85);
             hi = (long) ((double) mi * 1.15);
             SuggestedFee lo_sf = new SuggestedFee();
@@ -481,7 +481,7 @@ public class SendActivity extends Activity {
         }
         else    {
             ;
-        }
+        }*/
 
         if(lo < 1L)    {
             lo = 1L;
@@ -547,8 +547,12 @@ public class SendActivity extends Activity {
         }
 
         btLowFee.setText((FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
-        btPriorityFee.setText((FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
-        btAutoFee.setText((FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+        //btPriorityFee.setText((FeeUtil.getInstance().getHighFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+        //btAutoFee.setText((FeeUtil.getInstance().getNormalFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+
+        btPriorityFee.setText((FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+        btAutoFee.setText((FeeUtil.getInstance().getLowFee().getDefaultPerKB().longValue() / 1000L) + "\n" + getString(R.string.sat_b));
+
 
         btLowFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -570,7 +574,7 @@ public class SendActivity extends Activity {
 
         btAutoFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getNormalFee());
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
                 FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_NORMAL);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
@@ -588,7 +592,7 @@ public class SendActivity extends Activity {
 
         btPriorityFee.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
+                FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getLowFee());
                 FeeUtil.getInstance().sanitizeFee();
                 PrefsUtil.getInstance(SendActivity.this).setValue(PrefsUtil.CURRENT_FEE_TYPE, FEE_PRIORITY);
                 btLowFee.setBackgroundColor(SendActivity.this.getResources().getColor(R.color.darkgrey));
