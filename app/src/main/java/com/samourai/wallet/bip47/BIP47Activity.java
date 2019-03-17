@@ -452,7 +452,7 @@ public class BIP47Activity extends Activity {
         AppUtil.getInstance(BIP47Activity.this).checkTimeOut();
 
         if(_menu != null && PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
-            _menu.findItem(R.id.action_claim_paynym).setVisible(false);
+ //           _menu.findItem(R.id.action_claim_paynym).setVisible(false);
         }
 
         refreshList();
@@ -583,7 +583,7 @@ public class BIP47Activity extends Activity {
         _menu = menu;
 
         if(PrefsUtil.getInstance(BIP47Activity.this).getValue(PrefsUtil.PAYNYM_CLAIMED, false) == true)    {
-            menu.findItem(R.id.action_claim_paynym).setVisible(false);
+//            menu.findItem(R.id.action_claim_paynym).setVisible(false);
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -612,20 +612,20 @@ public class BIP47Activity extends Activity {
                 Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
             }
         }
-        else if(id == R.id.action_claim_paynym) {
+        /*else if(id == R.id.action_claim_paynym) {
             if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
                 doClaimPayNym();
             }
             else    {
                 Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
             }
-        }
+        }*/
         /*else if(id == R.id.action_support) {
             doSupport();
         }*/
-        else {
+        /*else {
             ;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -796,7 +796,7 @@ public class BIP47Activity extends Activity {
         Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels(false);
 
         if(_pcodes.size() < 1)    {
-            BIP47Meta.getInstance().setLabel(BIP47Meta.strSamouraiDonationPCode, "Samourai Wallet Donations");
+            BIP47Meta.getInstance().setLabel(BIP47Meta.strSamouraiDonationPCode, "Groestlcoin Samourai Wallet Donations");
         }
 
         //
@@ -953,7 +953,7 @@ public class BIP47Activity extends Activity {
 
             String message = getText(R.string.bip47_notif_tx_insufficient_funds_1) + " ";
             BigInteger biAmount = SendNotifTxFactory._bSWFee.add(SendNotifTxFactory._bNotifTxValue.add(FeeUtil.getInstance().estimatedFee(1, 4, FeeUtil.getInstance().getLowFee().getDefaultPerKB())));
-            String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) biAmount.longValue()) / 1e8) + " BTC ";
+            String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) biAmount.longValue()) / 1e8) + " GRS ";
             message += strAmount;
             message += " " + getText(R.string.bip47_notif_tx_insufficient_funds_2);
 
@@ -1121,7 +1121,7 @@ public class BIP47Activity extends Activity {
 
         String strNotifTxMsg = getText(R.string.bip47_setup4_text1) + " ";
         long notifAmount = amount;
-        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount + fee.longValue()) / 1e8) + " BTC ";
+        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount + fee.longValue()) / 1e8) + " GRS ";
         strNotifTxMsg += strAmount + getText(R.string.bip47_setup4_text2);
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
@@ -1162,11 +1162,8 @@ public class BIP47Activity extends Activity {
                                         Log.d("SendActivity", "pushTx:" + response);
 
                                         if(response != null)    {
-                                            org.json.JSONObject jsonObject = new org.json.JSONObject(response);
-                                            if(jsonObject.has("status"))    {
-                                                if(jsonObject.getString("status").equals("ok"))    {
+                                            if(PushTx.chainz_valid(response))    {
                                                     isOK = true;
-                                                }
                                             }
                                         }
                                         else    {
@@ -1294,8 +1291,8 @@ public class BIP47Activity extends Activity {
             final TextView tvLabel = (TextView)view.findViewById(R.id.Label);
             tvLabel.setText(strLabel);
 
-            final ImageView ivAvatar = (ImageView)view.findViewById(R.id.avatar);
-            ivAvatar.setVisibility(View.GONE);
+            //final ImageView ivAvatar = (ImageView)view.findViewById(R.id.inside);
+            //ivAvatar.setVisibility(View.GONE);
 
             if(meta.containsKey(pcodes[position]))    {
                 try {
@@ -1307,7 +1304,7 @@ public class BIP47Activity extends Activity {
                         String avatarUrl = obj.getString("user-avatar");
 
                         if(bitmaps.containsKey(pcodes[position]))    {
-                            ivAvatar.setImageBitmap(bitmaps.get(pcodes[position]));
+              //              ivAvatar.setImageBitmap(bitmaps.get(pcodes[position]));
                         }
                         else    {
                             Picasso.with(BIP47Activity.this)
@@ -1315,7 +1312,7 @@ public class BIP47Activity extends Activity {
                                     .into(new Target() {
                                         @Override
                                         public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
-                                            ivAvatar.setImageBitmap(bitmap);
+                //                            ivAvatar.setImageBitmap(bitmap);
                                             bitmaps.put(pcodes[position], bitmap);
                                         }
 
@@ -1328,7 +1325,7 @@ public class BIP47Activity extends Activity {
                         }
 
                         tvInitial.setVisibility(View.GONE);
-                        ivAvatar.setVisibility(View.VISIBLE);
+                  //      ivAvatar.setVisibility(View.VISIBLE);
 
                     }
 
