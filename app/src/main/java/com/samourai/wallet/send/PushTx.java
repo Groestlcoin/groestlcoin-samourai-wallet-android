@@ -107,11 +107,8 @@ public class PushTx {
                 if(DO_SPEND)    {
                     response = PushTx.getInstance(context).samourai(hexTx);
                     if(response != null)    {
-                        JSONObject jsonObject = new org.json.JSONObject(response);
-                        if(jsonObject.has("status"))    {
-                            if(jsonObject.getString("status").equals("ok"))    {
+                        if(PushTx.chainz_valid(response))    {
                                 isOK = true;
-                            }
                         }
                     }
                     else    {
@@ -143,6 +140,13 @@ public class PushTx {
 
         return isOK;
 
+    }
+
+    public static boolean chainz_valid(String result)
+    {
+        if(result.length() > 67 && result.charAt(66) == '\n')
+            return true;
+        else return false;
     }
 
 }
