@@ -837,10 +837,10 @@ public class APIFactory	{
             for(int i = 0; i < txArray.length(); i++)  {
                 txObj = (JSONObject)txArray.get(i);
 
-
-                if(!txObj.has("block_height") || (txObj.has("block_height") && txObj.getLong("block_height") < 1L))    {
+                //Chainz doesn't provide the block height with multiaddr
+                /*if(!txObj.has("block_height") || (txObj.has("block_height") && txObj.getLong("block_height") < 1L))    {
                     return;
-                }
+                }*/
 
                 String hash = null;
 
@@ -874,10 +874,12 @@ public class APIFactory	{
                 if(inArray.length() > 0)    {
                     JSONObject objInput = (JSONObject)inArray.get(0);
                     byte[] pubkey = null;
-                    String strScript = objInput.getString("sig");
+                    JSONObject received_from = ((JSONObject) inArray.get(0)).getJSONObject("received_from");
+                    String strScript = received_from.getString("script");
+
                     Log.i("APIFactory", "scriptsig:" + strScript);
-                    if((strScript == null || strScript.length() == 0 || strScript.startsWith("160014")) && objInput.has("witness"))    {
-                        JSONArray witnessArray = (JSONArray)objInput.get("witness");
+                    if((strScript == null || strScript.length() == 0 || strScript.startsWith("160014")) && received_from.has("txinwitness"))    {
+                        JSONArray witnessArray = (JSONArray)received_from.get("txinwitness");
                         if(witnessArray.length() == 2)    {
                             pubkey = Hex.decode((String)witnessArray.get(1));
                         }
@@ -891,11 +893,11 @@ public class APIFactory	{
                     Log.i("APIFactory", "address from script:" + pKey.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
 //                        Log.i("APIFactory", "uncompressed public key from script:" + Hex.toHexString(pKey.decompress().getPubKey()));
 
-                    if(((JSONObject)inArray.get(0)).has("outpoint"))    {
-                        JSONObject received_from = ((JSONObject) inArray.get(0)).getJSONObject("outpoint");
+                    if(((JSONObject)inArray.get(0)).has("received_from"))    {
+                        received_from = ((JSONObject) inArray.get(0)).getJSONObject("received_from");
 
-                        String strHash = received_from.getString("txid");
-                        int idx = received_from.getInt("vout");
+                        String strHash = received_from.getString("tx");
+                        int idx = received_from.getInt("n");
 
                         byte[] hashBytes = Hex.decode(strHash);
                         Sha256Hash txHash = new Sha256Hash(hashBytes);
@@ -925,14 +927,14 @@ public class APIFactory	{
                 String op_return = null;
                 for(int j = 0; j < outArray.length(); j++)  {
                     outObj = (JSONObject)outArray.get(j);
-                    if(outObj.has("address"))  {
-                        _addr = outObj.getString("address");
+                    if(outObj.has("addr"))  {
+                        _addr = outObj.getString("addr");
                         if(addr.equals(_addr))    {
                             isIncoming = true;
                         }
                     }
-                    if(outObj.has("scriptpubkey"))  {
-                        script = outObj.getString("scriptpubkey");
+                    if(outObj.has("script"))  {
+                        script = outObj.getString("script");
                         if(script.startsWith("6a4c50"))    {
                             op_return = script;
                         }
@@ -1023,10 +1025,10 @@ public class APIFactory	{
 
         int cf = 0;
 
-        if(jsonObject != null && jsonObject.has("block") && jsonObject.getJSONObject("block").has("height"))  {
+        if(jsonObject != null && jsonObject.has("block"))  {
 
             long latestBlockHeght = getLatestBlockHeight();
-            long height = jsonObject.getJSONObject("block").getLong("height");
+            long height = jsonObject.getLong("block");
 
             cf = (int)((latestBlockHeght - height) + 1);
 
@@ -1068,6 +1070,43 @@ public class APIFactory	{
 
             parseUnspentOutputs(response);
 
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public synchronized JSONObject getUnspentOutputs_chainz_pubkeys(String[] pubkeys) {
+
+        String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
+        JSONObject jsonObject  = null;
+
+        try {
+
+            String response = null;
+
+            for(String pubkey : pubkeys) {
+                if (AppUtil.getInstance(context).isOfflineMode()) {
+                    response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
+                } else if (!TorUtil.getInstance(context).statusFromBroadcast()) {
+                    StringBuilder args = new StringBuilder();
+                    args.append("active=" + pubkey);
+                    //args.append(StringUtils.join(pubkey, URLEncoder.encode("|", "UTF-8")));
+                    Log.d("APIFactory", "UTXO args:" + args.toString());
+                    response = WebUtil.getInstance(context).getURL(_url + "unspent&" + args.toString());
+                    Log.d("APIFactory", "UTXO:" + response);
+                } else {
+                    HashMap<String, String> args = new HashMap<String, String>();
+                    args.put("active", StringUtils.join(pubkeys, "|"));
+                    response = WebUtil.getInstance(context).tor_getURL(_url + "unspent" + args.toString());
+                }
+
+                parseUnspentOutputs_chainz(pubkey, response);
+            }
         }
         catch(Exception e) {
             jsonObject = null;
@@ -1486,7 +1525,7 @@ public class APIFactory	{
             if(addressStrings.size() > 0)    {
                 s = addressStrings.toArray(new String[0]);
 //                Log.i("APIFactory", addressStrings.toString());
-                getUnspentOutputs(s);
+                getUnspentOutputs_chainz_pubkeys(s);
             }
 
             Log.d("APIFactory", "addresses:" + addressStrings.toString());
@@ -1495,11 +1534,11 @@ public class APIFactory	{
             if(hdw != null && hdw.getXPUBs() != null)    {
                 String[] all = null;
                 if(s != null && s.length > 0)    {
-                    all = new String[hdw.getXPUBs().length + 2 + s.length];
+                    all = new String[hdw.getXPUBs().length + 2/* + s.length*/];
                     all[0] = BIP49Util.getInstance(context).getWallet().getAccount(0).ypubstr();
                     all[1] = BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr();
                     System.arraycopy(hdw.getXPUBs(), 0, all, 2, hdw.getXPUBs().length);
-                    System.arraycopy(s, 0, all, hdw.getXPUBs().length + 2, s.length);
+                    //System.arraycopy(s, 0, all, hdw.getXPUBs().length + 2, s.length);
                 }
                 else    {
                     all = new String[hdw.getXPUBs().length + 2];
@@ -1983,25 +2022,33 @@ public class APIFactory	{
 
                     try {
                         String address = null;
-                        if(Bech32Util.getInstance().isBech32Script(script))    {
-                            address = Bech32Util.getInstance().getAddressFromScript(script);
+                        if(outDict.has("addr")) {
+                            JSONObject addr = outDict.getJSONObject("addr");
+                            if(addr.has("derived"))
+                                address = addr.getString("derived");
                         }
-                        else    {
-                            address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                            /*if(address.startsWith("3") || address.startsWith("2"))
-                                last3address = address;
-                            else if(address.startsWith("F") || address.startsWith("m") || address.startsWith("n") && last3address != null)
-                            {
-                                //determine if the hash160 of this address matches the previous 3 address.
-                                Address Faddress = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
-                                byte [] hash160_F = Faddress.getHash160();
-                                Address last3addr = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), last3address);
-                                byte [] hash160_3 = last3addr.getHash160();
-                                if(Arrays.equals(hash160_F, hash160_3)) {
-                                    address = last3address;
-                                    scriptBytes = SegwitAddress.segWitOutputScript(address).getProgram();
-                                }
-                            }*/
+
+                        if(address == null) {
+                            if(Bech32Util.getInstance().isBech32Script(script))    {
+                                address = Bech32Util.getInstance().getAddressFromScript(script);
+                            }
+                            else    {
+                                address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                                /*if(address.startsWith("3") || address.startsWith("2"))
+                                    last3address = address;
+                                else if(address.startsWith("F") || address.startsWith("m") || address.startsWith("n") && last3address != null)
+                                {
+                                    //determine if the hash160 of this address matches the previous 3 address.
+                                    Address Faddress = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
+                                    byte [] hash160_F = Faddress.getHash160();
+                                    Address last3addr = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), last3address);
+                                    byte [] hash160_3 = last3addr.getHash160();
+                                    if(Arrays.equals(hash160_F, hash160_3)) {
+                                        address = last3address;
+                                        scriptBytes = SegwitAddress.segWitOutputScript(address).getProgram();
+                                    }
+                                }*/
+                            }
                         }
 
                         if(outDict.has("xpub"))    {
@@ -2019,10 +2066,10 @@ public class APIFactory	{
                                 unspentAccounts.put(address, AddressFactory.getInstance(context).xpub2account().get(m));
                             }
                         }
-                        else if(outDict.has("pubkey"))    {
-                            int idx = BIP47Meta.getInstance().getIdx4AddrLookup().get(outDict.getString("pubkey"));
+                        else if(xpub.length() == 66)    {
+                            int idx = BIP47Meta.getInstance().getIdx4AddrLookup().get(xpub);
                             BIP47Meta.getInstance().getIdx4AddrLookup().put(address, idx);
-                            String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(outDict.getString("pubkey"));
+                            String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(xpub);
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
                         }
                         else    {
