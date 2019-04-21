@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class BIP47Meta {
 
-    public static final String strSamouraiDonationPCode = "PM8TJZkyaooNCsgGkH1tueR2Qv5X8PmDDLuYA75q2b5U1Rq2iPcXgMK22B948oguysrEqGitRgutwNk56eX53ac4r4R3iajHcjSrMcC4PcZmcztGXN4g";
+    public static final String strSamouraiDonationPCode = "PM8TJWsADuK6ciCZq5noqiC882RsrNmgoD19gBLDvjmqpDg7cFs5qBbWb48ttRdR7hEbp1bYq7CyQFfLz6u7NjSWffgjeeqkZ8TdKJuVj1BPkata4kdo";
     public static final String strSamouraiDonationMeta = "?title=Groestlcoin Samourai Donations&desc=Donate to help fund development of Groestlcoin Samourai Wallet&user=K6tS2X8";
 
     public static final int INCOMING_LOOKAHEAD = 3;
@@ -266,7 +266,7 @@ public class BIP47Meta {
                     addrs.add(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
                 }
                 catch(Exception e) {
-                    ;
+                    Log.i("APIFactory", "Exception caught: " + e.getMessage());
                 }
             }
 
