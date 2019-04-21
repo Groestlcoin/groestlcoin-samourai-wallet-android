@@ -53,6 +53,7 @@ import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.TransactionOutPoint;
+import org.bitcoinj.core.Utils;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
@@ -1089,25 +1090,48 @@ public class APIFactory	{
 
             String response = null;
 
-            for(String pubkey : pubkeys) {
-                if (AppUtil.getInstance(context).isOfflineMode()) {
-                    response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
-                } else if (!TorUtil.getInstance(context).statusFromBroadcast()) {
-                    StringBuilder args = new StringBuilder();
-                    args.append("active=" + pubkey);
-                    //args.append(StringUtils.join(pubkey, URLEncoder.encode("|", "UTF-8")));
-                    Log.d("APIFactory", "UTXO args:" + args.toString());
-                    response = WebUtil.getInstance(context).getURL(_url + "unspent&" + args.toString());
-                    Log.d("APIFactory", "UTXO:" + response);
-                } else {
-                    HashMap<String, String> args = new HashMap<String, String>();
-                    args.put("active", StringUtils.join(pubkeys, "|"));
-                    response = WebUtil.getInstance(context).tor_getURL(_url + "unspent" + args.toString());
-                }
+            //first get a list of pubkeys
 
-                parseUnspentOutputs_chainz(pubkey, response);
+            HashMap<String, String> mapAddressToPubkey = new HashMap<>(pubkeys.length * 2);
+            StringBuilder addresses = new StringBuilder();
+            for(String pubkey : pubkeys) {
+                ECKey key = ECKey.fromPublicOnly(Utils.HEX.decode(pubkey));
+                String p2pkh = key.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toBase58();
+                SegwitAddress segwitAddress = new SegwitAddress(key, SamouraiWallet.getInstance().getCurrentNetworkParams());
+                String bech32 = segwitAddress.getBech32AsString();
+
+                mapAddressToPubkey.put(p2pkh, pubkey);
+                mapAddressToPubkey.put(bech32, pubkey);
+                addresses.append(p2pkh).append("|").append(bech32).append("|");
             }
-        }
+
+            if (AppUtil.getInstance(context).isOfflineMode()) {
+                response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
+            } else if (!TorUtil.getInstance(context).statusFromBroadcast()) {
+                StringBuilder args = new StringBuilder();
+                args.append("active=");
+                //ECKey key = ECKey.fromPublicOnly(Utils.HEX.decode(pubkey));
+                //String p2pkh = key.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toBase58();
+                //SegwitAddress segwitAddress = new SegwitAddress(key, SamouraiWallet.getInstance().getCurrentNetworkParams());
+                //String bech32 = segwitAddress.getBech32AsString();
+                //args.append(p2pkh);
+                //args.append("|");
+                //args.append(bech32);
+                //args.append(StringUtils.join(pubkey, URLEncoder.encode("|", "UTF-8")));
+                args.append(addresses.subSequence(0, addresses.length()-1));
+                Log.d("APIFactory", "UTXO args:" + args.toString());
+                response = WebUtil.getInstance(context).getURL(_url + "unspent&" + args.toString());
+                Log.d("APIFactory", "UTXO:" + response);
+            } else {
+                HashMap<String, String> args = new HashMap<String, String>();
+                args.put("active", StringUtils.join(pubkeys, "|"));
+                response = WebUtil.getInstance(context).tor_getURL(_url + "unspent" + args.toString());
+            }
+
+            //process the results
+
+                parseUnspentOutputs_chainz_pubkeys(mapAddressToPubkey, response);
+            }
         catch(Exception e) {
             jsonObject = null;
             e.printStackTrace();
@@ -1230,6 +1254,136 @@ public class APIFactory	{
         return false;
 
     }
+
+    private synchronized boolean parseUnspentOutputs_chainz_pubkeys(HashMap<String, String> mapAddresses, String unspents) {
+
+        if(unspents != null)    {
+
+            try {
+                JSONObject jsonObj = new JSONObject(unspents);
+
+                if(jsonObj == null || !jsonObj.has("unspent_outputs"))    {
+                    return false;
+                }
+                JSONArray utxoArray = jsonObj.getJSONArray("unspent_outputs");
+                if(utxoArray == null || utxoArray.length() == 0) {
+                    return false;
+                }
+
+                for (int i = 0; i < utxoArray.length(); i++) {
+
+                    JSONObject outDict = utxoArray.getJSONObject(i);
+
+                    byte[] hashBytes = Hex.decode((String)outDict.get("tx_hash"));
+                    Sha256Hash txHash = Sha256Hash.wrap(hashBytes);
+                    int txOutputN = ((Number)outDict.get("tx_ouput_n")).intValue();
+                    BigInteger value = new BigInteger(outDict.get("value").toString(), 10);
+                    String script = (String)outDict.get("script");
+                    byte[] scriptBytes = Hex.decode(script);
+                    int confirmations = ((Number)outDict.get("confirmations")).intValue();
+
+                    try {
+                        String address = null;
+                        if(outDict.has("addr")) {
+                            try {
+                                JSONObject addr = outDict.getJSONObject("addr");
+                                if (addr.has("derived"))
+                                    address = addr.getString("derived");
+                            } catch (Exception e) {
+                                //swallow, get address in the next section from the script
+                            }
+                        }
+
+                        if(address == null) {
+                            if(Bech32Util.getInstance().isBech32Script(script))    {
+                                address = Bech32Util.getInstance().getAddressFromScript(script);
+                            }
+                            else    {
+                                address = new Script(scriptBytes).getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                                /*if(address.startsWith("3") || address.startsWith("2"))
+                                    last3address = address;
+                                else if(address.startsWith("F") || address.startsWith("m") || address.startsWith("n") && last3address != null)
+                                {
+                                    //determine if the hash160 of this address matches the previous 3 address.
+                                    Address Faddress = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address);
+                                    byte [] hash160_F = Faddress.getHash160();
+                                    Address last3addr = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), last3address);
+                                    byte [] hash160_3 = last3addr.getHash160();
+                                    if(Arrays.equals(hash160_F, hash160_3)) {
+                                        address = last3address;
+                                        scriptBytes = SegwitAddress.segWitOutputScript(address).getProgram();
+                                    }
+                                }*/
+                            }
+                        }
+
+                        String pubkey = mapAddresses.get(address);
+
+                        if(pubkey.length() == 66)    {
+                            int idx = BIP47Meta.getInstance().getIdx4AddrLookup().get(pubkey);
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(address, idx);
+                            String pcode = BIP47Meta.getInstance().getPCode4AddrLookup().get(pubkey);
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
+                        }
+
+                        xpub_balance += value.longValue();
+
+
+                        // Construct the output
+                        MyTransactionOutPoint outPoint = new MyTransactionOutPoint(txHash, txOutputN, value, scriptBytes, address);
+                        outPoint.setConfirmations(confirmations);
+
+                        if(utxos.containsKey(script))    {
+                            utxos.get(script).getOutpoints().add(outPoint);
+                        }
+                        else    {
+                            UTXO utxo = new UTXO();
+                            utxo.getOutpoints().add(outPoint);
+                            utxos.put(script, utxo);
+                        }
+
+                        if(!BlockedUTXO.getInstance().contains(txHash.toString(), txOutputN))    {
+
+                            if(Bech32Util.getInstance().isBech32Script(script))    {
+                                UTXOFactory.getInstance().addP2WPKH(script, utxos.get(script));
+                            }
+                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                                UTXOFactory.getInstance().addP2SH_P2WPKH(script, utxos.get(script));
+                            }
+                            else    {
+                                UTXOFactory.getInstance().addP2PKH(script, utxos.get(script));
+                            }
+
+                        }
+
+                    }
+                    catch(Exception e) {
+                        Log.i("APIFactory", "Exception: "+e.getMessage());
+                    }
+
+                }
+
+                try {
+                    PayloadUtil.getInstance(context).serializeUTXO(jsonObj);
+                }
+                catch(IOException | DecryptionException e) {
+                    ;
+                }
+
+                return true;
+
+            }
+            catch(JSONException je) {
+                ;
+            }
+
+        }
+
+        return false;
+
+    }
+
+
 
     public synchronized JSONObject getAddressInfo(String addr) {
 
@@ -2023,9 +2177,13 @@ public class APIFactory	{
                     try {
                         String address = null;
                         if(outDict.has("addr")) {
-                            JSONObject addr = outDict.getJSONObject("addr");
-                            if(addr.has("derived"))
-                                address = addr.getString("derived");
+                            try {
+                                JSONObject addr = outDict.getJSONObject("addr");
+                                if (addr.has("derived"))
+                                    address = addr.getString("derived");
+                            } catch (Exception e) {
+                                //swallow, get address in the next section from the script
+                            }
                         }
 
                         if(address == null) {
@@ -2117,7 +2275,7 @@ public class APIFactory	{
 
                     }
                     catch(Exception e) {
-                        ;
+                        Log.i("APIFactory", "Exception: "+e.getMessage());
                     }
 
                 }
