@@ -75,6 +75,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.math.BigInteger;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -94,6 +97,7 @@ public class APIFactory	{
     private static HashMap<String,Integer> unspentBIP49 = null;
     private static HashMap<String,Integer> unspentBIP84 = null;
     private static HashMap<String,String> unspentPaths = null;
+    private static HashMap<String, List<Tx>> bip47_txs = null;
     private static HashMap<String,UTXO> utxos = null;
 
     private static HashMap<String, Long> bip47_amounts = null;
@@ -127,6 +131,7 @@ public class APIFactory	{
             utxos = new HashMap<String, UTXO>();
             xpub_pathaddressmap = new HashMap<>();
             instance = new APIFactory();
+            bip47_txs = new HashMap<>();
         }
 
         return instance;
@@ -143,6 +148,7 @@ public class APIFactory	{
         unspentBIP84 = new HashMap<String, Integer>();
         utxos = new HashMap<String, UTXO>();
         xpub_pathaddressmap.clear();
+        bip47_txs.clear();
 
         UTXOFactory.getInstance().clear();
     }
@@ -152,6 +158,33 @@ public class APIFactory	{
         String _url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
         JSONObject jsonObject  = null;
+
+        boolean regularAddress = false;
+        if(xpubs[0].startsWith("F") || xpubs[0].startsWith("m") || xpubs[0].startsWith("2") || xpubs[0].startsWith("3") || xpubs[0].startsWith("n")) {
+            regularAddress = true;
+            StringBuilder addresses = new StringBuilder();
+            for(String xpub : xpubs) {
+                addresses.append(xpub);
+            }
+            xpubs = new String[1];
+            xpubs[0] = addresses.substring(0, addresses.length()-1);
+        } else if(xpubs[0].length() == 66) {
+            HashMap<String, String> mapAddressToPubkey = new HashMap<>(xpubs.length * 2);
+            StringBuilder addresses = new StringBuilder();
+            regularAddress = true;
+            for(String pubkey : xpubs) {
+                ECKey key = ECKey.fromPublicOnly(Utils.HEX.decode(pubkey));
+                String p2pkh = key.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toBase58();
+                SegwitAddress segwitAddress = new SegwitAddress(key, SamouraiWallet.getInstance().getCurrentNetworkParams());
+                String bech32 = segwitAddress.getBech32AsString();
+
+                mapAddressToPubkey.put(p2pkh, pubkey);
+                mapAddressToPubkey.put(bech32, pubkey);
+                addresses.append(p2pkh).append("|").append(bech32).append("|");
+                xpubs = new String[1];
+                xpubs[0] = addresses.toString();
+            }
+        }
 
         try {
 
@@ -164,7 +197,9 @@ public class APIFactory	{
                 } else if (!TorUtil.getInstance(context).statusFromBroadcast()) {
                     // use POST
                     StringBuilder args = new StringBuilder();
-                    args.append("xpub2&xpub=");
+                    if(regularAddress)
+                        args.append("multiaddr&active=");
+                    else args.append("xpub2&xpub=");
                     //args.append(StringUtils.join(xpubs, URLEncoder.encode("|", "UTF-8")));
                     args.append(xpubs[i]);
                     Log.i("APIFactory", "XPUB["+i+"]:" + args.toString());
@@ -321,12 +356,20 @@ public class APIFactory	{
                 }
             }
 
+            ArrayList<String> addressesFound = new ArrayList<>();
+
             if(jsonObject.has("addresses"))  {
 
                 JSONArray addressesArray = (JSONArray)jsonObject.get("addresses");
                 JSONObject addrObj = null;
                 for(int i = 0; i < addressesArray.length(); i++)  {
                     addrObj = (JSONObject)addressesArray.get(i);
+                    if(addrObj.has("address")) {
+                        int count = addrObj.has("n_tx") ? addrObj.getInt("n_tx") : 1;
+                        for(int j = 0; j < count; ++j) {
+                            addressesFound.add(addrObj.getString("address"));
+                        }
+                    }
                     if(addrObj != null && addrObj.has("final_balance") && addrObj.has("address"))  {
                         if(FormatsUtil.getInstance().isValidXpub((String)addrObj.get("address")))    {
                             xpub_amounts.put((String)addrObj.get("address"), addrObj.getLong("final_balance"));
@@ -501,6 +544,22 @@ public class APIFactory	{
                             ;
                         }
 
+                    }
+
+                    //for multiaddr
+                    if(!txObj.has("out") && !txObj.has("inputs")) {
+                        amount = txObj.getLong("change");
+                        try {
+                            String date = txObj.getString("time_utc");
+                            date = date.replace('T', ' ');
+                            date = date.substring(0, date.length()-1);
+                            ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date).getTime()/1000;
+                        } catch (ParseException x) {
+                            ts = 0;
+                        }
+                        //address
+                        addr = addressesFound.get(i);
+                        manual_amount += amount;
                     }
 
                     if(addr != null || _addr != null)  {
@@ -1326,7 +1385,7 @@ public class APIFactory	{
                             BIP47Meta.getInstance().getPCode4AddrLookup().put(address, pcode);
                         }
 
-                        xpub_balance += value.longValue();
+                        //xpub_balance += value.longValue();
 
 
                         // Construct the output
@@ -1700,6 +1759,7 @@ public class APIFactory	{
                     all[1] = BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr();
                     System.arraycopy(hdw.getXPUBs(), 0, all, 2, hdw.getXPUBs().length);
                 }
+                APIFactory.getInstance(context).getBIP47(addressStrings.toArray(new String[0]), true);
                 APIFactory.getInstance(context).getXPUB(all, true);
                 String[] xs = new String[4];
                 xs[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
@@ -1948,6 +2008,12 @@ public class APIFactory	{
         List<Tx> ret = new ArrayList<Tx>();
         for(String key : xpub_txs.keySet())  {
             List<Tx> txs = xpub_txs.get(key);
+            for(Tx tx : txs)   {
+                ret.add(tx);
+            }
+        }
+        for(String key : bip47_txs.keySet())  {
+            List<Tx> txs = bip47_txs.get(key);
             for(Tx tx : txs)   {
                 ret.add(tx);
             }
@@ -2534,6 +2600,309 @@ public class APIFactory	{
             return addresses;
         }
         return null;
+    }
+
+    private synchronized void parseBIP47(JSONObject jsonObject, String address) throws JSONException {
+
+        if (jsonObject != null) {
+
+            String account0_xpub = null;
+            try {
+                account0_xpub = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
+            } catch (IOException ioe) {
+                ;
+            } catch (MnemonicException.MnemonicLengthException mle) {
+                ;
+            }
+
+            if (jsonObject.has("wallet")) {
+                JSONObject walletObj = (JSONObject) jsonObject.get("wallet");
+                if (walletObj.has("final_balance")) {
+                    //    bip47_balance += walletObj.getLong("final_balance");
+                }
+
+            }
+
+            long latest_block = 0L;
+            long manual_amount = 0;
+
+            if (jsonObject.has("info")) {
+                JSONObject infoObj = (JSONObject) jsonObject.get("info");
+                if (infoObj.has("latest_block")) {
+                    JSONObject blockObj = (JSONObject) infoObj.get("latest_block");
+                    if (blockObj.has("height")) {
+                        latest_block = blockObj.getLong("height");
+                    }
+                }
+            }
+
+            ArrayList<String> addressesFound = new ArrayList<>();
+
+
+            if (jsonObject.has("addresses")) {
+                JSONArray addressArray = (JSONArray) jsonObject.get("addresses");
+                JSONObject addrObj = null;
+                for (int i = 0; i < addressArray.length(); i++) {
+                    addrObj = (JSONObject) addressArray.get(i);
+                    if(addrObj.has("address")) {
+                        int count = addrObj.has("n_tx") ? addrObj.getInt("n_tx") : 1;
+                        for(int j = 0; j < count; ++j) {
+                            addressesFound.add(addrObj.getString("address"));
+                        }
+                    }
+                    long amount = 0L;
+                    String addr = null;
+                    if (addrObj.has("address")) {
+                        addr = (String) addrObj.get("address");
+                    }
+                    if (addrObj.has("final_balance")) {
+                        amount = addrObj.getLong("final_balance");
+
+                        String pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
+                        if(pcode != null) {
+                            int idx = BIP47Meta.getInstance().getIdx4Addr(addr);
+                            if (amount > 0L) {
+                                BIP47Meta.getInstance().addUnspent(pcode, idx);
+                            } else {
+                                BIP47Meta.getInstance().removeUnspent(pcode, Integer.valueOf(idx));
+                            }
+                            //bip47_balance += amount;
+                        }
+                    }
+                    if (addr != null) {
+                        bip47_amounts.put(addr, amount);
+                    }
+                }
+            }
+
+            if (jsonObject.has("txs")) {
+
+                JSONArray txArray = (JSONArray) jsonObject.get("txs");
+                JSONObject txObj = null;
+                for (int i = 0; i < txArray.length(); i++) {
+
+                    txObj = (JSONObject) txArray.get(i);
+                    long height = 0L;
+                    long confirmations = -1;
+                    long amount = 0L;
+                    long ts = 0L;
+                    String hash = null;
+                    String addr = null;
+                    boolean hasBIP47Input = false;
+                    boolean hasBIP47Output = false;
+                    boolean manual_ammount = false;
+
+                    if (txObj.has("block_height")) {
+                        height = txObj.getLong("block_height");
+                    } else {
+                        height = -1L;  // 0 confirmations
+                        if (txObj.has("confirmations")) {
+                            confirmations = txObj.getLong("confirmations");
+                        }
+                    }
+                    if (txObj.has("hash")) {
+                        hash = (String) txObj.get("hash");
+                    }
+                    if (txObj.has("change")) {
+                        amount = txObj.getLong("change");
+                        if (amount == 0)
+                            manual_ammount = true;
+                    } else manual_ammount = true;
+                    if (txObj.has("time")) {
+                        ts = txObj.getLong("time");
+                    } else if (txObj.has("time_utc")) {
+                        String _ts = txObj.getString("time_utc");
+                        ts = new Date().getTime();
+                        try {
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+                            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                            Date parsedDate = dateFormat.parse(_ts);
+                            ts = parsedDate.getTime() / 1000;
+                        } catch (Exception e) {//this generic but you can control another types of exception
+                            try {
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm'Z'");
+                                dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                                Date parsedDate = dateFormat.parse(_ts);
+                                ts = parsedDate.getTime() / 1000;
+                            } catch (Exception e1) {
+                                ts = new Date().getTime();
+                            }
+                            //look the origin of excption
+                        }
+                    }
+                    if (amount < 0) {
+                        if (BIP47Meta.getInstance().getPCode4Addr(address) != null) {
+                            addr = address;
+                            //amount -= prevOutObj.getLong("value");
+                            hasBIP47Input = true;
+                        }
+                    } else {
+                        if (BIP47Meta.getInstance().getPCode4Addr(address) != null) {
+//                                Log.i("APIFactory", "found output:" + outObj.getString("addr"));
+                            addr = address;
+                            //amount += outObj.getLong("value");
+                            hasBIP47Output = true;
+                        }
+                    }
+
+                    if (txObj.has("inputs")) {
+                        JSONArray inputArray = (JSONArray) txObj.get("inputs");
+                        JSONObject inputObj = null;
+                        for (int j = 0; j < inputArray.length(); j++) {
+                            inputObj = (JSONObject) inputArray.get(j);
+                            if (inputObj.has("prev_out")) {
+                                JSONObject prevOutObj = (JSONObject) inputObj.get("prev_out");
+                                if (prevOutObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(prevOutObj.getString("addr")) != null) {
+//                                    Log.i("APIFactory", "found input:" + prevOutObj.getString("addr"));
+                                    addr = prevOutObj.getString("addr");
+                                    amount -= prevOutObj.getLong("value");
+                                    hasBIP47Input = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (txObj.has("out")) {
+                        JSONArray outArray = (JSONArray) txObj.get("out");
+                        JSONObject outObj = null;
+                        for (int j = 0; j < outArray.length(); j++) {
+                            outObj = (JSONObject) outArray.get(j);
+                            if (outObj.has("xpub")) {
+                                JSONObject xpubObj = (JSONObject) outObj.get("xpub");
+                                addr = (String) xpubObj.get("m");
+                                String path = (String) xpubObj.get("path");
+                                String[] s = path.split("/");
+                                if (s[1].equals("1") && hasBIP47Input) {
+                                    amount += outObj.getLong("value");
+                                }
+                                //
+                                // collect unspent outputs for each xpub
+                                // store path info in order to generate private key later on
+                                //
+                                if (outObj.has("spent")) {
+                                    if (outObj.getBoolean("spent") == false && outObj.has("addr")) {
+                             /*           if(!haveUnspentOuts.containsKey(addr))  {
+                                            List<String> addrs = new ArrayList<String>();
+                                            haveUnspentOuts.put(addr, addrs);
+                                        }
+                                        String data = path + "," + (String)outObj.get("addr");
+                                        if(!haveUnspentOuts.get(addr).contains(data))  {
+                                            haveUnspentOuts.get(addr).add(data);
+                                        }
+                                    }*/
+                                    }
+                                } else if (outObj.has("addr") && BIP47Meta.getInstance().getPCode4Addr(outObj.getString("addr")) != null) {
+//                                Log.i("APIFactory", "found output:" + outObj.getString("addr"));
+                                    addr = outObj.getString("addr");
+                                    amount += outObj.getLong("value");
+                                    hasBIP47Output = true;
+                                } else {
+                                    ;
+                                }
+                            }
+                        }
+                    }
+                    //for multiaddr
+                    if(!txObj.has("out") && !txObj.has("inputs")) {
+                        amount = txObj.getLong("change");
+                        if(amount < 0)
+                            hasBIP47Output = true;
+                        else hasBIP47Input = true;
+                        try {
+                            String date = txObj.getString("time_utc");
+                            date = date.replace('T', ' ');
+                            date = date.substring(0, date.length()-1);
+                            ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date).getTime()/1000;
+                        } catch (ParseException x) {
+                            ts = 0;
+                        }
+                        //address
+                        addr = addressesFound.get(i);
+                        manual_amount += amount;
+                    }
+
+
+                    if (addr != null) {
+
+//                        Log.i("APIFactory", "found BIP47 tx, value:" + amount + "," + addr);
+
+                        if ((hasBIP47Output || hasBIP47Input) /*&& !seenBIP47Tx.containsKey(hash)*/) {
+                            Tx tx = new Tx(hash, addr, amount, ts, confirmations);
+                            if (!bip47_txs.containsKey(account0_xpub)) {
+                                bip47_txs.put(account0_xpub, new ArrayList<Tx>());
+                            }
+                            if (hasBIP47Input || hasBIP47Output && (BIP47Meta.getInstance().getPCode4Addr(addr) != null)) {
+                                tx.setPaymentCode(BIP47Meta.getInstance().getPCode4Addr(addr));
+                            }
+                            bip47_txs.get(account0_xpub).add(tx);
+                            //                           seenBIP47Tx.put(hash, "");
+                        } else {
+                            ;
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    }
+
+    private synchronized JSONObject getBIP47(String[] addresses, boolean simple) {
+
+        JSONObject jsonObject  = null;
+
+
+
+        boolean regularAddress = false;
+        if(addresses[0].startsWith("F") || addresses[0].startsWith("m") || addresses[0].startsWith("2") || addresses[0].startsWith("3") || addresses[0].startsWith("n")) {
+            regularAddress = true;
+            StringBuilder _addresses = new StringBuilder();
+            for(String xpub : addresses) {
+                _addresses.append(xpub).append("|");
+            }
+            addresses = new String[1];
+            addresses[0] = _addresses.substring(0, _addresses.length()-1);
+        } else if(addresses[0].length() == 66) {
+            HashMap<String, String> mapAddressToPubkey = new HashMap<>(addresses.length * 2);
+            StringBuilder _addresses = new StringBuilder();
+            regularAddress = false;
+            for(String pubkey : addresses) {
+                ECKey key = ECKey.fromPublicOnly(Utils.HEX.decode(pubkey));
+                String p2pkh = key.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toBase58();
+                SegwitAddress segwitAddress = new SegwitAddress(key, SamouraiWallet.getInstance().getCurrentNetworkParams());
+                String bech32 = segwitAddress.getBech32AsString();
+
+                mapAddressToPubkey.put(p2pkh, pubkey);
+                mapAddressToPubkey.put(bech32, pubkey);
+                _addresses.append(p2pkh).append("|").append(bech32).append("|");
+                addresses = new String[1];
+                addresses[0] = _addresses.toString();
+            }
+        }
+
+        StringBuilder args = new StringBuilder();
+        args.append("&active=");
+        args.append(addresses[0]);
+
+        String url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
+        try {
+//            Log.i("APIFactory", "BIP47 multiaddr:" + args.toString());
+            for(String address: addresses) {
+                String response = WebUtil.getInstance(null).getURL(url + "multiaddr&active=" + address);
+//            Log.i("APIFactory", "BIP47 multiaddr:" + response);
+                jsonObject = new JSONObject(response);
+                parseBIP47(jsonObject, address);
+            }
+        }
+        catch(Exception e) {
+            jsonObject = null;
+            e.printStackTrace();
+        }
+
+        return jsonObject;
     }
 
 }
