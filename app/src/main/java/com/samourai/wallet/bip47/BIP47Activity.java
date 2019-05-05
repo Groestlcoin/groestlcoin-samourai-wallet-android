@@ -604,14 +604,14 @@ public class BIP47Activity extends Activity {
         else if(id == R.id.action_unarchive) {
             doUnArchive();
         }
-        else if(id == R.id.action_sync_all) {
+        /*else if(id == R.id.action_sync_all) {
             if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
                 doSyncAll();
             }
             else    {
                 Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
             }
-        }
+        }*/
         /*else if(id == R.id.action_claim_paynym) {
             if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
                 doClaimPayNym();
@@ -961,7 +961,7 @@ public class BIP47Activity extends Activity {
                     .setTitle(R.string.app_name)
                     .setMessage(message)
                     .setCancelable(false)
-                    .setPositiveButton(R.string.help, new DialogInterface.OnClickListener() {
+                    ./*setPositiveButton(R.string.help, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
 
                             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.samourai.io/article/58-connecting-to-a-paynym-contact"));
@@ -969,7 +969,7 @@ public class BIP47Activity extends Activity {
 
                         }
                     })
-                    .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    .*/setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
 
                             dialog.dismiss();
