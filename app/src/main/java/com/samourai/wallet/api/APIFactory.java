@@ -86,6 +86,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class APIFactory	{
@@ -2016,6 +2017,45 @@ public class APIFactory	{
             List<Tx> txs = bip47_txs.get(key);
             for(Tx tx : txs)   {
                 ret.add(tx);
+            }
+        }
+
+        HashMap<String, ArrayList<Tx>> mapTx = new HashMap<>();
+
+        for(Tx tx: ret) {
+            if(mapTx.containsKey(tx.getHash())) {
+                mapTx.get(tx.getHash()).add(tx);
+            } else {
+                ArrayList<Tx> list = new ArrayList<Tx>();
+                list.add(tx);
+                mapTx.put(tx.getHash(), list);
+
+            }
+        }
+
+        ret.clear();
+
+        for(Map.Entry<String, ArrayList<Tx>> entry : mapTx.entrySet()) {
+            String hash = entry.getKey();
+            ArrayList<Tx> txs = entry.getValue();
+            if(txs.size() == 1)
+                ret.add(txs.get(0));
+            else {
+                long confirmations = 0;
+                long date = txs.get(0).getTS();
+                long blockHeight = txs.get(0).getBlockHeight();
+                String address = txs.get(0).getAddress();
+                double amount = 0;
+                String pcode = null;
+                for(Tx tx : txs) {
+                    amount += tx.getAmount();
+                    confirmations = Math.max(confirmations, tx.getConfirmations());
+                    if(tx.getPaymentCode() != null) {
+                        pcode = tx.getPaymentCode();
+                    }
+                }
+                Tx combinedTx = new Tx(hash, address, amount, date, confirmations, pcode);
+                ret.add(combinedTx);
             }
         }
 
