@@ -291,6 +291,7 @@ public class RicochetActivity extends Activity {
                                 Intent intent = new Intent(RicochetActivity.this, BalanceActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                 startActivity(intent);
+                                emptyRicochetQueue();
 
                             }
                         });
@@ -392,6 +393,27 @@ public class RicochetActivity extends Activity {
         else    {
             Toast.makeText(RicochetActivity.this, R.string.no_ricochet_display, Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    private void emptyRicochetQueue()    {
+
+        RicochetMeta.getInstance(RicochetActivity.this).setLastRicochet(null);
+        RicochetMeta.getInstance(RicochetActivity.this).empty();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    PayloadUtil.getInstance(RicochetActivity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(RicochetActivity.this).getGUID() + AccessFactory.getInstance(RicochetActivity.this).getPIN()));
+                }
+                catch(Exception e) {
+                    ;
+                }
+
+            }
+        }).start();
 
     }
 
