@@ -2864,7 +2864,9 @@ public class APIFactory	{
 
                     if (addr != null) {
 
-//                        Log.i("APIFactory", "found BIP47 tx, value:" + amount + "," + addr);
+                        Log.i("APIFactory", "found BIP47 tx, value:" + amount + "," + addr);
+
+                        xpub_balance += amount;
 
                         if ((hasBIP47Output || hasBIP47Input) /*&& !seenBIP47Tx.containsKey(hash)*/) {
                             Tx tx = new Tx(hash, addr, amount, ts, confirmations);
@@ -2929,10 +2931,10 @@ public class APIFactory	{
         String url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
         try {
-//            Log.i("APIFactory", "BIP47 multiaddr:" + args.toString());
+            Log.i("APIFactory", "BIP47 multiaddr:" + args.toString());
             for(String address: addresses) {
                 String response = WebUtil.getInstance(null).getURL(url + "multiaddr&active=" + address);
-//            Log.i("APIFactory", "BIP47 multiaddr:" + response);
+            Log.i("APIFactory", "BIP47 multiaddr:" + response);
                 jsonObject = new JSONObject(response);
                 parseBIP47(jsonObject, address);
             }
