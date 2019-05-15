@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
-
+ext {
+    googleVersion = 125
+    fullVersion = 126
+    versionName = "0.98.86"
+}
 android {
     compileSdkVersion 26
     buildToolsVersion '27.0.3'
@@ -9,8 +13,8 @@ android {
         applicationId "hashengineering.groestlcoin.samourai.wallet"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 118
-        versionName "0.98.86"
+        versionCode googleVersion
+        versionName '$versioName'
         // Enabling multidex support.
         multiDexEnabled true
     }
@@ -48,16 +52,25 @@ android {
             applicationId 'hashengineering.groestlcoin.samourai.wallet'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 118
+            versionCode googleVersion
             versionName "0.98.86"
             resValue "string", "app_name", "Groestlcoin Samourai"
-            resValue "string", "version_name", "0.98.86"
+            resValue "string", "version_name", "0.98.86A"
+        }
+        full {
+            applicationId 'hashengineering.groestlcoin.samourai.wallet'
+            minSdkVersion 21
+            targetSdkVersion 26
+            versionCode fullVersion
+            versionName "0.98.86"
+            resValue "string", "app_name", "Groestlcoin Samourai"
+            resValue "string", "version_name", "0.98.86A"
         }
         staging {
             applicationId 'com.samourai.wallet.staging'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 118
+            versionCode fullVersion
             versionName "0.98.86"
             resValue "string", "app_name", "Samourai Staging"
             resValue "string", "version_name", "0.98.86"
@@ -66,15 +79,26 @@ android {
             applicationId 'hashengineering.groestlcoin.samourai.wallet.testnet'
             minSdkVersion 21
             targetSdkVersion 26
-            versionCode 118
+            versionCode googleVersion
             versionName "0.98.86"
-            resValue "string", "app_name", "Groestlcoin Samourai"
-            resValue "string", "version_name", "0.98.86"
+            resValue "string", "app_name", "Groestlcoin Samourai Testnet"
+            resValue "string", "version_name", "0.98.86A"
+        }
+        _testnet_full {
+            applicationId 'hashengineering.groestlcoin.samourai.wallet.testnet'
+            minSdkVersion 21
+            targetSdkVersion 26
+            versionCode fullVersion
+            versionName "0.98.86"
+            resValue "string", "app_name", "Groestlcoin Samourai Testnet"
+            resValue "string", "version_name", "0.98.86A"
         }
     }
     dexOptions {
         javaMaxHeapSize "4g"
     }
+
+
 }
 
 dependencies {
