@@ -2898,6 +2898,8 @@ public class APIFactory	{
 
 
         boolean regularAddress = false;
+        if(addresses.length == 0)
+            return jsonObject;
         if(addresses[0].startsWith("F") || addresses[0].startsWith("m") || addresses[0].startsWith("2") || addresses[0].startsWith("3") || addresses[0].startsWith("n")) {
             regularAddress = true;
             StringBuilder _addresses = new StringBuilder();
