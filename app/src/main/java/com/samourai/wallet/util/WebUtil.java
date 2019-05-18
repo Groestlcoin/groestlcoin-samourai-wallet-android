@@ -38,7 +38,7 @@ public class WebUtil	{
     public static final String BLOCKCHAIN_DOMAIN_TEST_API = BLOCKCHAIN_DOMAIN_TEST + "api.dws?key=d47da926b82e&q=";
 
     public static final String GROESTLSIGHT_SEND_URL = "https://groestlsight.groestlcoin.org/api/tx/send";
-
+    public static final String GROESTLSIGHT_TESTNET_SEND_URL = "https://groestlsight-test.groestlcoin.org/api/tx/send";
 
     public static final String SAMOURAI_API = BLOCKCHAIN_DOMAIN_API;
     public static final String SAMOURAI_API_CHECK = "https://api.samourai.com/v1/status";

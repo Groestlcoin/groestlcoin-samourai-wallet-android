@@ -44,13 +44,15 @@ public class PushTx {
         try {
             String response = null;
 
+            String serverUrl = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+
             if(!TorUtil.getInstance(context).statusFromBroadcast())    {
-                response = WebUtil.getInstance(context).postURL("text/plain", WebUtil.SAMOURAI_API + _url, hexString);
+                response = WebUtil.getInstance(context).postURL("text/plain", serverUrl + _url, hexString);
             }
             else    {
                 HashMap<String,String> args = new HashMap<String,String>();
                 args.put("tx", hexString);
-                response = WebUtil.getInstance(context).tor_postURL(WebUtil.SAMOURAI_API + _url, args);
+                response = WebUtil.getInstance(context).tor_postURL(serverUrl + _url, args);
             }
 
             return response;

@@ -2,6 +2,8 @@ package com.samourai.wallet.util;
 
 import android.content.Context;
 
+import com.samourai.wallet.SamouraiWallet;
+
 public class PushTx {
 
     private static PushTx instance = null;
@@ -49,7 +51,8 @@ public class PushTx {
     public String samourai(String hexString) {
 
         try {
-            String response = WebUtil.getInstance(null).postURL(WebUtil.SAMOURAI_API + "pushtx", "tx=" + hexString);
+            String serverUrl = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+            String response = WebUtil.getInstance(null).postURL(serverUrl + "pushtx", "tx=" + hexString);
 //        Log.i("Send response", response);
             return response;
         }
@@ -62,7 +65,8 @@ public class PushTx {
     public String chainz(String hexString) {
 
         try {
-            String response = WebUtil.getInstance(null).postURL("text/plain", WebUtil.BLOCKCHAIN_DOMAIN_API + "pushtx", hexString);
+            String serverUrl = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
+            String response = WebUtil.getInstance(null).postURL("text/plain", serverUrl + "pushtx", hexString);
 //        Log.i("Send response", response);
             return response;
         }
@@ -81,7 +85,8 @@ public class PushTx {
     public String groestlsight(String hexString) {
 
         try {
-            String response = WebUtil.getInstance(null).postURL(WebUtil.GROESTLSIGHT_SEND_URL, "rawtx="+hexString);
+            String serverUrl = SamouraiWallet.getInstance().isTestNet() ? WebUtil.GROESTLSIGHT_TESTNET_SEND_URL : WebUtil.GROESTLSIGHT_SEND_URL;
+            String response = WebUtil.getInstance(null).postURL(serverUrl, "rawtx="+hexString);
 //        Log.i("Send response", response);
             return response;
         }
