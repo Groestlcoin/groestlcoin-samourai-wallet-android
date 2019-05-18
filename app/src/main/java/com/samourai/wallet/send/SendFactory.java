@@ -575,7 +575,7 @@ public class SendFactory	{
 
             }
             else    {
-                if(key != null && key.hasPrivKey() || key.isEncrypted()) {
+                if(key != null && (key.hasPrivKey() || key.isEncrypted())) {
                     sig = transaction.calculateSignature(i, key, connectedPubKeyScript, Transaction.SigHash.ALL, false);
                 }
                 else {
