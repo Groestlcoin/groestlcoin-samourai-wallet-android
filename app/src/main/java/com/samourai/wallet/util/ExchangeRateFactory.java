@@ -26,14 +26,12 @@ public class ExchangeRateFactory	{
     private static String strDataBFX = null;
     private static String strDataBTCAvg = null;
     private static String strBittrex = null;
-    private static String strCryptopia = null;
     private static String strBinance = null;
     private static String strUpbit = null;
 
     private static HashMap<String,Double> fxRatesLBC = null;
     private static HashMap<String,Double> fxRatesBTCe = null;
     private static HashMap<String,Double> fxRatesBFX = null;
-    private static HashMap<String,Double> fxCryptopia = null;
     private static HashMap<String,Double> fxRatesBTCAvg = null;
     private static HashMap<String,Double> fxBittrex = null;
     private static HashMap<String,Double> fxBinance = null;
@@ -62,7 +60,6 @@ public class ExchangeRateFactory	{
     };
 
     private static String[] exchangeLabels = {
-            "Cryptopia",
             "Bittrex",
             "Binance",
             "Upbit"
@@ -81,7 +78,6 @@ public class ExchangeRateFactory	{
             fxRatesBTCAvg = new HashMap<String,Double>();
             fxBittrex = new HashMap<String,Double>();
 //            fxSymbols = new HashMap<String,String>();
-            fxCryptopia = new HashMap<String,Double>();
             fxBittrex = new HashMap<String,Double>();
             fxBinance = new HashMap<>();
             fxUpbit = new HashMap<>();
@@ -120,11 +116,8 @@ public class ExchangeRateFactory	{
         int fxSel = PrefsUtil.getInstance(context).getValue(PrefsUtil.CURRENT_EXCHANGE_SEL, 0);
         HashMap<String,Double> fxRates = null;
         if(fxSel == 0)	 {
-            fxRates = fxCryptopia;
-        }
-        else if(fxSel == 1)	 {
             fxRates = fxBittrex;
-        } else if(fxSel == 2) {
+        } else if(fxSel == 1) {
             fxRates = fxBinance;
         } else {
             fxRates = fxUpbit;
@@ -277,15 +270,6 @@ public class ExchangeRateFactory	{
                     ExchangeRateFactory.getInstance(context).parseBittrex();
 
                     if(!AppUtil.getInstance(context).isOfflineMode())    {
-                        response = WebUtil.getInstance(null).getURL(WebUtil.CRYPTOPIA_EXCHANGE_URL);
-                    }
-                    else    {
-                        response = PayloadUtil.getInstance(context).deserializeFX_Cryptopia().toString();
-                    }
-                    ExchangeRateFactory.getInstance(context).setDataCryptopia(response);
-                    ExchangeRateFactory.getInstance(context).parseCryptopia();
-
-                    if(!AppUtil.getInstance(context).isOfflineMode())    {
                         response = WebUtil.getInstance(null).getURL(WebUtil.BINANCE_EXCHANGE_URL);
                     }
                     else    {
@@ -404,16 +388,9 @@ public class ExchangeRateFactory	{
         }
     }
 
-    public void setDataCryptopia(String str)
-    {  strCryptopia = str; }
-
     public void setDataBittrex(String str)
     {  strBittrex = str; }
 
-    public void parseCryptopia()	 {
-           getCryptopia();
-
-    }
 
     public void parseBittrex()	 {
         getBittrex();
@@ -437,34 +414,6 @@ public class ExchangeRateFactory	{
     }
 
 
-    private void getCryptopia()	 {
-        try {
-            JSONObject result = new JSONObject(strCryptopia);
-            JSONArray recenttrades = result.getJSONArray("Data");
-
-            double btcTraded = 0.0;
-            double coinTraded = 0.0;
-
-            for(int i = 0; i < recenttrades.length(); ++i)
-            {
-                JSONObject trade = (JSONObject)recenttrades.get(i);
-
-                btcTraded += trade.getDouble("Total");
-                coinTraded += trade.getDouble("Amount");
-
-            }
-
-            Double averageTrade = btcTraded / coinTraded;
-
-            fxCryptopia.put("BTC", Double.valueOf(averageTrade));
-//                Log.i("ExchangeRateFactory", "BFX:" + currency + " " + Double.valueOf(avg_price));
-
-
-        } catch (JSONException je) {
-            fxCryptopia.put("BTC", Double.valueOf(-1.0));
-//            fxSymbols.put(currency, null);
-        }
-    }
     private void getBittrex()	 {
         try {
             JSONObject jsonObject = new JSONObject(strBittrex);
