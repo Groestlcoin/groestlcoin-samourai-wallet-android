@@ -97,8 +97,12 @@ android {
     dexOptions {
         javaMaxHeapSize "4g"
     }
+}
 
-
+sourceSets {
+    _testnet_full {
+        resources { srcDir 'src/_testnet/res' }
+    }
 }
 
 dependencies {
