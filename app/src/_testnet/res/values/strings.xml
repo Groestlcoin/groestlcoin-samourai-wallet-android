@@ -6,6 +6,7 @@
 
     <string name="unknown_xpub">TPUB depth</string>
 
+    <string name="bip47_notif_tx_insufficient_funds_2">tGRS into your wallet and try again.</string>
 
     <string name="xpub_add_ok">TPUB added successfully</string>
     <string name="xpub_add_ko">TPUB add failed</string>
@@ -29,7 +30,7 @@
     <string name="tor_routing_off">Groestlcoin Samourai Testnet is not routing via Tor. Tap to activate.</string>
     <string name="tor_install">Tap to install Orbot and route Groestlcoin Samourai Testnet through Tor.</string>
 
-    <string name="ricochet_spend3">(includes 0.002 GRS fee to Groestlcoin Samourai Testnet and miners\' fees)?</string>
+    <string name="ricochet_spend3">(includes 0.002 tGRS fee to Groestlcoin Samourai Testnet and miners\' fees)?</string>
 
     <string name="trusted_node_not_core_131">Trusted node is set. Note that Groestlcoin Samourai Testnet Wallet supports Groestlcoin Core 2.13.1 and over.</string>
     <string name="passphrase_disclaimer">I understand that Groestlcoin Samourai Testnet cannot provide assistance in the case of lost or forgotten passphrases. Samourai never has any knowledge of my passphrase.</string>
