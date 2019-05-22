@@ -97,13 +97,14 @@ android {
     dexOptions {
         javaMaxHeapSize "4g"
     }
-}
-
-sourceSets {
-    _testnet_full {
-        resources { srcDir 'src/_testnet/res' }
+    sourceSets {
+        _testnet_full {
+            res { srcDir 'src/_testnet/res' }
+        }
     }
 }
+
+
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
