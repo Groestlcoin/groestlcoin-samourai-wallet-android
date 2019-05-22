@@ -784,8 +784,15 @@ public class SendActivity extends Activity {
 
                                     }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int whichButton) {
-
                                             dialog.dismiss();
+                                            SendActivity.this.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    btSend.setActivated(true);
+                                                    btSend.setClickable(true);
+                                                }
+                                            });
+
 
                                         }
                                     });
