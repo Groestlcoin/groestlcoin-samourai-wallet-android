@@ -322,7 +322,9 @@ public class RicochetMeta {
                 long totalVal = 0L;
                 SecureRandom random = new SecureRandom();
 
-                int _outgoingIdx = BIP47Meta.getInstance().getOutgoingIdx(BIP47Meta.strSamouraiDonationPCode);
+                int _outgoingIdx = BIP47Meta.getInstance().getOutgoingIdx(SamouraiWallet.getInstance().isTestNet() ?
+                        BIP47Meta.strSamouraiDonationPCodeTestNet :
+                        BIP47Meta.strSamouraiDonationPCode);
 
                 for(int i = 0; i < 4; i++)   {
                     int val = random.nextInt(25000);
@@ -343,7 +345,9 @@ public class RicochetMeta {
                     // put address here
                     //
                     try {
-                        PaymentCode pcode = new PaymentCode(BIP47Meta.strSamouraiDonationPCode);
+                        PaymentCode pcode = new PaymentCode(SamouraiWallet.getInstance().isTestNet() ?
+                                BIP47Meta.strSamouraiDonationPCodeTestNet :
+                                BIP47Meta.strSamouraiDonationPCode);
                         PaymentAddress paymentAddress = BIP47Util.getInstance(context).getSendAddress(pcode, _outgoingIdx + i);
 //                        String strAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
                         //

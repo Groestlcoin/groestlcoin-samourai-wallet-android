@@ -222,11 +222,17 @@ public class RicochetActivity extends Activity {
                                         //
                                         if(samouraiFeeViaBIP47)    {
                                             for(int j = 0; j < 4; j++)   {
-                                                PaymentCode pcode = new PaymentCode(BIP47Meta.strSamouraiDonationPCode);
+                                                PaymentCode pcode = new PaymentCode(SamouraiWallet.getInstance().isTestNet() ?
+                                                        BIP47Meta.strSamouraiDonationPCodeTestNet :
+                                                        BIP47Meta.strSamouraiDonationPCode);
                                                 PaymentAddress paymentAddress = BIP47Util.getInstance(RicochetActivity.this).getSendAddress(pcode, BIP47Meta.getInstance().getOutgoingIdx(BIP47Meta.strSamouraiDonationPCode));
                                                 String strAddress = paymentAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(strAddress, BIP47Meta.strSamouraiDonationPCode);
-                                                BIP47Meta.getInstance().inc(BIP47Meta.strSamouraiDonationPCode);
+                                                BIP47Meta.getInstance().getPCode4AddrLookup().put(strAddress, SamouraiWallet.getInstance().isTestNet() ?
+                                                        BIP47Meta.strSamouraiDonationPCodeTestNet :
+                                                        BIP47Meta.strSamouraiDonationPCode);
+                                                BIP47Meta.getInstance().inc(SamouraiWallet.getInstance().isTestNet() ?
+                                                        BIP47Meta.strSamouraiDonationPCodeTestNet :
+                                                        BIP47Meta.strSamouraiDonationPCode);
                                             }
                                         }
 

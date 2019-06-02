@@ -796,7 +796,10 @@ public class BIP47Activity extends Activity {
         Set<String> _pcodes = BIP47Meta.getInstance().getSortedByLabels(false);
 
         if(_pcodes.size() < 1)    {
-            BIP47Meta.getInstance().setLabel(BIP47Meta.strSamouraiDonationPCode, "Groestlcoin Samourai Wallet Donations");
+            BIP47Meta.getInstance().setLabel(SamouraiWallet.getInstance().isTestNet() ?
+                    BIP47Meta.strSamouraiDonationPCodeTestNet :
+                    BIP47Meta.strSamouraiDonationPCode, SamouraiWallet.getInstance().isTestNet() ?
+                    "Groestlcoin Samourai TestNet Wallet Donations": "Groestlcoin Samourai Wallet Donations");
         }
 
         //

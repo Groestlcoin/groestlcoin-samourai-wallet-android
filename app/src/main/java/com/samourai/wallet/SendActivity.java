@@ -750,7 +750,9 @@ public class SendActivity extends Activity {
                 if(SPEND_TYPE == SPEND_RICOCHET)    {
 
                     boolean samouraiFeeViaBIP47 = false;
-                    if(BIP47Meta.getInstance().getOutgoingStatus(BIP47Meta.strSamouraiDonationPCode) == BIP47Meta.STATUS_SENT_CFM)    {
+                    if(BIP47Meta.getInstance().getOutgoingStatus(SamouraiWallet.getInstance().isTestNet() ?
+                            BIP47Meta.strSamouraiDonationPCodeTestNet :
+                            BIP47Meta.strSamouraiDonationPCode) == BIP47Meta.STATUS_SENT_CFM)    {
                         samouraiFeeViaBIP47 = true;
                     }
 

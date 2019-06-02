@@ -30,6 +30,9 @@ public class BIP47Meta {
 
     public static final String strSamouraiDonationPCode = "PM8TJWsADuK6ciCZq5noqiC882RsrNmgoD19gBLDvjmqpDg7cFs5qBbWb48ttRdR7hEbp1bYq7CyQFfLz6u7NjSWffgjeeqkZ8TdKJuVj1BPkata4kdo";
     public static final String strSamouraiDonationMeta = "?title=Groestlcoin Samourai Donations&desc=Donate to help fund development of Groestlcoin Samourai Wallet&user=K6tS2X8";
+    public static final String strSamouraiDonationPCodeTestNet = "PM8TJLLpJY1xrCgZXoRHVgNT6214mPYfLCjNsVQBh2QfRKCJJX9cpMPgautHb2UbvxQ2dsvft9Qxs9TFKDea94rpV9bRnMfFQfGW5bAySdkmiQPtx2cD";
+    public static final String strSamouraiDonationMetaTestNet = "?title=Groestlcoin Samourai TestNet Donations&desc=Donate to help fund development of Groestlcoin Samourai TestNet Wallet&user=K6tS2X8";
+
 
     public static final int INCOMING_LOOKAHEAD = 3;
     public static final int OUTGOING_LOOKAHEAD = 3;
