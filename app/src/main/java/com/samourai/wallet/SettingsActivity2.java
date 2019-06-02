@@ -945,7 +945,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                 });
 
                 Preference aboutPref = (Preference) findPreference("about");
-                aboutPref.setSummary("Groestlcoin Samourai," + " " + getResources().getString(R.string.version_name));
+                aboutPref.setSummary(getResources().getString(R.string.app_name) + " " + getResources().getString(R.string.version_name));
 
                 aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                     public boolean onPreferenceClick(Preference preference) {
