@@ -1809,7 +1809,7 @@ public class APIFactory	{
 
     public synchronized int syncBIP47Incoming(String[] addresses) {
 
-        JSONObject jsonObject = getXPUB(addresses, false);
+        JSONObject jsonObject = getBIP47(addresses, false);
         Log.d("APIFactory", "sync BIP47 incoming:" + jsonObject.toString());
         int ret = 0;
 
