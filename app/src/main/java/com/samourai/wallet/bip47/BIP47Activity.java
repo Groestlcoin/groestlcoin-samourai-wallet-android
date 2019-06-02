@@ -604,14 +604,14 @@ public class BIP47Activity extends Activity {
         else if(id == R.id.action_unarchive) {
             doUnArchive();
         }
-        /*else if(id == R.id.action_sync_all) {
+        else if(id == R.id.action_sync_all) {
             if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
                 doSyncAll();
             }
             else    {
                 Toast.makeText(BIP47Activity.this, R.string.in_offline_mode, Toast.LENGTH_SHORT).show();
             }
-        }*/
+        }
         /*else if(id == R.id.action_claim_paynym) {
             if(!AppUtil.getInstance(BIP47Activity.this).isOfflineMode())    {
                 doClaimPayNym();
@@ -821,7 +821,7 @@ public class BIP47Activity extends Activity {
             ++i;
         }
 
-        doPayNymTask();
+        //doPayNymTask();
 
         adapter = new BIP47EntryAdapter();
         listView.setAdapter(adapter);
