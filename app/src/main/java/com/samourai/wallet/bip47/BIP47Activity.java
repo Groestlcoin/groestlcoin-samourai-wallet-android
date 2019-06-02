@@ -953,7 +953,7 @@ public class BIP47Activity extends Activity {
 
             String message = getText(R.string.bip47_notif_tx_insufficient_funds_1) + " ";
             BigInteger biAmount = SendNotifTxFactory._bSWFee.add(SendNotifTxFactory._bNotifTxValue.add(FeeUtil.getInstance().estimatedFee(1, 4, FeeUtil.getInstance().getLowFee().getDefaultPerKB())));
-            String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) biAmount.longValue()) / 1e8) + " GRS ";
+            String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) biAmount.longValue()) / 1e8) + " "+MonetaryUtil.getInstance().getBTCUnits()+ " ";
             message += strAmount;
             message += " " + getText(R.string.bip47_notif_tx_insufficient_funds_2);
 
@@ -1121,7 +1121,7 @@ public class BIP47Activity extends Activity {
 
         String strNotifTxMsg = getText(R.string.bip47_setup4_text1) + " ";
         long notifAmount = amount;
-        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount + fee.longValue()) / 1e8) + " GRS ";
+        String strAmount = MonetaryUtil.getInstance().getBTCFormat().format(((double) notifAmount + fee.longValue()) / 1e8) + " " + MonetaryUtil.getInstance().getBTCUnits() + " ";
         strNotifTxMsg += strAmount + getText(R.string.bip47_setup4_text2);
 
         AlertDialog.Builder dlg = new AlertDialog.Builder(BIP47Activity.this)
