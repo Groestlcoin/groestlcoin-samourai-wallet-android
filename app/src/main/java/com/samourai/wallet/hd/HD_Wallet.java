@@ -54,8 +54,8 @@ public class HD_Wallet {
         DeterministicKey t1 = HDKeyDerivation.deriveChildKey(mKey, purpose|ChildNumber.HARDENED_BIT);
         int coin = SamouraiWallet.getInstance().isTestNet() ? (1 | ChildNumber.HARDENED_BIT) : (17 | ChildNumber.HARDENED_BIT);
         mRoot = HDKeyDerivation.deriveChildKey(t1, coin);
-        if(legacy) {
-            int legacyCoin = SamouraiWallet.getInstance().isTestNet() ? (1 | ChildNumber.HARDENED_BIT) : (0 | ChildNumber.HARDENED_BIT);
+        if(legacy && !SamouraiWallet.getInstance().isTestNet()) {
+            int legacyCoin = 0 | ChildNumber.HARDENED_BIT;
             mLegacyRoot = HDKeyDerivation.deriveChildKey(t1, legacyCoin);
         }
 
@@ -63,7 +63,7 @@ public class HD_Wallet {
         for(int i = 0; i < nbAccounts; i++) {
             String acctName = String.format("account %02d", i);
             mAccounts.add(new HD_Account(mParams, mRoot, acctName, i));
-            if(legacy)
+            if(legacy && mLegacyRoot != null)
                 mAccounts.add(new HD_Account(mParams, mLegacyRoot, acctName, i));
         }
 
@@ -89,8 +89,8 @@ public class HD_Wallet {
         DeterministicKey t1 = HDKeyDerivation.deriveChildKey(mKey, purpose|ChildNumber.HARDENED_BIT);
         int coin = SamouraiWallet.getInstance().isTestNet() ? (1 | ChildNumber.HARDENED_BIT) : (17 | ChildNumber.HARDENED_BIT);
         mRoot = HDKeyDerivation.deriveChildKey(t1, coin);
-        if(legacy) {
-            int legacyCoin = SamouraiWallet.getInstance().isTestNet() ? (1 | ChildNumber.HARDENED_BIT) : (0 | ChildNumber.HARDENED_BIT);
+        if(legacy && !SamouraiWallet.getInstance().isTestNet()) {
+            int legacyCoin = 0 | ChildNumber.HARDENED_BIT;
             mLegacyRoot = HDKeyDerivation.deriveChildKey(t1, legacyCoin);
         }
 
@@ -98,7 +98,7 @@ public class HD_Wallet {
         for(int i = 0; i < nbAccounts; i++) {
             String acctName = String.format("account %02d", i);
             mAccounts.add(new HD_Account(mParams, mRoot, acctName, i));
-            if(legacy)
+            if(legacy && mLegacyRoot != null)
                 mAccounts.add(new HD_Account(mParams, mLegacyRoot, acctName, i));
         }
 
