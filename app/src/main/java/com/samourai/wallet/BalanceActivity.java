@@ -1705,9 +1705,26 @@ public class BalanceActivity extends Activity {
                     int p2wpkh = 0;
 
                     for(int i = 0; i < inputs.length(); i++)   {
-                        if(inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey"))    {
-                            String scriptpubkey = inputs.getJSONObject(i).getJSONObject("outpoint").getString("scriptpubkey");
-                            Script script = new Script(Hex.decode(scriptpubkey));
+                        if(inputs.getJSONObject(i).has("received_from") && inputs.getJSONObject(i).getJSONObject("received_from").has("script"))    {
+                            /*String scriptpubkey = inputs.getJSONObject(i).getJSONObject("received_from").getString("script");
+                            Script script = null;
+                            if(scriptpubkey.equals(""))
+                            {
+
+
+                                try {
+                                    Address addr = Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), );
+                                    script = ScriptBuilder.createOutputScript(addr);
+                                } catch (AddressFormatException x) {
+                                    if(inputs.getJSONObject(i).getJSONObject("received_from").has("txinwitness")) {
+                                        JSONArray witness = inputs.getJSONObject(i).getJSONObject("received_from").getJSONArray("txinwitness");
+                                        scriptpubkey = witness.getString(1);
+                                    }
+                                    //Bech32Segwit.
+                                }
+                            }
+                            if(script == null)
+                                script = new Script(Hex.decode(scriptpubkey));
                             String address = null;
                             if(Bech32Util.getInstance().isBech32Script(scriptpubkey))    {
                                 try {
@@ -1728,8 +1745,17 @@ public class BalanceActivity extends Activity {
                             }
                             else    {
                                 p2pkh++;
+                            }*/
+                            String address = inputs.getJSONObject(i).getString("addr");
+                            if(address.startsWith("grs1") || address.startsWith("tgrs1")) {
+                                p2wpkh++;
+                            } else if(address.startsWith("3") || address.startsWith("2")) {
+                                p2sh_p2wpkh++;
+                            } else {
+                                p2pkh++;
                             }
                         }
+
                     }
 
                     FeeUtil.getInstance().setSuggestedFee(FeeUtil.getInstance().getHighFee());
@@ -1743,20 +1769,22 @@ public class BalanceActivity extends Activity {
 
                     for(int i = 0; i < inputs.length(); i++)   {
                         JSONObject obj = inputs.getJSONObject(i);
-                        if(obj.has("outpoint"))    {
+                        if(obj.has("amount"))
+                            total_inputs += obj.getDouble("amount") * 100000000;
+                        /*if(obj.has("outpoint"))    {
                             JSONObject objPrev = obj.getJSONObject("outpoint");
                             if(objPrev.has("value"))    {
                                 total_inputs += objPrev.getLong("value");
                             }
-                        }
+                        }*/
                     }
 
                     for(int i = 0; i < outputs.length(); i++)   {
                         JSONObject obj = outputs.getJSONObject(i);
-                        if(obj.has("value"))    {
-                            total_outputs += obj.getLong("value");
+                        if(obj.has("amount"))    {
+                            total_outputs += obj.getDouble("amount") * 100000000;
 
-                            String addr = obj.getString("address");
+                            String addr = obj.getString("addr");
                             Log.d("BalanceActivity", "checking address:" + addr);
                             if(utxo == null)    {
                                 utxo = getUTXO(addr);
