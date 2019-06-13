@@ -1760,7 +1760,7 @@ public class APIFactory	{
                     all[1] = BIP84Util.getInstance(context).getWallet().getAccount(0).zpubstr();
                     System.arraycopy(hdw.getXPUBs(), 0, all, 2, hdw.getXPUBs().length);
                 }
-                APIFactory.getInstance(context).getBIP47(addressStrings.toArray(new String[0]), true);
+                APIFactory.getInstance(context).getBIP47(addressStrings.toArray(new String[0]), true, null);
                 APIFactory.getInstance(context).getXPUB(all, true);
                 String[] xs = new String[4];
                 xs[0] = HD_WalletFactory.getInstance(context).get().getAccount(0).xpubstr();
@@ -1809,7 +1809,8 @@ public class APIFactory	{
 
     public synchronized int syncBIP47Incoming(String[] addresses) {
 
-        JSONObject jsonObject = getBIP47(addresses, false);
+        HashMap<String, String> mapAddressToPublicKey = new HashMap<>(addresses.length * 2);
+        JSONObject jsonObject = getBIP47(addresses, false, mapAddressToPublicKey);
         Log.d("APIFactory", "sync BIP47 incoming:" + jsonObject.toString());
         int ret = 0;
 
@@ -1841,8 +1842,9 @@ public class APIFactory	{
                         }
                         else    {
                             addr = (String)addrObj.get("address");
-                            pcode = BIP47Meta.getInstance().getPCode4Addr(addr);
-                            idx = BIP47Meta.getInstance().getIdx4Addr(addr);
+                            String pubkey = mapAddressToPublicKey.get(addr);
+                            pcode = BIP47Meta.getInstance().getPCode4Addr(pubkey);
+                            idx = BIP47Meta.getInstance().getIdx4Addr(pubkey);
                         }
 
                         if(addrObj.has("final_balance"))  {
@@ -2891,7 +2893,7 @@ public class APIFactory	{
         }
     }
 
-    private synchronized JSONObject getBIP47(String[] addresses, boolean simple) {
+    private synchronized JSONObject getBIP47(String[] addresses, boolean simple, HashMap<String, String> mapAddressToPubkey) {
 
         JSONObject jsonObject  = null;
 
@@ -2909,7 +2911,8 @@ public class APIFactory	{
             addresses = new String[1];
             addresses[0] = _addresses.substring(0, _addresses.length()-1);
         } else if(addresses[0].length() == 66) {
-            HashMap<String, String> mapAddressToPubkey = new HashMap<>(addresses.length * 2);
+            if(mapAddressToPubkey == null)
+                mapAddressToPubkey = new HashMap<>(addresses.length * 2);
             StringBuilder _addresses = new StringBuilder();
             regularAddress = false;
             for(String pubkey : addresses) {
