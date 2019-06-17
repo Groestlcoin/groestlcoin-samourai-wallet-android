@@ -750,11 +750,11 @@ public class SendActivity extends Activity {
                 if(SPEND_TYPE == SPEND_RICOCHET)    {
 
                     boolean samouraiFeeViaBIP47 = false;
-                    if(BIP47Meta.getInstance().getOutgoingStatus(SamouraiWallet.getInstance().isTestNet() ?
+                    /*if(BIP47Meta.getInstance().getOutgoingStatus(SamouraiWallet.getInstance().isTestNet() ?
                             BIP47Meta.strSamouraiDonationPCodeTestNet :
                             BIP47Meta.strSamouraiDonationPCode) == BIP47Meta.STATUS_SENT_CFM)    {
                         samouraiFeeViaBIP47 = true;
-                    }
+                    }*/
 
                     final JSONObject jObj = RicochetMeta.getInstance(SendActivity.this).script(amount, FeeUtil.getInstance().getSuggestedFee().getDefaultPerKB().longValue(), address, 4, strPCode, samouraiFeeViaBIP47);
                     if(jObj != null)    {
