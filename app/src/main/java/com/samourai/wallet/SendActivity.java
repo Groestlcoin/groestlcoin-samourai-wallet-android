@@ -1883,7 +1883,7 @@ public class SendActivity extends Activity {
         double btc_amount = 0.0;
 
         String strBTCAddress = edAddress.getText().toString().trim();
-        if(strBTCAddress.startsWith("bitcoin:"))    {
+        if(strBTCAddress.startsWith("groestlcoin:"))    {
             edAddress.setText(strBTCAddress.substring(8));
         }
 
