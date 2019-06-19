@@ -66,7 +66,7 @@ public class WebSocketService extends Service {
         addrSubs.addAll(Arrays.asList(BIP47Meta.getInstance().getIncomingLookAhead(context)));
         String[] addrs = addrSubs.toArray(new String[addrSubs.size()]);
 
-        webSocketHandler = new WebSocketHandler(WebSocketService.this, addrs);
+        webSocketHandler = null; //new WebSocketHandler(WebSocketService.this, addrs);
         connectToWebsocketIfNotConnected();
 
     }
@@ -84,9 +84,9 @@ public class WebSocketService extends Service {
     public void connectToWebsocketIfNotConnected()
     {
         try {
-            if(!webSocketHandler.isConnected()) {
+            /*if(!webSocketHandler.isConnected()) {
                 webSocketHandler.start();
-            }
+            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -118,7 +118,7 @@ public class WebSocketHandler {
 
     private void connect() throws IOException, WebSocketException
     {
-        new ConnectionTask().execute();
+        //new ConnectionTask().execute();
     }
 
     private void updateBalance(final String rbfHash, final String blkHash)    {
