@@ -57,7 +57,7 @@ public class WebSocketService extends Service {
         //
         // prune BIP47 lookbehind
         //
-        BIP47Meta.getInstance().pruneIncoming();
+        //BIP47Meta.getInstance().pruneIncoming();
 
         addrSubs = new ArrayList<String>();
         addrSubs.add(AddressFactory.getInstance(context).account2xpub().get(0));

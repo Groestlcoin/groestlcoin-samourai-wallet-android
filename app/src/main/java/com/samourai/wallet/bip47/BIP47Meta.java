@@ -34,8 +34,8 @@ public class BIP47Meta {
     public static final String strSamouraiDonationMetaTestNet = "?title=Groestlcoin Samourai TestNet Donations&desc=Donate to help fund development of Groestlcoin Samourai TestNet Wallet&user=K6tS2X8";
 
 
-    public static final int INCOMING_LOOKAHEAD = 3;
-    public static final int OUTGOING_LOOKAHEAD = 3;
+    public static final int INCOMING_LOOKAHEAD = 20;
+    public static final int OUTGOING_LOOKAHEAD = 20;
 
     public static final int STATUS_NOT_SENT = -1;
     public static final int STATUS_SENT_NO_CFM = 0;

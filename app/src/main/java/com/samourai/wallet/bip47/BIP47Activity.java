@@ -1540,8 +1540,8 @@ public class BIP47Activity extends Activity {
                         idx += 20;
                     }
 
-                    Log.i("BIP47Activity","Pruning incoming");
-                    BIP47Meta.getInstance().pruneIncoming();
+                    //Log.i("BIP47Activity","Pruning incoming");
+                    //BIP47Meta.getInstance().pruneIncoming();
 
                     Log.i("BIP47Activity","Saving wallet");
                     PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance(BIP47Activity.this).getPIN()));
