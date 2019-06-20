@@ -1500,11 +1500,12 @@ public class BIP47Activity extends Activity {
                     while(loop) {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
-                            Log.i("BIP47Activity", "sync receive from " + i + ":" + BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
-                            BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
-                            BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i), i);
-                            BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i), payment_code.toString());
-                            addrs.add(BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i));
+                            String publicKey = BIP47Util.getInstance(BIP47Activity.this).getReceivePubKey(payment_code, i);
+                            Log.i("BIP47Activity", "sync receive from " + i + ":" + publicKey);
+                            BIP47Meta.getInstance().setIncomingIdx(payment_code.toString(), i, publicKey);
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(publicKey, i);
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(publicKey, payment_code.toString());
+                            addrs.add(publicKey);
                             Log.i("BIP47Activity", "p2pkh " + i + ":" + BIP47Util.getInstance(BIP47Activity.this).getReceiveAddress(payment_code, i).getReceiveECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
                         }
                         String[] s = addrs.toArray(new String[addrs.size()]);
@@ -1523,25 +1524,29 @@ public class BIP47Activity extends Activity {
                         addrs.clear();
                         for(int i = idx; i < (idx + 20); i++)   {
                             PaymentAddress sendAddress = BIP47Util.getInstance(BIP47Activity.this).getSendAddress(payment_code, i);
-//                            Log.i("BIP47Activity", "sync send to " + i + ":" + sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                            String address = sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
+                            Log.i("BIP47Activity", "sync send to " + i + ":" + address);
 //                            BIP47Meta.getInstance().setOutgoingIdx(payment_code.toString(), i);
-                            BIP47Meta.getInstance().getIdx4AddrLookup().put(sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), i);
-                            BIP47Meta.getInstance().getPCode4AddrLookup().put(sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString(), payment_code.toString());
-                            addrs.add(sendAddress.getSendECKey().toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString());
+                            BIP47Meta.getInstance().getIdx4AddrLookup().put(address, i);
+                            BIP47Meta.getInstance().getPCode4AddrLookup().put(address, payment_code.toString());
+                            addrs.add(address);
                         }
                         String[] s = addrs.toArray(new String[addrs.size()]);
                         int nb = APIFactory.getInstance(BIP47Activity.this).syncBIP47Outgoing(s);
-//                        Log.i("BIP47Activity", "sync send idx:" + idx + ", nb == " + nb);
+                        Log.i("BIP47Activity", "sync send idx:" + idx + ", nb == " + nb);
                         if(nb == 0)    {
                             loop = false;
                         }
                         idx += 20;
                     }
 
+                    Log.i("BIP47Activity","Pruning incoming");
                     BIP47Meta.getInstance().pruneIncoming();
 
+                    Log.i("BIP47Activity","Saving wallet");
                     PayloadUtil.getInstance(BIP47Activity.this).saveWalletToJSON(new CharSequenceX(AccessFactory.getInstance(BIP47Activity.this).getGUID() + AccessFactory.getInstance(BIP47Activity.this).getPIN()));
 
+                    Log.i("BIP47Activity","Refreshing...");
                     Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
                     LocalBroadcastManager.getInstance(BIP47Activity.this).sendBroadcast(intent);
 
@@ -1577,6 +1582,7 @@ public class BIP47Activity extends Activity {
                 if (progress != null && progress.isShowing()) {
                     progress.dismiss();
                     progress = null;
+                    Log.i("BIP47Activity","Completing sync operation");
                 }
 
                 runOnUiThread(new Runnable() {
