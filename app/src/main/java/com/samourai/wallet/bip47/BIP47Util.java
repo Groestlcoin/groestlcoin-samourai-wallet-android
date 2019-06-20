@@ -157,9 +157,9 @@ public class BIP47Util {
     }
 
     public PaymentAddress getPaymentAddress(PaymentCode pcode, int idx, HD_Address address) throws AddressFormatException, NotSecp256k1Exception {
-        DumpedPrivateKey dpk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), address.getPrivateKeyString());
-        ECKey eckey = dpk.getKey();
-        PaymentAddress paymentAddress = new PaymentAddress(pcode, idx, eckey.getPrivKeyBytes());
+        //DumpedPrivateKey dpk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), address.getPrivateKeyString());
+        //ECKey eckey = dpk.getKey();
+        PaymentAddress paymentAddress = new PaymentAddress(pcode, idx, /*eckey.getPrivKeyBytes()*/address.getECKey().getPrivKeyBytes());
         return paymentAddress;
     }
 
