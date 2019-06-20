@@ -215,6 +215,7 @@ public class TxAnimUIActivity extends AppCompatActivity {
                                                 isOK = true;
                                             } else {
                                                 Toast.makeText(TxAnimUIActivity.this, R.string.pushtx_returns_null, Toast.LENGTH_SHORT).show();
+                                                Log.i("TxAnimUIActivity", "chainz returned a null value");
                                                 failTx(R.string.tx_broadcast_ko);
                                             }
                                         }
