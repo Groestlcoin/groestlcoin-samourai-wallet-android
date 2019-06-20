@@ -256,16 +256,17 @@ public class BIP47Meta {
             if(getArchived(pcode))    {
                 continue;
             }
-            int idx = getIncomingIdx(pcode);
+            int idx = 0;//getIncomingIdx(pcode);
 
 //            Log.i("APIFactory", "idx:" + idx + " , " + pcode);
 
             for(int i = idx; i < (idx + INCOMING_LOOKAHEAD); i++)   {
                 try {
-                    Log.i("APIFactory", "receive from " + i + ":" + BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
-                    BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
-                    BIP47Meta.getInstance().getIdx4AddrLookup().put(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i), i);
-                    BIP47Meta.getInstance().getPCode4AddrLookup().put(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i), pcode.toString());
+                    String publicKey = BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i);
+                    Log.i("APIFactory", "receive from " + i + ":" + publicKey);
+                    BIP47Meta.getInstance().setIncomingIdx(pcode.toString(), i, publicKey);
+                    BIP47Meta.getInstance().getIdx4AddrLookup().put(publicKey, i);
+                    BIP47Meta.getInstance().getPCode4AddrLookup().put(publicKey, pcode.toString());
                     addrs.add(BIP47Util.getInstance(ctx).getReceivePubKey(new PaymentCode(pcode), i));
                 }
                 catch(Exception e) {
