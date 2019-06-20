@@ -1,5 +1,7 @@
 package com.samourai.wallet.bip47.rpc;
 
+import com.samourai.wallet.SamouraiWallet;
+
 import org.bitcoinj.core.bip47.Wallet;
 import org.bitcoinj.core.bip47.Address;
 import org.bitcoinj.core.AddressFormatException;
@@ -46,7 +48,7 @@ public class Util {
     public byte[] getIncomingMask(Wallet wallet, byte[] pubkey, byte[] outPoint) throws AddressFormatException, Exception    {
 
         Address notifAddress = getNotificationAddress(wallet);
-        DumpedPrivateKey dpk = new DumpedPrivateKey(MainNetParams.get(), notifAddress.getPrivateKeyString());
+        DumpedPrivateKey dpk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), notifAddress.getPrivateKeyString());
         ECKey inputKey = dpk.getKey();
         byte[] privkey = inputKey.getPrivKeyBytes();
         byte[] mask = PaymentCode.getMask(new SecretPoint(privkey, pubkey).ECDHSecretAsBytes(), outPoint);
@@ -55,7 +57,7 @@ public class Util {
     }
 
     public PaymentAddress getPaymentAddress(PaymentCode pcode, int idx, Address address) throws AddressFormatException, NotSecp256k1Exception {
-        DumpedPrivateKey dpk = new DumpedPrivateKey(MainNetParams.get(), address.getPrivateKeyString());
+        DumpedPrivateKey dpk = new DumpedPrivateKey(SamouraiWallet.getInstance().getCurrentNetworkParams(), address.getPrivateKeyString());
         ECKey eckey = dpk.getKey();
         PaymentAddress paymentAddress = new PaymentAddress(pcode, idx, eckey.getPrivKeyBytes());
         return paymentAddress;
