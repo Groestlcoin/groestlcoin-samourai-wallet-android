@@ -102,6 +102,8 @@ public class PrefsUtil {
 
 	public boolean getValue(String name, boolean value) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		if(name.equals(RBF_OPT_IN))
+			return false;
 		return prefs.getBoolean(name, value);
 	}
 
