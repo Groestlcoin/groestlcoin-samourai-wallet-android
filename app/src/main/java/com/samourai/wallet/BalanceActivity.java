@@ -134,6 +134,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.Executors;
 
 import info.guardianproject.netcipher.proxy.OrbotHelper;
 
@@ -505,7 +506,7 @@ public class BalanceActivity extends Activity {
 
                                 if(rbfTask == null || rbfTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
                                     rbfTask = new RBFTask();
-                                    rbfTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
+                                    rbfTask.executeOnExecutor(Executors.newSingleThreadExecutor(), tx.getHash());
                                 }
 
                             }
@@ -530,7 +531,7 @@ public class BalanceActivity extends Activity {
 
                                 if(cpfpTask == null || cpfpTask.getStatus().equals(AsyncTask.Status.FINISHED))    {
                                     cpfpTask = new CPFPTask();
-                                    cpfpTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, tx.getHash());
+                                    cpfpTask.executeOnExecutor(Executors.newSingleThreadExecutor(), tx.getHash());
                                 }
 
                             }
@@ -2125,28 +2126,13 @@ public class BalanceActivity extends Activity {
                     int p2wpkh = 0;
 
                     for(int i = 0; i < inputs.length(); i++)   {
-                        if(inputs.getJSONObject(i).has("outpoint") && inputs.getJSONObject(i).getJSONObject("outpoint").has("scriptpubkey"))    {
-                            String scriptpubkey = inputs.getJSONObject(i).getJSONObject("outpoint").getString("scriptpubkey");
-                            Script script = new Script(Hex.decode(scriptpubkey));
-                            String address = null;
-                            if(Bech32Util.getInstance().isBech32Script(scriptpubkey))    {
-                                try {
-                                    address = Bech32Util.getInstance().getAddressFromScript(scriptpubkey);
-                                }
-                                catch(Exception e) {
-                                    ;
-                                }
-                            }
-                            else    {
-                                address = script.getToAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toString();
-                            }
-                            if(FormatsUtil.getInstance().isValidBech32(address))    {
+                        if(inputs.getJSONObject(i).has("received_from") && inputs.getJSONObject(i).getJSONObject("received_from").has("script"))    {
+                            String address = inputs.getJSONObject(i).getString("addr");
+                            if(address.startsWith("grs1") || address.startsWith("tgrs1")) {
                                 p2wpkh++;
-                            }
-                            else if(Address.fromBase58(SamouraiWallet.getInstance().getCurrentNetworkParams(), address).isP2SHAddress())    {
+                            } else if(address.startsWith("3") || address.startsWith("2")) {
                                 p2sh_p2wpkh++;
-                            }
-                            else    {
+                            } else {
                                 p2pkh++;
                             }
                         }
@@ -2164,29 +2150,29 @@ public class BalanceActivity extends Activity {
 
                     for(int i = 0; i < inputs.length(); i++)   {
                         JSONObject obj = inputs.getJSONObject(i);
-                        if(obj.has("outpoint"))    {
-                            JSONObject objPrev = obj.getJSONObject("outpoint");
-                            if(objPrev.has("value"))    {
-                                total_inputs += objPrev.getLong("value");
-                                String key = objPrev.getString("txid") + ":" + objPrev.getLong("vout");
-                                input_values.put(key, objPrev.getLong("value"));
+                        if(obj.has("received_from"))    {
+                            JSONObject objPrev = obj.getJSONObject("received_from");
+                            if(obj.has("amount"))    {
+                                total_inputs += obj.getDouble("amount") * 100000000;
+                                String key = objPrev.getString("tx") + ":" + objPrev.getLong("n");
+                                input_values.put(key, (long)(obj.getDouble("amount")* 100000000L));
                             }
                         }
                     }
 
                     for(int i = 0; i < outputs.length(); i++)   {
                         JSONObject obj = outputs.getJSONObject(i);
-                        if(obj.has("value"))    {
-                            total_outputs += obj.getLong("value");
+                        if(obj.has("amount"))    {
+                            total_outputs += obj.getDouble("amount") * 100000000;
 
                             String _addr = null;
-                            if(obj.has("address"))    {
-                                _addr = obj.getString("address");
+                            if(obj.has("addr"))    {
+                                _addr = obj.getString("addr");
                             }
 
                             selfAddresses.add(_addr);
                             if(_addr != null && rbf.getChangeAddrs().contains(_addr.toString()))    {
-                                total_change += obj.getLong("value");
+                                total_change += obj.getDouble("amount") * 100000000;
                             }
                         }
                     }
