@@ -663,6 +663,18 @@ public class TxAnimUIActivity extends AppCompatActivity {
 
                 }, 1000L);
 
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (SendParams.getInstance().getChangeAmount() == 0L) {
+                            Intent intent = new Intent("com.samourai.wallet.BalanceFragment.REFRESH");
+                            intent.putExtra("notifTx", false);
+                            intent.putExtra("fetch", true);
+                            LocalBroadcastManager.getInstance(TxAnimUIActivity.this).sendBroadcast(intent);
+                        }
+                    }
+
+                }, 10000L);
             } else {
                 Toast.makeText(TxAnimUIActivity.this, R.string.tx_failed, Toast.LENGTH_SHORT).show();
                 // reset change index upon tx fail
