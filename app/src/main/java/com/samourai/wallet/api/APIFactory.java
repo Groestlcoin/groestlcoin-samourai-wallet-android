@@ -89,6 +89,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import static java.util.TimeZone.getTimeZone;
+
 public class APIFactory	{
 
     private static long xpub_balance = 0L;
@@ -533,7 +535,8 @@ public class APIFactory	{
                             }
                         }
 
-                        if(hasOnlyBIP47Input && !hasChangeOutput)    {
+                        //we are not including BIP47 with the query, so don't do this.
+                        /*if(hasOnlyBIP47Input && !hasChangeOutput)    {
                             amount = bip47_input_amount;
                             manual_amount += bip47_input_amount;
                         }
@@ -543,7 +546,7 @@ public class APIFactory	{
                         }
                         else    {
                             ;
-                        }
+                        }*/
 
                     }
 
@@ -1854,8 +1857,8 @@ public class APIFactory	{
                                 Log.i("APIFactory", "BIP47 incoming amount:" + idx + ", " + addr + ", " + amount);
                             }
                             else    {
-                                if(addrObj.has("pubkey"))    {
-                                    String pubkey = addrObj.getString("pubkey");
+                                if(addrObj.has("address") || mapAddressToPublicKey.containsKey(addrObj.getString("address")))    {
+                                    String pubkey = mapAddressToPublicKey.get(addrObj.getString("address")); //addrObj.getString("pubkey");
                                     if(pubkeys.containsKey(pubkey))    {
                                         int count = pubkeys.get(pubkey);
                                         count++;
@@ -1899,7 +1902,9 @@ public class APIFactory	{
 
     public synchronized int syncBIP47Outgoing(String[] addresses) {
 
-        JSONObject jsonObject = getXPUB(addresses, false);
+        HashMap<String, String> mapAddressToPublicKey = new HashMap<>(addresses.length * 2);
+
+        JSONObject jsonObject = getBIP47(addresses, false, mapAddressToPublicKey);
         int ret = 0;
 
         try {
@@ -2757,7 +2762,7 @@ public class APIFactory	{
                         ts = new Date().getTime();
                         try {
                             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
-                            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                            dateFormat.setTimeZone(getTimeZone("GMT"));
                             Date parsedDate = dateFormat.parse(_ts);
                             ts = parsedDate.getTime() / 1000;
                         } catch (Exception e) {//this generic but you can control another types of exception
@@ -2767,7 +2772,7 @@ public class APIFactory	{
                                 Date parsedDate = dateFormat.parse(_ts);
                                 ts = parsedDate.getTime() / 1000;
                             } catch (Exception e1) {
-                                ts = new Date().getTime();
+                                ts = new Date().getTime() / 1000;
                             }
                             //look the origin of excption
                         }
@@ -2850,14 +2855,7 @@ public class APIFactory	{
                         if(amount < 0)
                             hasBIP47Output = true;
                         else hasBIP47Input = true;
-                        try {
-                            String date = txObj.getString("time_utc");
-                            date = date.replace('T', ' ');
-                            date = date.substring(0, date.length()-1);
-                            ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date).getTime()/1000;
-                        } catch (ParseException x) {
-                            ts = 0;
-                        }
+
                         //address
                         addr = addressesFound.get(i);
                         manual_amount += amount;
