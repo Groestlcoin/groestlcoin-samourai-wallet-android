@@ -1,6 +1,7 @@
 package com.samourai.wallet;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.samourai.wallet.hd.HD_WalletFactory;
 
@@ -80,6 +81,8 @@ public class SamouraiWallet {
     }
 
     public NetworkParameters getCurrentNetworkParams() {
+        if(networkParams == null)
+            Log.i("SamouraiWallet", "networkParams == null, defaulting to mainnet");
         return (networkParams == null) ? MainNetParams.get() : networkParams;
     }
 
