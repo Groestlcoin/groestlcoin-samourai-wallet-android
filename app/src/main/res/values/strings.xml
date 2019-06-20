@@ -595,5 +595,8 @@
     <string name="address_type">Address Type</string>
     <string name="path">Path</string>
 
+    <string name="upgrade_to_full_version">Upgrade to Full Version</string>
+    <string name="not_supported">This version of the app was installed from the Google Play Store and does not support Stealth or Remote features.</string>
+
     <!--string name="version_name">0.98</string-->
 </resources>

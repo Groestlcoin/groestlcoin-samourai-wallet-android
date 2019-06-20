@@ -5,9 +5,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -45,6 +48,8 @@ public class PermissionsUtil {
         String title = "";
         String message = "";
 
+        final boolean fromGooglePlay = isStoreVersion(context) && (code == SMS_PERMISSION_CODE || code == OUTGOING_CALL_PERMISSION_CODE);
+
         switch(code)    {
             case READ_WRITE_EXTERNAL_PERMISSION_CODE:
                 title = context.getString(R.string.permission_alert_dialog_title_external);
@@ -52,11 +57,11 @@ public class PermissionsUtil {
                 break;
             case SMS_PERMISSION_CODE:
                 title = context.getString(R.string.permission_alert_dialog_title_sms);
-                message = context.getString(R.string.permission_dialog_message_sms);
+                message = fromGooglePlay ? context.getString(R.string.not_supported) : context.getString(R.string.permission_dialog_message_sms);
                 break;
             case OUTGOING_CALL_PERMISSION_CODE:
                 title = context.getString(R.string.permission_alert_dialog_title_outgoing);
-                message = context.getString(R.string.permission_dialog_message_outgoing);
+                message = fromGooglePlay ? context.getString(R.string.not_supported) : context.getString(R.string.permission_dialog_message_outgoing);
                 break;
             case CAMERA_PERMISSION_CODE:
                 title = context.getString(R.string.permission_alert_dialog_title_camera);
@@ -95,9 +100,15 @@ public class PermissionsUtil {
 
             }
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(fromGooglePlay ? R.string.upgrade_to_full_version : R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if(fromGooglePlay) {
+                    String url = "https://github.com/Groestlcoin/groestlcoin-samourai-wallet-android/releases";
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    context.startActivity(i);
+                }
                 dialog.dismiss();
             }
         });
@@ -120,6 +131,19 @@ public class PermissionsUtil {
             }
         }
 
+    }
+
+    public static boolean isStoreVersion(Context context) {
+        boolean result = false;
+
+        try {
+            String installer = context.getPackageManager()
+                    .getInstallerPackageName(context.getPackageName());
+            result = installer.equals("com.android.store");//!TextUtils.isEmpty(installer);
+        } catch (Throwable e) {
+        }
+
+        return result;
     }
 
 }
