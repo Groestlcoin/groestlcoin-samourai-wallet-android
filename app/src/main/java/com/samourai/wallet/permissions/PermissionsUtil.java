@@ -139,7 +139,7 @@ public class PermissionsUtil {
         try {
             String installer = context.getPackageManager()
                     .getInstallerPackageName(context.getPackageName());
-            result = installer.equals("com.android.store");//!TextUtils.isEmpty(installer);
+            result = installer.equals("com.android.vending");//!TextUtils.isEmpty(installer);
         } catch (Throwable e) {
         }
 
