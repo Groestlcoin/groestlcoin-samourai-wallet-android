@@ -182,7 +182,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
                     }
                 });
 
-                final CheckBoxPreference cbPref9 = (CheckBoxPreference) findPreference("rbf");
+                /*final CheckBoxPreference cbPref9 = (CheckBoxPreference) findPreference("rbf");
                 cbPref9.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
 
@@ -195,7 +195,7 @@ public class SettingsActivity2 extends PreferenceActivity	{
 
                         return true;
                     }
-                });
+                });*/
 
                 Preference trustedNodePref = (Preference) findPreference("trustedNode");
                 trustedNodePref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
