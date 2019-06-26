@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 ext {
-    googleVersion = 153
-    fullVersion = 154
-    versionName = "0.98.86.1"
+    googleVersion = 161
+    fullVersion = 162
+    versionName = "0.98.86.2"
 }
 android {
     compileSdkVersion 26
