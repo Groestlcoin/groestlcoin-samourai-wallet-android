@@ -82,7 +82,9 @@ public class PayloadUtil	{
     private final static String strPayNymFilename = "samourai.paynyms";
 
     private final static String strOptionalBackupDir = "/groestlcoin-samourai";
+    private final static String strOptionalBackupDir2 = "/samourai";
     private final static String strOptionalFilename = "groestlcoin-samourai.txt";
+    private final static String strOptionalFilename2 = "samourai.txt";
     private final static String strOptionalFilenameTestnet = "groestlcoin-samourai-testnet.txt";
 
     private static Context context = null;
@@ -112,6 +114,11 @@ public class PayloadUtil	{
             dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir);
         }
         File file = new File(dir, SamouraiWallet.getInstance().isTestNet() ? strOptionalFilenameTestnet : strOptionalFilename);
+
+        if(!file.exists()) {
+            dir = Environment.getExternalStoragePublicDirectory(directory + strOptionalBackupDir2);
+            file = new File(dir, strOptionalFilename2);
+        }
 
         return file;
     }
