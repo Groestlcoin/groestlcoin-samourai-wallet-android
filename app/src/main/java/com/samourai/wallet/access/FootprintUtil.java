@@ -38,8 +38,11 @@ public class FootprintUtil {
                         Build.SERIAL + "§"
                 ;
 
-        strFootprint += tManager.getDeviceId();
+        try {
+            strFootprint += tManager.getDeviceId();
+        } catch (SecurityException x) {
 
+        }
         return RIPEMD160(strFootprint);
     }
 
@@ -49,8 +52,11 @@ public class FootprintUtil {
 
         String strFootprint = Build.BOARD +  Build.MANUFACTURER + Build.BRAND + Build.MODEL + Build.SERIAL;
 
-        strFootprint += tManager.getDeviceId();
+        try {
+            strFootprint += tManager.getDeviceId();
+        } catch (SecurityException x) {
 
+        }
         return RIPEMD160(strFootprint);
     }
 
