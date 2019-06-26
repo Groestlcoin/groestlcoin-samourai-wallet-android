@@ -1,5 +1,6 @@
 package com.samourai.wallet;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,10 +11,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -43,7 +47,9 @@ public class MainActivity2 extends Activity {
 
     private ProgressDialog progress = null;
 
-    /** An array of strings to populate dropdown list */
+    /**
+     * An array of strings to populate dropdown list
+     */
     private static String[] account_selections = null;
     private static ArrayAdapter<String> adapter = null;
 
@@ -350,7 +356,18 @@ public class MainActivity2 extends Activity {
             }).start();
 
         }
-        else if(AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
+        else checkForPhoneStatePermission(isDial, strUri);
+
+    }
+
+    private static final int REQUEST_PHONE_STATE = 1;
+
+
+    private void doStuff(boolean isDial, String strUri, boolean hasPermission) {
+        this.isDial = isDial;
+        this.strUri = strUri;
+        boolean  hasGuid = hasPermission ? AccessFactory.getInstance(MainActivity2.this).getGUID().length() < 1 : false;
+        if(hasGuid || !PayloadUtil.getInstance(MainActivity2.this).walletFileExists()) {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             if(AppUtil.getInstance(MainActivity2.this).isSideLoaded())    {
                 doSelectNet();
@@ -381,7 +398,65 @@ public class MainActivity2 extends Activity {
             AccessFactory.getInstance(MainActivity2.this).setIsLoggedIn(false);
             validatePIN(strUri == null ? null : strUri);
         }
+    }
 
+
+    private boolean checkForPhoneStatePermission(boolean isDial, String strUri) {
+
+        int guid_v = PrefsUtil.getInstance(getApplicationContext()).getValue(PrefsUtil.GUID_V, 0);
+        if(guid_v != 2 && guid_v != 3) {
+            doStuff(isDial, strUri, true);
+            return true;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            if (ContextCompat.checkSelfPermission(MainActivity2.this,
+                    Manifest.permission.READ_PHONE_STATE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity2.this,
+                        Manifest.permission.READ_PHONE_STATE)) {
+
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+                    showPermissionMessage();
+
+                } else {
+
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(MainActivity2.this,
+                            new String[]{Manifest.permission.READ_PHONE_STATE},
+                            REQUEST_PHONE_STATE);
+                }
+            } else {
+                //... Permission has already been granted, obtain the UUID
+                doStuff(isDial, strUri, true);
+            }
+
+        } else {
+            //... No need to request permission, obtain the UUID
+            doStuff(isDial, strUri, true);
+        }
+        return false;
+    }
+
+
+    private void showPermissionMessage(){
+        new AlertDialog.Builder(this)
+                .setTitle("Read phone state")
+                .setMessage("This app requires the permission to read phone state to continue")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(MainActivity2.this,
+                                new String[]{Manifest.permission.READ_PHONE_STATE},
+                                REQUEST_PHONE_STATE);
+                    }
+                }).create().show();
     }
 
     private void doAccountSelection() {
@@ -442,6 +517,60 @@ public class MainActivity2 extends Activity {
         }*/
         initDialog();
 
+    }
+
+    boolean isDial = false;
+    String strUri = null;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch(requestCode){
+            case REQUEST_PHONE_STATE:
+
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                    // .. Can now obtain the UUID
+                    doStuff(isDial, strUri, true);
+                }else{
+                    // do not show this dialog.  it will display even if the app wasn't upgraded from 0.82
+                    doStuff(isDial, strUri, false);
+                    /*
+                    Toast.makeText(MainActivity2.this, "Unable to continue without granting permission", Toast.LENGTH_SHORT).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity2.this);
+                    builder.setTitle("Upgrade to full version");
+                    builder.setCancelable(false);
+                    builder.setMessage("You must upgrade to the Full Version on GitHub to continue with this app.  \n\n"
+                             + "Press OK to go to the site to download the upgrade.\n" +
+                            "\nOtherwise you need to know your passphrase.  Press CANCEL if you know your passphrase and then enter your PIN three times and then your passphrase.");
+                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            String url = "https://github.com/Groestlcoin/groestlcoin-samourai-wallet-android/releases";
+                            Intent i = new Intent(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse(url));
+                            getApplicationContext().startActivity(i);
+
+                            dialog.dismiss();
+
+                        }
+                    });
+                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            doStuff(isDial, strUri, false);
+                            dialog.dismiss();
+                        }
+                    });
+
+                    if(!isFinishing())
+                        builder.create().show();
+                        */
+                }
+                break;
+        }
     }
 
 }
