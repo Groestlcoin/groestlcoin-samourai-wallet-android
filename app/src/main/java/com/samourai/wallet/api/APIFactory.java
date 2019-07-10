@@ -1152,11 +1152,17 @@ public class APIFactory	{
         try {
 
             String response = null;
+            final int MAX_PER_REQUESTS = 15;
+            int numRequests = pubkeys.length / MAX_PER_REQUESTS + 1;
 
             //first get a list of pubkeys
 
             HashMap<String, String> mapAddressToPubkey = new HashMap<>(pubkeys.length * 2);
             StringBuilder addresses = new StringBuilder();
+            String [] addressArray = new String[numRequests];
+            for(int i = 0; i < numRequests; ++i)
+                addressArray[i] = "";
+            int count = 0;
             for(String pubkey : pubkeys) {
                 ECKey key = ECKey.fromPublicOnly(Utils.HEX.decode(pubkey));
                 String p2pkh = key.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toBase58();
@@ -1166,29 +1172,35 @@ public class APIFactory	{
                 mapAddressToPubkey.put(p2pkh, pubkey);
                 mapAddressToPubkey.put(bech32, pubkey);
                 addresses.append(p2pkh).append("|").append(bech32).append("|");
+                count++;
+                addressArray[count / MAX_PER_REQUESTS] += p2pkh + "|" + bech32 + "|";//addresses.toString();
             }
 
-            if (AppUtil.getInstance(context).isOfflineMode()) {
-                response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
-            } else if (!TorUtil.getInstance(context).statusFromBroadcast()) {
-                StringBuilder args = new StringBuilder();
-                args.append("active=");
-                //ECKey key = ECKey.fromPublicOnly(Utils.HEX.decode(pubkey));
-                //String p2pkh = key.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toBase58();
-                //SegwitAddress segwitAddress = new SegwitAddress(key, SamouraiWallet.getInstance().getCurrentNetworkParams());
-                //String bech32 = segwitAddress.getBech32AsString();
-                //args.append(p2pkh);
-                //args.append("|");
-                //args.append(bech32);
-                //args.append(StringUtils.join(pubkey, URLEncoder.encode("|", "UTF-8")));
-                args.append(addresses.subSequence(0, addresses.length()-1));
-                Log.d("APIFactory", "UTXO args:" + args.toString());
-                response = WebUtil.getInstance(context).getURL(_url + "unspent&" + args.toString());
-                Log.d("APIFactory", "UTXO:" + response);
-            } else {
-                HashMap<String, String> args = new HashMap<String, String>();
-                args.put("active", StringUtils.join(pubkeys, "|"));
-                response = WebUtil.getInstance(context).tor_getURL(_url + "unspent" + args.toString());
+            pubkeys = addressArray;
+
+            for(String _addresses : addressArray) {
+                if (AppUtil.getInstance(context).isOfflineMode()) {
+                    response = PayloadUtil.getInstance(context).deserializeUTXO().toString();
+                } else if (!TorUtil.getInstance(context).statusFromBroadcast()) {
+                    StringBuilder args = new StringBuilder();
+                    args.append("active=");
+                    //ECKey key = ECKey.fromPublicOnly(Utils.HEX.decode(pubkey));
+                    //String p2pkh = key.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toBase58();
+                    //SegwitAddress segwitAddress = new SegwitAddress(key, SamouraiWallet.getInstance().getCurrentNetworkParams());
+                    //String bech32 = segwitAddress.getBech32AsString();
+                    //args.append(p2pkh);
+                    //args.append("|");
+                    //args.append(bech32);
+                    //args.append(StringUtils.join(pubkey, URLEncoder.encode("|", "UTF-8")));
+                    args.append(_addresses);
+                    Log.d("APIFactory", "UTXO args:" + args.toString());
+                    response = WebUtil.getInstance(context).getURL(_url + "unspent&" + args.toString());
+                    Log.d("APIFactory", "UTXO:" + response);
+                } else {
+                    HashMap<String, String> args = new HashMap<String, String>();
+                    args.put("active", StringUtils.join(pubkeys, "|"));
+                    response = WebUtil.getInstance(context).tor_getURL(_url + "unspent" + args.toString());
+                }
             }
 
             //process the results
@@ -2895,6 +2907,8 @@ public class APIFactory	{
 
         JSONObject jsonObject  = null;
 
+        final int MAX_COUNT = 15;
+        int numRequests = addresses.length / MAX_COUNT + 1;
 
 
         boolean regularAddress = false;
@@ -2911,8 +2925,13 @@ public class APIFactory	{
         } else if(addresses[0].length() == 66) {
             if(mapAddressToPubkey == null)
                 mapAddressToPubkey = new HashMap<>(addresses.length * 2);
-            StringBuilder _addresses = new StringBuilder();
+            StringBuilder _addresses =  new StringBuilder();
+            String [] addressArray = new String [numRequests];
+            for (String addr : addressArray) {
+                addr = "";
+            }
             regularAddress = false;
+            int count = 0;
             for(String pubkey : addresses) {
                 ECKey key = ECKey.fromPublicOnly(Utils.HEX.decode(pubkey));
                 String p2pkh = key.toAddress(SamouraiWallet.getInstance().getCurrentNetworkParams()).toBase58();
@@ -2922,22 +2941,23 @@ public class APIFactory	{
                 mapAddressToPubkey.put(p2pkh, pubkey);
                 mapAddressToPubkey.put(bech32, pubkey);
                 _addresses.append(p2pkh).append("|").append(bech32).append("|");
-                addresses = new String[1];
-                addresses[0] = _addresses.toString();
+                count++;
+                addressArray[count / MAX_COUNT] += p2pkh + "|" + bech32 + "|";//_addresses.toString();
             }
+            addresses = addressArray;
         }
 
-        StringBuilder args = new StringBuilder();
-        args.append("&active=");
-        args.append(addresses[0]);
+        //StringBuilder args = new StringBuilder();
+        //args.append("&active=");
+        //args.append(addresses[0]);
 
         String url = SamouraiWallet.getInstance().isTestNet() ? WebUtil.SAMOURAI_API2_TESTNET : WebUtil.SAMOURAI_API2;
 
         try {
-            Log.i("APIFactory", "BIP47 multiaddr:" + args.toString());
             for(String address: addresses) {
+                Log.i("APIFactory", "BIP47 multiaddr:" + address);
                 String response = WebUtil.getInstance(null).getURL(url + "multiaddr&active=" + address);
-            Log.i("APIFactory", "BIP47 multiaddr:" + response);
+                Log.i("APIFactory", "BIP47 multiaddr:" + response);
                 jsonObject = new JSONObject(response);
                 parseBIP47(jsonObject, address);
             }
