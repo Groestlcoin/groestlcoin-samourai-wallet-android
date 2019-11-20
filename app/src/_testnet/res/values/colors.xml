@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- app icon -->
+    <color name="appicon_gradient_start">#AA140C</color>
+    <color name="appicon_gradient_end">#FF0500</color>
+</resources>

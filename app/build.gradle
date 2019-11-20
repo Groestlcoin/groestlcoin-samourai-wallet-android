@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'androidsvgdrawable'
+
 ext {
     googleVersion = 164
     fullVersion = 165
@@ -135,4 +137,20 @@ dependencies {
     implementation 'com.yanzhenjie.zbar:camera:1.0.0'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+}
+
+task svgToPngMipmap(type: fr.avianey.androidsvgdrawable.gradle.SvgDrawableTask) {
+    from = files('graphics/mipmap')
+    to = file('src/main/res')
+    targetedDensities = ['hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
+    outputFormat = 'PNG'
+    outputType = 'mipmap'
+}
+
+task svgToPngMipmapTestnet(type: fr.avianey.androidsvgdrawable.gradle.SvgDrawableTask) {
+    from = files('graphics/mipmap-testnet')
+    to = file('src/_testNet/res')
+    targetedDensities = ['hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']
+    outputFormat = 'PNG'
+    outputType = 'mipmap'
 }
