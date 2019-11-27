@@ -2,9 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'androidsvgdrawable'
 
 ext {
-    googleVersion = 164
-    fullVersion = 165
-    versionNameString = "0.98.86.4"
+    googleVersion = 166
+    fullVersion = 167
+    versionNameString = "0.98.86.5"
 }
 android {
     compileSdkVersion 28
