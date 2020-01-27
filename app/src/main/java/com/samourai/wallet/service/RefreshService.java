@@ -8,6 +8,7 @@ import android.app.Notification;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Looper;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -36,6 +37,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bitcoinj.core.AddressFormatException;
 import org.bitcoinj.crypto.MnemonicException;
 import org.json.JSONException;
+import java.io.IOException;
+import java.util.List;
+
+import static com.samourai.wallet.SamouraiApplication.FOREGROUND_SERVICE_CHANNEL_ID;
 
 public class RefreshService extends IntentService {
 
@@ -47,14 +52,19 @@ public class RefreshService extends IntentService {
         super("RefreshService");
     }
 
+
+
     @Override
     protected void onHandleIntent(Intent intent) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            Notification.Builder builder = new Notification.Builder(this)
-                    .setContentTitle(getString(R.string.app_name))
-                    .setContentText("refresh")
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, FOREGROUND_SERVICE_CHANNEL_ID)
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .setContentTitle("Updating Wallet...")
+                    .setSmallIcon(R.drawable.ic_samourai_logo_trans2x)
+                    .setOngoing(true)
+                    .setCategory(Notification.CATEGORY_SERVICE)
                     .setAutoCancel(true);
 
             Notification notification = builder.build();
