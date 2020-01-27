@@ -2,9 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'androidsvgdrawable'
 
 ext {
-    googleVersion = 166
-    fullVersion = 167
-    versionNameString = "0.98.86.5"
+    googleVersion = 168
+    fullVersion = 169
+    versionNameString = "0.98.86.6"
 }
 android {
     compileSdkVersion 28
@@ -53,7 +53,6 @@ android {
         production {
             applicationId 'hashengineering.groestlcoin.samourai.wallet'
             minSdkVersion 21
-            targetSdkVersion 26
             versionCode googleVersion
             versionName "$versionNameString"
             resValue "string", "app_name", "Groestlcoin Samourai"
@@ -61,26 +60,20 @@ android {
         }
         full {
             applicationId 'hashengineering.groestlcoin.samourai.wallet'
-            minSdkVersion 21
-            targetSdkVersion 26
             versionCode fullVersion
             versionName "$versionNameString"
             resValue "string", "app_name", "Groestlcoin Samourai"
             resValue "string", "version_name", versionName
         }
         staging {
-            applicationId 'com.samourai.wallet.staging'
-            minSdkVersion 21
-            targetSdkVersion 26
+            applicationId 'hashengineering.groestlcoin.samourai.wallet.staging'
             versionCode fullVersion
             versionName "$versionNameString"
-            resValue "string", "app_name", "Samourai Staging"
+            resValue "string", "app_name", "Groestlcoin Samourai Staging"
             resValue "string", "version_name", versionName
         }
         _testnet {
             applicationId 'hashengineering.groestlcoin.samourai.wallet.testnet'
-            minSdkVersion 21
-            targetSdkVersion 26
             versionCode googleVersion
             versionName "$versionNameString"
             resValue "string", "app_name", "Groestlcoin Samourai Testnet"
@@ -88,8 +81,6 @@ android {
         }
         _testnet_full {
             applicationId 'hashengineering.groestlcoin.samourai.wallet.testnet'
-            minSdkVersion 21
-            targetSdkVersion 26
             versionCode fullVersion
             versionName "$versionNameString"
             resValue "string", "app_name", "Groestlcoin Samourai Testnet"
